@@ -1,0 +1,51 @@
+{
+"architecture":{
+	"n_layers":5,
+	"n_neurons":100
+	},
+
+"experiment":{
+	"dataset":"elliptic_cos",
+	"prop_exact":0.01,
+	"prop_collocation":1.00,
+	"is_uniform_exact":"False",
+	"noise_lv":0.01,
+	"batch_size":100
+	},
+
+"param":{
+	"param_eikonal":1.0,
+	"param_log_joint":20.0,
+	"param_prior":0.5,
+	"param2loss":1e-4,
+	"random_seed":42
+	},
+
+"sigmas":{
+	"data_prior_noise":1e-4,
+	"pde_prior_noise":1e-4,
+	"data_prior_noise_trainable":"False",
+	"pde_prior_noise_trainable":"False"
+	},
+
+"SVGD":{
+	"n_samples":30,
+	"epochs":100,
+	"lr":1e-3,
+	"lr_noise":1e-5,
+	"param_repulsivity":100.0
+	},
+
+"HMC":{
+	"N_HMC":1000,
+	"M_HMC":750,
+	"L_HMC":10,
+	"dt_HMC":1e-3,
+	"dt_noise_HMC":1e-4
+	},
+
+"utils":{
+	"verbose":"True",
+	"save_flag":"True"
+	}
+}
