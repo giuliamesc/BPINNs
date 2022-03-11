@@ -3,15 +3,11 @@ import tensorflow as tf
 
 import time
 import math
-
-# import the modules you need
-from helpers import memory
+from tqdm import tqdm
 
 ## list update: update left list usign right list and a mult factor
 def list_update(left, right, mult):
-    for i in range(len(left)):
-        left[i]= left[i]+(mult*right[i])
-    return left
+    return [x+mult*y for x,y in zip(left,right)]
 
 ### Hamiltonian Monte Carlo
 class HMC_MCMC:
@@ -197,9 +193,7 @@ class HMC_MCMC:
         sp_target = sp_at
 
         ## for every iteration in 1,...,N
-        for iteration in range(self.N):
-            print(iteration, " iteration")
-
+        for iteration in tqdm(range(self.N), desc="HMC_MCMC", leave=False):
             epochtime = time.time()
 
             ## save the previous theta->theta0 (make a copy() of the list)
@@ -248,7 +242,7 @@ class HMC_MCMC:
                     grad_theta, u_theta, log_likelihood, log_prior_w, log_eq, losses = \
                         self._grad_U_theta(sp_inputs, sp_target, inputs)
 
-                    ## update rr = rr - (dt/2)*grad_theta
+                    ## update rr = rr - (self.dt/2)*grad_theta
                     rr = list_update(rr, grad_theta, -self.dt/2)
                     ## if betas_trainable update also rr_log_b
                     if(self.bayes_nn.log_betas.betas_trainable_flag()):
@@ -279,45 +273,27 @@ class HMC_MCMC:
                     self.bayes_nn.prior_logloss.append(log_prior_w)
                     self.bayes_nn.eikonal_logloss.append(log_eq)
 
-
-            debug_flag = True
-            if(debug_flag and iteration>0):
-                print("------------------------------")
-                print("u_theta0: ",u_theta0.numpy())
-                print("u_theta: ",u_theta.numpy())
-                print("------------------------------")
-                print("*******************************")
-                print("Log likelihood: ")
-                print(log_likelihood.numpy()[0][0])
-                print("*******************************")
-                print("Log prior w: ")
-                print(log_prior_w.numpy()[0])
-                print("*******************************")
-                print("Log eq: ")
-                print(log_eq.numpy()[0])
-                print("-------------------------------")
-
-            #if(debug_flag and iteration>0 and self.bayes_nn.log_betas.betas_trainable_flag()):
-            #    print(theta_log_b)
-
-            if(verbosity):
-                if(iteration == 0 or iteration==(self.N-1)):
-                    mem = memory()
-                    print("total memory used = ", mem)
-
-                fin_epochtime = time.time()-epochtime
-                print("time for this iteration = ", fin_epochtime)
-
             ## accept vs reject step
             ## sample p from a Uniform(0,1)
             p = np.log(np.random.random())
             ## compute alpha prob using alpha_fun (since now alpha is 0.95 at most,
             ## we can have some instabilities and ending up with a NaN, see after)
             alpha = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
-
-            if(debug_flag):
+            
+            
+            debug_flag = False
+            if(debug_flag and iteration>0):
+                print("\n**********START DEBUG*************")
+                fin_epochtime = time.time()-epochtime
+                print("u_theta0: ",u_theta0.numpy())
+                print("u_theta: ",u_theta.numpy())
+                print("Log likelihood: ", log_likelihood.numpy()[0][0])
+                print("Log prior w:    ", log_prior_w.numpy()[0])
+                print("Log equation:   ", log_eq.numpy()[0])
+                print("time for this iteration = ", fin_epochtime)
                 print("alpha: ", np.exp(alpha))
                 print("p: ", np.exp(p))
+                
 
             ## if p>=alpha (and u_theta is not a NaN)
             ##          ACCEPT THE NEW VALUES
@@ -338,7 +314,10 @@ class HMC_MCMC:
 
                 # store the new theta
                 thetas.append(theta)
-                print("accept")
+                if(debug_flag and iteration>0):
+                    print("Accept")
+                    print("***********END DEBUG**************")
+                    
 
                 # update accepted_total and accepted_after_burnin
                 accepted_total+=1
@@ -350,9 +329,7 @@ class HMC_MCMC:
                 loss_2 = losses[1].numpy()
                 loss_d = losses[2].numpy()
 
-                print("loss 1: ",loss_1)
-                print("loss 2: ",loss_2)
-                print("loss d: ",loss_d)
+                print(f"\nLoss 1:{loss_1 : 1.3e} | Loss 2:{loss_2: 1.3e} | Loss d:{loss_d: 1.3e}")
                 print("------------------------------")
 
                 # update theta0 and u_theta0
@@ -384,7 +361,9 @@ class HMC_MCMC:
 
                 ## store theta0
                 thetas.append(theta0.copy())
-                print("reject")
+                if(debug_flag and iteration>0):
+                    print("Reject")
+                    print("***********END DEBUG**************")
 
                 ## Handling NaN values:
                 ## Since we could end up with NaN (because we have changed alpha from max 1.0 to max 0.95)
@@ -406,8 +385,8 @@ class HMC_MCMC:
             rec_log_betaR.append(self.bayes_nn.log_betas.log_betaR.numpy())
 
         ## print accepance rates
-        print("total accepance rate: ", accepted_total/self.N)
-        print("after_burn_in accepance rate: ", accepted_after_burnin/self.M)
+        print("Total accepance rate: ", accepted_total/self.N)
+        print("After_burn_in accepance rate: ", accepted_after_burnin/self.M)
 
         ## store thetas and log_betas(if trainable) (just the last M iterations) in bayes_nn
         ## so we can compute all the statistics we need

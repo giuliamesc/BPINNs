@@ -18,7 +18,7 @@ sys.path.append("utils") # local import from the subfolder "utils" -> all the co
 from args import args   #command-line arg parser
 from param import param #parameter class
 
-from helpers import create_directories, memory
+from helpers import create_directories
 
 from dataset_creation import dataset_class
 from dataloader import dataloader
@@ -71,14 +71,13 @@ datasets_class.plot(path_plot)
 print("Number of exact data:", datasets_class.n_exact)
 print("Number of collocation data:", datasets_class.n_collocation)
 print("Dataset created")
-
-print("--------------------------------------------")
 print("Building dataloader...")
 # Build the dataloader for minibatch training (of just collocation points)
 batch_size = par.experiment["batch_size"]
 reshuffle_every_epoch = True
 batch_loader  = dataloader(datasets_class, batch_size, reshuffle_every_epoch)
 batch_loader, batch_loader_size = batch_loader.dataload_collocation()
+print("Done")
 
 # %% Model Building
 
@@ -89,9 +88,7 @@ if(par.pde == "laplace"):
     pde_constr = laplace(par)
 else:
     raise Exception("No other pde implemented")
-print("Done")
 
-print("--------------------------------------------")
 print("Initializing the Bayesian PINN...")
 # Initialize the correct Bayesian NN (SVGD_BayesNN for "SVGD" method, MCMC_BayesNN for every other MCMC-like method)
 if(par.method == "SVGD"):
@@ -107,9 +104,7 @@ else:
                                 par.n_output_vel, par.param, pde_constr,
                                 par.param["random_seed"],
                                 par.param_method["M_HMC"])
-print("Done")
 
-print("--------------------------------------------")
 print("Building", par.method ,"alg...")
 
 # Build the method class
@@ -171,18 +166,14 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
 print("--------------------------------------------")
 print("Plotting the results...")
 plot_result(par.n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_plot)
-print("Done")
-
-print("--------------------------------------------")
 print("Plotting the losses")
 plot_losses(LOSSD, LOSS1, LOSS2, LOSS, path_plot)
-print("Done")
 
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("--------------------------------------------")
     print("Plotting log betas")
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
-    print("Done")
+    
+print("Done")
 
 print("--------------------------------------------")
 print("Plot all the NNs")

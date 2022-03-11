@@ -30,7 +30,7 @@
 
 "SVGD":{
 	"n_samples":30,
-	"epochs":1000,
+	"epochs":50,
 	"lr":1e-3,
 	"lr_noise":1e-5,
 	"param_repulsivity":100.0

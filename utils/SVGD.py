@@ -10,6 +10,7 @@ import math
 import sys
 import os
 import gc
+from tqdm import tqdm
 
 # local import
 from helpers import get_trainable_weights_flatten, memory
@@ -233,8 +234,7 @@ class SVGD:
         sp_target = sp_at
 
         # training for epoch in self.epochs
-        for epoch in range(self.epochs):
-
+        for epoch in tqdm(range(self.epochs), desc="SVGD", leave=False):
             # to compute the time for a single epoch
             epochtime = time.time()
 
@@ -253,21 +253,18 @@ class SVGD:
                     log_total, log_likelihood, log_prior_w, log_eq = \
                     self._compute_backprop_gradients(sp_inputs, sp_target, inputs)
 
-                debug_print_flag = True
+                debug_print_flag = False
                 if(batch_idx==(len(self.train_loader)-1) and debug_print_flag):
-                    print("------------------------------")
-                    print("Log total: ")
-                    print(log_total.numpy())
-                    print("*******************************")
-                    print("Log likelihood: ")
-                    print(log_likelihood.numpy())
-                    print("*******************************")
-                    print("Log prior w: ")
-                    print(log_prior_w.numpy())
-                    print("*******************************")
-                    print("Log eq: ")
-                    print(log_eq.numpy())
                     print("-------------------------------")
+                    print("\n**********START DEBUG*************")
+                    fin_epochtime = time.time()-epochtime
+                    print("Log total:      " ,log_total.numpy()[0])
+                    print("Log likelihood: ", log_likelihood.numpy()[0])
+                    print("Log prior w:    ", log_prior_w.numpy()[0])
+                    print("Log equation:   ", log_eq.numpy()[0])
+                    print("time for this iteration = ", fin_epochtime)
+                    print("***********END DEBUG**************")
+
 
                 ## collect all the parts of log_posterior (log_likelihood, log_prior_w and log_eq)
                 self.bayes_nn.data_logloss.append(log_likelihood)
@@ -339,13 +336,5 @@ class SVGD:
             LOSS2.append(loss_2_tot.numpy()/len(self.train_loader))
             LOSSD.append(loss_d_tot.numpy()/len(self.train_loader))
 
-            if(verbosity):
-                print("epoch = ", epoch)
-                if(epoch == 0 or epoch==(self.epochs-1)):
-                    mem = memory()
-                    print("total memory used = ", mem)
-
-                fin_epochtime = time.time()-epochtime
-                print("time for this epoch = ", fin_epochtime)
 
         return rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSS2,LOSSD
