@@ -90,7 +90,7 @@ class BayesNN:
         ## weights for pde in posterior
         self.param_res = parameters["param_res"]
         ## weights for likelihood in posterior
-        self.param_log_joint = parameters["param_log_joint"]
+        self.param_data = parameters["param_data"]
         ## weights for prior in posterior
         self.param_prior = parameters["param_prior"]
 
@@ -184,9 +184,9 @@ class BayesNN:
 
         # divide by the numerosity of target (number of exact)
         #log_likelihood/= tf.size(target[:,0], out_type = tf.dtypes.float32)
-        # multiply by param_log_joint
+        # multiply by param_data
         log_likelihood = tf.convert_to_tensor(log_likelihood)
-        log_likelihood*=self.param_log_joint
+        log_likelihood*=self.param_data
 
         # compute log prior of w (t-student)
         log_prob_prior_w = []
@@ -706,8 +706,8 @@ class SVGD_BayesNN(BayesNN):
         log_likelihood = tf.convert_to_tensor(log_likelihood, dtype=tf.float32)
         # divide by size of target (number of exact)
         #log_likelihood/= tf.size(target[:,0], out_type = tf.dtypes.float32)
-        # multiply by param log joint
-        log_likelihood*=self.param_log_joint
+        # multiply by param_data
+        log_likelihood*=self.param_data
 
         # divide loss d by num num_neural_networks
         loss_d_scalar /= self.num_neural_networks

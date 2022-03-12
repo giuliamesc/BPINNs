@@ -15,9 +15,8 @@
 
 "param":{
 	"param_res":0.01,
-	"param_log_joint":10.0,
+	"param_data":10.0,
 	"param_prior":1.0,
-	"param2loss":1e-4,
 	"random_seed":42
 	},
 
