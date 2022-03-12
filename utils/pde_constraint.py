@@ -149,15 +149,20 @@ class laplace(pde_constraint):
 
     def compute_pde_losses(self, at_gr_2, v):
         """
-        - Nabla(at) = v -> v+Nabla(at)=0
+        - Nabla(u) = f -> f+Nabla(u)=0
         """
         if(self.n_input == 1):
             # select each entries (a,b if n_output_vel = 2; a,b,c if n_output_vel = 3)
             v = v[:,:,0]
-
             # compute the loss 1: residual of the PDE
             loss_1 = at_gr_2[0] + v
-
-            return loss_1
-        else:
-            raise Exception("Only case 1D laplace implemented")
+            
+        if(self.n_input == 2):
+            v = v[:,:,0:2]
+            loss_1 = at_gr_2[0]+at_gr_2[1] + sum(v)
+        
+        if(self.n_input == 3):
+            v = v[:,:,0:3] 
+            loss_1 = at_gr_2[0]+at_gr_2[1]+at_gr_2[2] + sum(v)
+            
+        return loss_1
