@@ -15,7 +15,7 @@ class HMC_MCMC:
     Hamiltonian Monte Carlo (MCMC)
     """
 
-    def __init__(self, bayes_nn,train_loader,datasets_class, hmc_param, random_seed):
+    def __init__(self, bayes_nn, train_loader, datasets_class, hmc_param, random_seed):
         """!
         @param bayes_nn an object of type MCMC_BayesNN that collects the neural network and all the methods to compute the posterior
         @param train_loader the data loader in minibatch for the collocation points
@@ -61,20 +61,17 @@ class HMC_MCMC:
         sp_output_times, _ = self.bayes_nn.forward(sp_inputs)
 
         ## compute the log likelihood of exact data (sp_target - sp_output_times) and log prior
-        log_likelihood_total, loss_d_scalar, log_likelihood,log_prior_w = \
+        log_likelihood_total, loss_d_scalar, log_likelihood, log_prior_w = \
                 self.bayes_nn.log_joint(sp_output_times, sp_target)
 
         ## compute log likelihood of pde equation and losses for batch collocation points (PDE constraints)
-        log_eq, loss_1_scalar, loss_2_scalar =  self.bayes_nn.pde_logloss(inputs)
-        # log_eq = [0.0]
-        # loss_1_scalar = 1.0
-        # loss_2_scalar = 1.0
+        log_eq, loss_1_scalar, _ = self.bayes_nn.pde_logloss(inputs)
 
         ## compute u_theta
         log_total = log_likelihood_total[0,0] + log_eq[0]
         u_theta = -log_total
 
-        return u_theta, log_likelihood, log_prior_w, log_eq, loss_1_scalar, loss_2_scalar, loss_d_scalar
+        return u_theta, log_likelihood, log_prior_w, log_eq, loss_1_scalar, loss_d_scalar
 
     def _h_fun(self,u,r):
         """!
@@ -146,7 +143,8 @@ class HMC_MCMC:
                 ## if flag=True watch also log_betas trainable
                 tape.watch(betas_trainable)
             ## Compute U(theta) calling the u_fun method
-            u_theta, log_likelihood, log_prior_w, log_eq,*losses = self._u_fun(sp_inputs, sp_target, inputs)
+            print("BACINELLA")
+            u_theta, log_likelihood, log_prior_w, log_eq, *losses = self._u_fun(sp_inputs, sp_target, inputs)
         ## compute the gradient of NN param (by backpropagation)
         grad_theta = tape.gradient(u_theta, param)
         grad_theta = grad_theta[0]
@@ -162,14 +160,12 @@ class HMC_MCMC:
         """ Train using HMC algorithm """
 
         loss_1 = 1.    # Initialize the losses (only in case we reject the first iteration)
-        loss_2 = 1.
         loss_d = 1.
 
         rec_log_betaD = []  # list that collects all the log_betaD during training
         rec_log_betaR = []  # list that collects all the log_betaR during training
         LOSS = []   # list that collects total loss during training
         LOSS1 = []  # list that collects loss of pde during training
-        LOSS2 = []  # list that collects loss of high gradients during training
         LOSSD = []  # list that collects loss of exact noisy data during training
 
         thetas = [] # list to collect all the parameters of NN during training
@@ -271,7 +267,7 @@ class HMC_MCMC:
                     ## save all the three posterior components
                     self.bayes_nn.data_logloss.append(log_likelihood)
                     self.bayes_nn.prior_logloss.append(log_prior_w)
-                    self.bayes_nn.eikonal_logloss.append(log_eq)
+                    self.bayes_nn.res_logloss.append(log_eq)
 
             ## accept vs reject step
             ## sample p from a Uniform(0,1)
@@ -279,8 +275,8 @@ class HMC_MCMC:
             ## compute alpha prob using alpha_fun (since now alpha is 0.95 at most,
             ## we can have some instabilities and ending up with a NaN, see after)
             alpha = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
-            
-            
+
+
             debug_flag = False
             if(debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
@@ -293,7 +289,7 @@ class HMC_MCMC:
                 print("time for this iteration = ", fin_epochtime)
                 print("alpha: ", np.exp(alpha))
                 print("p: ", np.exp(p))
-                
+
 
             ## if p>=alpha (and u_theta is not a NaN)
             ##          ACCEPT THE NEW VALUES
@@ -317,7 +313,7 @@ class HMC_MCMC:
                 if(debug_flag and iteration>0):
                     print("Accept")
                     print("***********END DEBUG**************")
-                    
+
 
                 # update accepted_total and accepted_after_burnin
                 accepted_total+=1
@@ -326,11 +322,10 @@ class HMC_MCMC:
                     ttt.append(theta)
 
                 loss_1 = losses[0].numpy()
-                loss_2 = losses[1].numpy()
-                loss_d = losses[2].numpy()
-                
+                loss_d = losses[1].numpy()
+
                 if(accepted_total % 10 == 0):
-                    print(f"\nLoss 1:{loss_1 : 1.3e} | Loss 2:{loss_2: 1.3e} | Loss d:{loss_d: 1.3e}")
+                    print(f"\nLoss 1:{loss_1 : 1.3e} | Loss d:{loss_d: 1.3e}")
                     print("------------------------------")
 
                 # update theta0 and u_theta0
@@ -357,7 +352,6 @@ class HMC_MCMC:
                 ## store the previous losses since we have rejected (after the first iteration where we don't have previous values )
                 if(iteration>0):
                     loss_1 = LOSS1[-1]
-                    loss_2 = LOSS2[-1]
                     loss_d = LOSSD[-1]
 
                 ## store theta0
@@ -379,9 +373,8 @@ class HMC_MCMC:
                             self.bayes_nn.log_betas.log_betaR.assign(log_betaRs[-4])
             ## store all the losses and log_betas
             LOSS1.append(loss_1)
-            LOSS2.append(loss_2)
             LOSSD.append(loss_d)
-            LOSS.append(loss_1+loss_2+loss_d)
+            LOSS.append(loss_1+loss_d)
             rec_log_betaD.append(self.bayes_nn.log_betas.log_betaD.numpy())
             rec_log_betaR.append(self.bayes_nn.log_betas.log_betaR.numpy())
 
@@ -397,4 +390,4 @@ class HMC_MCMC:
         if(self.bayes_nn.log_betas._bool_log_betaD):
             self.bayes_nn._log_betaRs = log_betaRs[-self.M:]
 
-        return rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSS2,LOSSD
+        return rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD

@@ -125,7 +125,7 @@ print("Done")
 print("--------------------------------------------")
 print('Start training...')
 t0 = time.time()
-rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSS2,LOSSD = alg.train_all(par.utils["verbose"])
+rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD = alg.train_all(par.utils["verbose"])
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
@@ -147,7 +147,6 @@ bayes_nn.save_networks(path_weights)
 print("Save losses...")
 np.savetxt(os.path.join(path_result,"Loss.csv" ),LOSS)
 np.savetxt(os.path.join(path_result,"LOSS1.csv"),LOSS1)
-np.savetxt(os.path.join(path_result,"LOSS2.csv"),LOSS2)
 np.savetxt(os.path.join(path_result,"LOSSD.csv"),LOSSD)
 
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
@@ -162,7 +161,7 @@ print("Done")
 
 print("--------------------------------------------")
 print("Plotting the losses...")
-plot_losses(LOSSD, LOSS1, LOSS2, LOSS, path_plot)
+plot_losses(LOSSD, LOSS1, LOSS, path_plot)
 print("Plotting the results...")
 plot_result(par.n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_plot)
 

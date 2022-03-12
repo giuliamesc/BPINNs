@@ -7,7 +7,6 @@ tfd = tfp.distributions
 
 from FCN import Net
 from other_trainable_parameters import trainable_param
-from pde_constraint import eikonal, anisotropic_eikonal
 
 
 class BayesNN:
@@ -23,8 +22,8 @@ class BayesNN:
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
         @param n_output_vel dim of output velocity
-        @param parameters weights for posterior probability (eikonal, likelihood and prior)
-        @param pde_constr object of pde_constraint class (isotropic or anisotropic)
+        @param parameters weights for posterior probability (pde, likelihood and prior)
+        @param pde_constr object of pde_constraint class
         """
 
         # w_i ~ StudentT(w_i | mu=0, lambda=shape/rate, nu=2*shape)
@@ -66,6 +65,7 @@ class BayesNN:
         # append an instance of Net object
         self.nnets.append(Net(self.n_input, architecture["n_layers"],
                               architecture["n_neurons"], self.n_output_vel+1))
+        # N_vel for u + 1 for f
         self.architecture_nn = self.nnets[0].get_dimensions()
 
         # additional trainable parameters
@@ -87,8 +87,8 @@ class BayesNN:
                                             param, num_neural_networks, random_seed)
 
         # store the posterior weights
-        ## weights for eikonal in posterior
-        self.param_eikonal = parameters["param_eikonal"]
+        ## weights for pde in posterior
+        self.param_res = parameters["param_res"]
         ## weights for likelihood in posterior
         self.param_log_joint = parameters["param_log_joint"]
         ## weights for prior in posterior
@@ -99,8 +99,8 @@ class BayesNN:
 
         # list to store the log losses
 
-        ## list to store eikonal log losses
-        self.eikonal_logloss = []
+        ## list to store pde log losses
+        self.res_logloss = []
         ## list to store data log losses
         self.data_logloss = []
         ## list to store prior log losses
@@ -288,11 +288,10 @@ class BayesNN:
         at_gr, v_gr, v = self._gradients(inputs)
 
         # compute loss_1 and loss_2 using pde_constraint
-        loss_1, loss_2 = self.pde_constraint.compute_pde_losses(at_gr, v_gr, v)
+        loss_1 = self.pde_constraint.compute_pde_losses(at_gr, v_gr, v)
 
         # compute loss_1_scalar and loss_2_scalar
         loss_1_scalar = tf.keras.losses.MSE(loss_1,tf.zeros_like(loss_1)) #shape (1,) for HMC; (num_neural_networks,) for SVGD
-        loss_2_scalar = tf.keras.losses.MSE(loss_2,tf.zeros_like(loss_2))
 
         # likelihood of pde constraints:
 
@@ -303,17 +302,9 @@ class BayesNN:
                     + 0.50 * (tf.size(inputs[:,0], out_type = tf.dtypes.float32))
                     * self.log_betas.log_betaR)
 
-        # Normal(loss_2 | zeros, 1/betaR*Identity)
-        # log loss for a Gaussian
-        logloss2 = (- 0.5 * tf.math.exp(self.log_betas.log_betaR) *
-                    tf.reduce_sum((loss_2 - tf.zeros_like(loss_2))**2, axis = 0)
-                    + 0.50 * (tf.size(inputs[:,0], out_type = tf.dtypes.float32))
-                    * self.log_betas.log_betaR)
-
-        # sum log_loss1 and log_loss2 and divide by size of inputs (= batch size of collocation data)
-        log_loss_total = (logloss1+logloss2)#/tf.size(inputs[:,0], out_type = tf.dtypes.float32)
-        # multiply by param_eikonal
-        log_loss_total*= self.param_eikonal
+        log_loss_total = logloss1
+        # multiply by param_res
+        log_loss_total*= self.param_res
 
         # if log_betaR trainable add his prior (Inv-Gamma)
         if(self.log_betas._bool_log_betaR):
@@ -323,9 +314,8 @@ class BayesNN:
 
         # compute the mean losses
         loss_1_scalar = tf.reduce_mean(loss_1_scalar)
-        loss_2_scalar = tf.reduce_mean(loss_2_scalar)
 
-        return log_loss_total, loss_1_scalar, loss_2_scalar
+        return log_loss_total, loss_1_scalar
 
 class MCMC_BayesNN(BayesNN):
     """
@@ -338,8 +328,8 @@ class MCMC_BayesNN(BayesNN):
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
         @param n_output_vel dim of output velocity
-        @param parameters weights for posterior probability (eikonal, likelihood and prior)
-        @param pde_constr object of pde_constraint class (isotropic or anisotropic)
+        @param parameters weights for posterior probability (pde, likelihood and prior)
+        @param pde_constr object of pde_constraint class
         @param M param M in HMC (number of samples we want to keep after burn-in period)
         """
 
@@ -445,10 +435,9 @@ class MCMC_BayesNN(BayesNN):
                     + 0.50 * (tf.size(inputs[:,0], out_type = tf.dtypes.float32))
                     * self.log_betas.log_betaR)
 
-        # sum log_loss1 and log_loss2 and divide by size of inputs (= batch size of collocation data)
-        log_loss_total = logloss1#/tf.size(inputs[:,0], out_type = tf.dtypes.float32)
-        # multiply by param_eikonal
-        log_loss_total*= self.param_eikonal
+        log_loss_total = logloss1
+        # multiply by param_res
+        log_loss_total*= self.param_res
 
         # if log_betaR trainable add his prior (Inv-Gamma)
         if(self.log_betas._bool_log_betaR):
@@ -579,8 +568,8 @@ class SVGD_BayesNN(BayesNN):
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
         @param n_output_vel dim of output velocity
-        @param parameters weights for posterior probability (eikonal, likelihood and prior)
-        @param pde_constr object of pde_constraint class (isotropic or anisotropic)
+        @param parameters weights for posterior probability (pde, likelihood and prior)
+        @param pde_constr object of pde_constraint class
         """
 
         super().__init__(num_neural_networks, sigmas, nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed)
@@ -844,10 +833,9 @@ class SVGD_BayesNN(BayesNN):
                     + 0.50 * (tf.size(inputs[:,0], out_type = tf.dtypes.float32))
                     * self.log_betas.log_betaR)
 
-        # sum log_loss1 and log_loss2 and divide by size of inputs (= batch size of collocation data)
-        log_loss_total = logloss1#/tf.size(inputs[:,0], out_type = tf.dtypes.float32)
-        # multiply by param_eikonal
-        log_loss_total*= self.param_eikonal
+        log_loss_total = logloss1
+        # multiply by param_res
+        log_loss_total*= self.param_res
 
         # if log_betaR trainable add his prior (Inv-Gamma)
         if(self.log_betas._bool_log_betaR):

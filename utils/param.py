@@ -211,53 +211,17 @@ class param:
 
 """dictionary for input dimension given the dataset used"""
 n_input = {
-"exponential": 1,
-"circle": 2,
-"triflag": 2,
-"checkerboard":2,
-"square_with_circle": 2,
-"anisotropic1": 2,
-"anisotropic2": 2,
-"cude3D": 3,
-"prolate3D": 3,
-"prolate3D_scar": 3,
-"prova_1D": 1,
-"prova_1D_vecchia": 1,
 "elliptic_cos": 1
 }
 
 
 """dictionary for isotropic or anisotropic pde given the dataset used"""
 pde = {
-"exponential": "isotropic",
-"circle": "isotropic",
-"triflag": "isotropic",
-"checkerboard":"isotropic",
-"square_with_circle": "isotropic",
-"anisotropic1": "anisotropic",
-"anisotropic2": "anisotropic",
-"cube3D": "isotropic",
-"prolate3D": "isotropic",
-"prolate3D_scar": "isotropic",
-"prova_1D": "isotropic",
-"prova_1D_vecchia": "isotropic",
 "elliptic_cos": "laplace"
 }
 
 
 """dictionary for dataset_type (analytical functions or real dataset from Pykonal) given the dataset used"""
 dataset_type = {
-"exponential": "analytical",
-"circle": "analytical",
-"triflag": "dataset",
-"checkerboard":"dataset",
-"square_with_circle": "dataset",
-"anisotropic1": "analytical",
-"anisotropic2": "analytical",
-"cube3D": "dataset",
-"prolate3D": "dataset",
-"prolate3D_scar": "dataset",
-"prova_1D": "dataset",
-"prova_1D_vecchia": "dataset",
 "elliptic_cos": "dataset"
 }

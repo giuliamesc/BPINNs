@@ -142,7 +142,6 @@ class anisotropic_eikonal(pde_constraint):
             raise Exception("Only case 2D anisotropic implemented")
 
 class laplace(pde_constraint):
-    # Anisotropic case
     def __init__(self, par):
 
         super().__init__(par.method, par.n_input, par.n_output_vel)

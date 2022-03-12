@@ -443,14 +443,13 @@ def plot_axis_example(n_output_vel, datasets_class, bayes_nn, path_plot, add_nam
             path = os.path.join(path_plot,name)
             plt.savefig(path,bbox_inches= 'tight')
 
-def plot_losses(LOSSD, LOSS1, LOSS2, LOSS, path_plot):
+def plot_losses(LOSSD, LOSS1, LOSS, path_plot):
     """
     Plot log(losses)
     """
     plt.figure()
     plt.plot(np.log(LOSSD),  lw=1.0, alpha=0.7,label = 'LossD')
     plt.plot(np.log(LOSS1),  lw=1.0, alpha=0.7,label = 'Loss1')
-    plt.plot(np.log(LOSS2),  lw=1.0, alpha=0.7,label = 'Loss2')
     plt.plot(np.log(LOSS),  lw=2.0, alpha=1.0,label = 'Loss tot')
     plt.xlabel('epochs')
     plt.ylabel('Loss')
