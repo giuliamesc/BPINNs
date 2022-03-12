@@ -143,7 +143,6 @@ class HMC_MCMC:
                 ## if flag=True watch also log_betas trainable
                 tape.watch(betas_trainable)
             ## Compute U(theta) calling the u_fun method
-            print("BACINELLA")
             u_theta, log_likelihood, log_prior_w, log_eq, *losses = self._u_fun(sp_inputs, sp_target, inputs)
         ## compute the gradient of NN param (by backpropagation)
         grad_theta = tape.gradient(u_theta, param)
