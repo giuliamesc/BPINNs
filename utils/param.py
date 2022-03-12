@@ -126,8 +126,6 @@ class param:
         if self.experiment["batch_size"]<0:
             raise Exception("Batch size must be >=0")
 
-        if self.param["param2loss"]<0:
-            raise Exception("param2loss must be >= 0")
         if self.sigmas["data_prior_noise"]<0:
             raise Exception("data_prior_noise must be >= 0")
         if self.sigmas["pde_prior_noise"]<0:
