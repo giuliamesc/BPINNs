@@ -200,38 +200,18 @@ def plot_result(n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_p
             inputs_train,at_train,_ = datasets_class.get_exact_data_with_noise()
             xtrain = inputs_train[:,0]
 
-            # xtrain = xtrain[0:50]
-            # at_train = at_train[0:50]
-            # x = x[0:300]
-            # at_NN = at_NN[0:300]
-            # at_std = at_std[0:300]
-            # at_true = at_true[0:300]
-
-
-
             # Plot activation_times (Real, Mean_NN and Standard Deviation buonds)
             plt.figure()
             plt.plot(x, at_NN, 'b--', label='mean')
             plt.plot(x, at_NN-at_std, 'g--', label='mean-std')
             plt.plot(x, at_NN+at_std, 'g--', label='mean+std')
             plt.plot(x, at_true, 'r-', label='true')
-            # plt.fill_between(x, at_NN-2.*at_std, at_NN+2.*at_std,
-            #                 facecolor='green', alpha=0.3, label='Epistemic UQ (+/- 2std)')
-            # noise_lv = datasets_class.noise_lv
-            # plt.fill_between(x, at_NN-2*noise_lv, at_NN+2*noise_lv,
-            #                 facecolor='orange', alpha=0.3, label='Aleatoric UQ (+/- 2std)')
-
-
-            # plt.plot(x, at_NN-2.*at_std, 'g-', label='Epistemic UQ (+/- 2std)')
-            # plt.plot(x, at_NN+2.*at_std, 'g-')
-            # plt.plot(x, at_NN-0.06, 'k-', label='Aleatoric UQ (+/- 2std)')
-            # plt.plot(x, at_NN+0.06, 'k-')
-            #plt.plot(x, at_true, 'r-', label='True')
             plt.plot(xtrain, at_train, 'r*')
 
             plt.xlabel('x')
-            plt.ylabel('Activaion Times')
+            plt.ylabel('u')
             plt.legend(prop={'size': 9})
+            plt.title('Confidence Interval for u')
             name = add_name_plot + "at_axis.png"
             path = os.path.join(path_plot,name)
             plt.savefig(path,bbox_inches= 'tight')
@@ -243,120 +223,14 @@ def plot_result(n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_p
             plt.plot(x, v_NN+v_std, 'g--', label='mean+std')
             plt.plot(x, v_true, 'r-', label='true')
 
-            plt.xlabel('x=y')
-            plt.ylabel('Conduction Velocity')
+            plt.xlabel('x')
+            plt.ylabel('f')
             plt.legend(prop={'size': 9})
+            plt.title('Confidence Interval for f')
             name = add_name_plot + "cv_axis.png"
             path = os.path.join(path_plot,name)
             plt.savefig(path,bbox_inches= 'tight')
 
-
-    else: # Anisotropic case
-
-        # get domain data
-        inputs,at_true,v_true = datasets_class.get_dom_data()
-        x = inputs[:,0]
-        y = inputs[:,1]
-
-        # Plot arguments for title
-        plot_x = 0.4*np.max(x)
-        plot_y = 0.95*np.max(y)
-        fontsize = 18
-
-        # Load the sparse data used for training -> 100 true observations
-        inputs_train,_,_ = datasets_class.get_exact_data()
-        xtrain = inputs_train[:,0]
-        ytrain = inputs_train[:,1]
-
-        # Plot activation_times (Real, Mean_NN and Standard Deviation)
-        # plot real+noise vs NN mean vs NN std
-        fig = plt.figure()
-        fig.set_size_inches((15,5))
-
-        plt.subplot(1,3,1)
-        plt.scatter(x, y, c= at_true, label = 'at true', cmap = 'coolwarm', vmin = min(at_true), vmax = max(at_true))
-        plt.colorbar()
-        plt.scatter(xtrain, ytrain, facecolors = 'none', edgecolor = 'k')
-        plt.text(plot_x, plot_y, r'at true', {'color': 'b', 'fontsize': fontsize})
-        plt.axis('equal')
-        plt.xlim([0,1])
-        plt.ylim([0,1])
-
-        n_1 = datasets_class.n_1
-        n_2 = datasets_class.n_2
-
-        xx = x.reshape((n_1,n_2))
-        yy = y.reshape((n_1,n_2))
-        tt = at_true.reshape((n_1,n_2))
-        plt.contour(xx, yy, tt, levels=20, colors="black", alpha=0.5)
-
-        plt.title('activation times REAL + NOISE')
-
-        plt.subplot(1,3,2)
-        plt.scatter(x, y, c= at_NN, label = 'atNN', cmap = 'coolwarm', vmin = min(at_NN), vmax = max(at_NN))
-        plt.text(plot_x, plot_y, r'at Mean', {'color': 'b', 'fontsize': fontsize})
-        plt.colorbar()
-        plt.axis('equal')
-        plt.xlim([0,1])
-        plt.ylim([0,1])
-        tt = at_NN.reshape((n_1,n_2))
-        plt.contour(xx, yy, tt, levels=20, colors="black", alpha=0.5)
-        plt.title('activation times NN MEAN')
-
-        plt.subplot(1,3,3)
-        plt.scatter(x, y, c=at_std , label = 'at_NN_std', cmap = 'coolwarm', vmin = 0.0, vmax = max(at_std))
-        plt.text(plot_x, plot_y, r'at Std', {'color': 'b', 'fontsize': fontsize})
-        plt.axis('equal')
-        plt.xlim([0,1])
-        plt.ylim([0,1])
-        plt.colorbar()
-        plt.title('activation times NN STD')
-
-        plt.tight_layout()
-        name = add_name_plot + "activation_times.png"
-        path = os.path.join(path_plot,name)
-        plt.savefig(path,bbox_inches = 'tight')
-
-        # Plot anisotropic velocities [a,b,c] (Real, Mean_NN and Standard Deviation)
-        name_conduction_velocity = {0:"a",
-                                    1:"b",
-                                    2:"c"}
-
-        for i in range(v_NN.shape[1]):
-            fig = plt.figure()
-            fig.set_size_inches((15,5))
-
-            plt.subplot(1,3,1)
-            plt.scatter(x, y, c= v_true[:,i], label = 'v true', cmap = 'coolwarm', vmin = min(v_true[:,i]), vmax = max(v_true[:,i]))
-            plt.colorbar()
-            plt.text(plot_x, plot_y, r'v true', {'color': 'b', 'fontsize': fontsize})
-            plt.axis('equal')
-            plt.xlim([0,1])
-            plt.ylim([0,1])
-            plt.title('conduction velocity REAL + NOISE ' + name_conduction_velocity[i])
-
-            plt.subplot(1,3,2)
-            plt.scatter(x, y, c= v_NN[:,i], label = 'v NN', cmap = 'coolwarm', vmin = min(v_NN[:,i]), vmax = max(v_NN[:,i]))
-            plt.text(plot_x, plot_y, r'v Mean', {'color': 'b', 'fontsize': fontsize})
-            plt.colorbar()
-            plt.axis('equal')
-            plt.xlim([0,1])
-            plt.ylim([0,1])
-            plt.title('conduction velocity NN MEAN ' + name_conduction_velocity[i])
-
-            plt.subplot(1,3,3)
-            plt.scatter(x, y, c= v_std[:,i], label = 'vtd_NN_std', cmap = 'coolwarm', vmin = 0.0, vmax = max(v_std[:,i]))
-            plt.text(plot_x, plot_y, r'v Std', {'color': 'b', 'fontsize': fontsize})
-            plt.axis('equal')
-            plt.xlim([0,1])
-            plt.ylim([0,1])
-            plt.colorbar()
-            plt.title('conduction velocity NN STD ' + name_conduction_velocity[i])
-
-            plt.tight_layout()
-            name = add_name_plot + "conduction_velocity_"+name_conduction_velocity[i]+".png"
-            path = os.path.join(path_plot,name)
-            plt.savefig(path,bbox_inches = 'tight')
 
 
 def plot_all_result(x, at, v, at_NN, v_NN, datasets_class, n_input, n_output_vel, method, path_plot, add_name_plot=""):
@@ -386,8 +260,12 @@ def plot_all_result(x, at, v, at_NN, v_NN, datasets_class, n_input, n_output_vel
         #plt.xlim([0,1])
         #plt.ylim([-0.5,1.5])
         plt.xlabel('x')
-        plt.ylabel('Solution U')
+        plt.ylabel('Solution u')
         plt.legend(prop={'size': 9})
+        if(method == 'SVGD'):
+            plt.title('Output u of all the particles')
+        elif(method == 'HMC'):
+            plt.title('Samples from u reconstructed distribution')
         name = add_name_plot + "at_all.png"
         path = os.path.join(path_plot,name)
         plt.savefig(path,bbox_inches= 'tight')
@@ -407,6 +285,10 @@ def plot_all_result(x, at, v, at_NN, v_NN, datasets_class, n_input, n_output_vel
         plt.xlabel('x')
         plt.ylabel('Parametric field f')
         plt.legend(prop={'size': 9})
+        if(method == 'SVGD'):
+            plt.title('Output f of all the particles')
+        elif(method == 'HMC'):
+            plt.title('Samples from f reconstructed distribution')
         name = add_name_plot + "cv_all.png"
         path = os.path.join(path_plot,name)
         plt.savefig(path,bbox_inches= 'tight')

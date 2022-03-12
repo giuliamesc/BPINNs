@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import time
+import datetime
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import matplotlib.pylab as plt
@@ -68,9 +69,8 @@ datasets_class = dataset_class(par)
 # Plot the exact data
 datasets_class.plot(path_plot)
 
-print("Number of exact data:", datasets_class.n_exact)
-print("Number of collocation data:", datasets_class.n_collocation)
-print("Dataset created")
+print("\tNumber of exact data:", datasets_class.n_exact)
+print("\tNumber of collocation data:", datasets_class.n_collocation)
 print("Building dataloader...")
 # Build the dataloader for minibatch training (of just collocation points)
 batch_size = par.experiment["batch_size"]
@@ -105,7 +105,7 @@ else:
                                 par.param["random_seed"],
                                 par.param_method["M_HMC"])
 
-print("Building", par.method ,"alg...")
+print("Building", par.method ,"algorithm...")
 
 # Build the method class
 if(par.method == "SVGD"):
@@ -127,7 +127,8 @@ print('Start training...')
 t0 = time.time()
 rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSS2,LOSSD = alg.train_all(par.utils["verbose"])
 training_time = time.time() - t0
-print('Finished in ',training_time)
+print('End training')
+print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 
 print("--------------------------------------------")
 print("Computing errors...")
@@ -142,41 +143,30 @@ print("Done")
 print("--------------------------------------------")
 print("Saving networks weights...")
 bayes_nn.save_networks(path_weights)
-print("Done")
 
-print("--------------------------------------------")
 print("Save losses...")
 np.savetxt(os.path.join(path_result,"Loss.csv" ),LOSS)
 np.savetxt(os.path.join(path_result,"LOSS1.csv"),LOSS1)
 np.savetxt(os.path.join(path_result,"LOSS2.csv"),LOSS2)
 np.savetxt(os.path.join(path_result,"LOSSD.csv"),LOSSD)
-print("Done")
 
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("--------------------------------------------")
     print("Save log betass...")
     rec_log_betaD = np.array(rec_log_betaD)
     rec_log_betaR = np.array(rec_log_betaR)
     np.save(os.path.join(path_result,"log_betaD.npy"),rec_log_betaD)
     np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
-    print("Done")
+print("Done")
 
 # %% Plotting
 
 print("--------------------------------------------")
+print("Plotting the losses...")
+plot_losses(LOSSD, LOSS1, LOSS2, LOSS, path_plot)
 print("Plotting the results...")
 plot_result(par.n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_plot)
-print("Plotting the losses")
-plot_losses(LOSSD, LOSS1, LOSS2, LOSS, path_plot)
 
-if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("Plotting log betas")
-    plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
-    
-print("Done")
-
-print("--------------------------------------------")
-print("Plot all the NNs")
+print("Plot all the NNs...")
 if(par.n_input == 1):
     inputs, u, f = datasets_class.get_dom_data()
     u_NN, f_NN = bayes_nn.predict(inputs)
@@ -185,6 +175,9 @@ if(par.n_input == 1):
                     par.n_input, par.n_output_vel, par.method, path_plot)
 else:
     print("Unable to plot all the NNs in 1D up to now")
+if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
+    print("Plotting log betas")
+    plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
 print("End")
 print("--------------------------------------------")

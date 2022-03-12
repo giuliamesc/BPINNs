@@ -64,7 +64,7 @@ def create_directories(par):
     pde_type = par.pde
     method_name = par.method
 
-    case_name = str(n_input)+"D-"+pde_type+"-eikonal"
+    case_name = str(n_input)+"D-"+pde_type
 
     if(save_flag):
         ## if save_flag = True create new directories using datetime.now()
@@ -82,19 +82,13 @@ def create_directories(par):
     else:
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
         path_result = os.path.join(case_name,"results", "trash")
-        try:
-            os.makedirs(path_result)
-        except:
-            pass
+        try: os.makedirs(path_result)
+        except: pass
         path_plot = os.path.join(path_result, "plot")
-        try:
-            os.makedirs(path_plot)
-        except:
-            pass
+        try: os.makedirs(path_plot)
+        except: pass
         path_weights = os.path.join(path_result, "weights")
-        try:
-            os.makedirs(path_weights)
-        except:
-            pass
+        try: os.makedirs(path_weights)
+        except: pass
 
     return path_result, path_plot, path_weights

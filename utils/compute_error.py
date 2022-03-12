@@ -68,8 +68,8 @@ class compute_error:
             relative_error_at = np.sqrt(error_at/at_truenorm)
             relative_error_v = np.sqrt(error_v/v_truenorm)
 
-            print('relative error |at - at_true|/|at_true|', relative_error_at)
-            print('relative error |v - v_true|/|v_true|', relative_error_v)
+            print('relative error |u - u_true|/|u_true| =', relative_error_at)
+            print('relative error |f - f_true|/|f_true| =', relative_error_v)
 
             ##################### UQ ####################
             ## UQ mean -> is the mean of standard deviations in the domain
@@ -85,11 +85,11 @@ class compute_error:
             ## Std v max
             uq_v_max = v_std.max()
 
-            print('mean uq at is',uq_at_mean)
-            print('mean uq v is',uq_v_mean)
+            print('mean uq u is',uq_at_mean)
+            print('mean uq f is',uq_v_mean)
 
-            print('max uq at is',uq_at_max)
-            print('max uq v is',uq_v_max)
+            print('max uq u is',uq_at_max)
+            print('max uq f is',uq_v_max)
 
 
             string_error = "relative error norm activation_times = " + str(relative_error_at) + "\n" + \
@@ -155,8 +155,8 @@ class compute_error:
             for i in range(v_NN.shape[1]):
                 relative_error_v.append(np.sqrt(error_v[i]/v_truenorm[i]))
 
-            print('relative error |at - at_true|/|at_true|', relative_error_at)
-            print('relative error |v - v_true|/|v_true|', relative_error_v)
+            print('relative error |u - u_true|/|u_true| =', relative_error_at)
+            print('relative error |f - f_true|/|f_true| =', relative_error_v)
 
             ##################### UQ ####################
             ## Std at mean
@@ -169,12 +169,12 @@ class compute_error:
             ## Std v max
             uq_v_max = v_std.max(axis=0)
 
-            print('mean uq at is',uq_at_mean)
-            print('mean uq v is',uq_v_mean)
+            print('mean uq u is',uq_at_mean)
+            print('mean uq f is',uq_v_mean)
 
             #
-            print('max uq at is',uq_at_max)
-            print('max uq v is',uq_v_max)
+            print('max uq u is',uq_at_max)
+            print('max uq f is',uq_v_max)
 
 
             string_error = "relative error norm activation_times = " + str(relative_error_at) + "\n" + \

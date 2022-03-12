@@ -55,8 +55,6 @@ class dataloader:
 
 		coll_loader = data.batch(batch_size=self.batch_size)
 
-		if(self.reshuffle_each_iteration):
-			print('Reshuffled at every epoch')
 
 		return coll_loader,self.batch_size
 

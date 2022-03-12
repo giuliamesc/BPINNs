@@ -328,9 +328,10 @@ class HMC_MCMC:
                 loss_1 = losses[0].numpy()
                 loss_2 = losses[1].numpy()
                 loss_d = losses[2].numpy()
-
-                print(f"\nLoss 1:{loss_1 : 1.3e} | Loss 2:{loss_2: 1.3e} | Loss d:{loss_d: 1.3e}")
-                print("------------------------------")
+                
+                if(accepted_total % 10 == 0):
+                    print(f"\nLoss 1:{loss_1 : 1.3e} | Loss 2:{loss_2: 1.3e} | Loss d:{loss_d: 1.3e}")
+                    print("------------------------------")
 
                 # update theta0 and u_theta0
                 theta0 = theta.copy()
@@ -385,8 +386,8 @@ class HMC_MCMC:
             rec_log_betaR.append(self.bayes_nn.log_betas.log_betaR.numpy())
 
         ## print accepance rates
-        print("Total accepance rate: ", accepted_total/self.N)
-        print("After_burn_in accepance rate: ", accepted_after_burnin/self.M)
+        print("Total accepance rate:", accepted_total/self.N)
+        print(f"After burn-in accepance rate: {accepted_after_burnin/self.M : 1.4f}")
 
         ## store thetas and log_betas(if trainable) (just the last M iterations) in bayes_nn
         ## so we can compute all the statistics we need
