@@ -10,7 +10,7 @@
 		"prop_collocation":1.0,
 		"is_uniform_exact":"False",
 		"noise_lv":0.01,
-		"batch_size":1000
+		"batch_size":100
 	},
 
 	"param":{
