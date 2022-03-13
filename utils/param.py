@@ -34,29 +34,18 @@ class param:
         if(self._length_additional(vars(args)) > 0):
             self._update(vars(args))    # update param overspecified by command-line
 
-        # for these parameters we use the dictionaries specified at the bottom (n_input, pde and dataset_type)
+        # for these parameters we use the dictionaries specified at the bottom (n_input/output, pde)
         ## store the dimension input (1D, 2D or 3D)
         self.n_input = n_input[self.experiment["dataset"]]
+        ## dimension of solution
+        self.n_out_sol = n_output[self.experiment["dataset"]][0]
+        ## dimension of parametric field
+        self.n_out_par = n_output[self.experiment["dataset"]][1]
         ## isotropic or anisotropic
         self.pde = pde[self.experiment["dataset"]]
-        ## analytical or dataset
-        self.dataset_type = dataset_type[self.experiment["dataset"]]
 
         ## dimension of velocity: 1 if isotropic, >1 if anisotropic
-        self.n_output_vel = 1
-        if(self.experiment["dataset"]=="anisotropic1"):
-            self.n_output_vel = 3
-        if(self.experiment["dataset"]=="anisotropic2"):
-            self.n_output_vel = 2
-
-        # if experiment is analytical, specify the n of domain points
-        if(self.dataset_type == "analytical"):
-            if self.n_input == 1:
-                self.experiment["n_domain"] = 1000
-            elif self.n_input == 2:
-                self.experiment["n_domain"] = 10000
-            else:
-                self.experiment["n_domain"] = 1000000
+        self.n_output_vel = 1 # DA CANCELLARE
 
         # check possible errors in parameters
         self._check_parameter()
@@ -172,7 +161,6 @@ class param:
         print("n_input: ", self.n_input, " \n ")
         print("n_output_vel: ", self.n_output_vel, " \n ")
         print("pde_type: ", self.pde, " \n ")
-        print("dataset_type: ", self.dataset_type)
 
 
     def save_parameter(self, path=""):
@@ -212,14 +200,12 @@ n_input = {
 "elliptic_cos": 1
 }
 
-
-"""dictionary for isotropic or anisotropic pde given the dataset used"""
-pde = {
-"elliptic_cos": "laplace"
+"""dictionary for output dimension given the dataset used"""
+n_output = {
+"elliptic_cos": (1,1)
 }
 
-
-"""dictionary for dataset_type (analytical functions or real dataset from Pykonal) given the dataset used"""
-dataset_type = {
-"elliptic_cos": "dataset"
+"""dictionary for pde given the dataset used"""
+pde = {
+"elliptic_cos": "laplace"
 }

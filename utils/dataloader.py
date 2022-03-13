@@ -28,7 +28,6 @@ class dataloader:
 		self.batch_size = batch_size
 		## boolean for reshuffle_every_epoch or not
 		self.reshuffle_each_iteration = reshuffle_every_epoch
-	###############################################################################################
 
 	def dataload_collocation(self):
 		"""Return a dataloader for collocation points.
