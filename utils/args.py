@@ -48,10 +48,9 @@ class Parser(argparse.ArgumentParser):
                                                             Select 0 if you don't want a """)
 
         # param
-        self.add_argument('--param_eikonal', type=float, help="weight for eikonal log loss")
-        self.add_argument('--param_log_joint', type=float, help="weight for data log loss")
+        self.add_argument('--param_pde', type=float, help="weight for eikonal log loss")
+        self.add_argument('--param_data', type=float, help="weight for data log loss")
         self.add_argument('--param_prior', type=float, help="weight for prio log loss")
-        self.add_argument('--param2loss', type=float, help='parameter for penalizing loss of high gradients in conduction_velocity')
         self.add_argument('--random_seed', type=int, help="random seed for numpy and tf random generator")
 
         # sigmas
