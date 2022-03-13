@@ -221,60 +221,7 @@ class BayesNN:
     # compute the derivative of at and v wrt x and y
     @tf.function    # decorator @tf.function to speed up the computation
     def _gradients(self,inputs):
-        """!
-        Compute the gradients of at and v wrt to inputs x, y and z
-        in (a batch of) collocation points.
-
-        @param inputs tensor of shape (batch_size, n_input) a single batch of the collocation points
-        """
-        # x,y,z inputs
-        x = inputs[:,0:1]
-        if(self.n_input>1):
-            y = inputs[:,1:2]
-            if(self.n_input == 3):
-                z = inputs[:,2:3]
-
-        with tf.GradientTape(persistent = True) as t1:
-            # watch the inputs
-            t1.watch(x)
-            if(self.n_input>1):
-                t1.watch(y)
-                if(self.n_input == 3):
-                    t1.watch(z)
-                    inputs = tf.concat( (x,y,z), axis=1 )
-                else:
-                    inputs = tf.concat((x,y), axis=1)
-            else:
-                inputs = x
-            # compute the output by forward pass of inputs
-            at,v = self.forward(inputs) #output after forward(input)
-
-        # store the gradients
-        at_gradients = []
-        v_gradients = []
-
-        at_x = t1.gradient(at, x)   # dT/dx
-        at_gradients.append(at_x)
-        if(self.n_output_vel == 1):
-            v_x = t1.gradient(v, x) # dv/dx (we need only in isotropic case, where we require small gradients of v)
-            v_gradients.append(v_x)
-
-        if(self.n_input > 1):
-            at_y = t1.gradient(at, y) #dT/dy
-            at_gradients.append(at_y)
-            if(self.n_output_vel == 1):
-                v_y = t1.gradient(v, y) #dv/dy
-                v_gradients.append(v_y)
-
-            if(self.n_input == 3):
-                at_z = t1.gradient(at, z)   #dT/dz
-                at_gradients.append(at_z)
-                if(self.n_output_vel == 1):
-                    v_z = t1.gradient(v, z) #dv/dz
-                    v_gradients.append(v_z)
-
-        del t1
-        return at_gradients,v_gradients,v
+        pass
 
     # compute the loss and logloss of Physics Constrain (PDE constraint)
     @tf.function # decorator @tf.function to speed up the computation
@@ -363,26 +310,20 @@ class MCMC_BayesNN(BayesNN):
             if(self.n_input == 3):
                 z = inputs[:,2:3]
 
-        with tf.GradientTape(persistent = True) as t2:
-            t2.watch(x)
+        with tf.GradientTape(persistent = True) as t1:
+            # watch the inputs
+            t1.watch(x)
             if(self.n_input>1):
-                t2.watch(y)
+                t1.watch(y)
                 if(self.n_input == 3):
-                    t2.watch(z)
-            with tf.GradientTape(persistent = True) as t1:
-                # watch the inputs
-                t1.watch(x)
-                if(self.n_input>1):
-                    t1.watch(y)
-                    if(self.n_input == 3):
-                        t1.watch(z)
-                        inputs = tf.concat( (x,y,z), axis=1 )
-                    else:
-                        inputs = tf.concat((x,y), axis=1)
+                    t1.watch(z)
+                    inputs = tf.concat( (x,y,z), axis=1 )
                 else:
-                    inputs = x
-                # compute the output by forward pass of inputs
-                at,v = self.forward(inputs) #output after forward(input)
+                    inputs = tf.concat((x,y), axis=1)
+            else:
+                inputs = x
+            # compute the output by forward pass of inputs
+            at,v = self.forward(inputs) #output after forward(input)
 
             at_x = t1.gradient(at, x)   # dT/dx
             if(self.n_input > 1):
@@ -390,23 +331,22 @@ class MCMC_BayesNN(BayesNN):
                 if(self.n_input == 3):
                     at_z = t1.gradient(at, z)   #dT/dz
 
-        #breakpoint()
-        # store the gradients
-        at_gradients = []
-        at_xx = t2.gradient(at_x,x)
-        at_gradients.append(at_xx)
-        if(self.n_input > 1):
-            at_yy = t2.gradient(at_y,y)
-            at_gradients.append(at_yy)
-            if(self.n_input == 3):
-                at_zz = t2.gradient(at_z,z)
-                at_gradients.append(at_zz)
+            #breakpoint()
+            # store the gradients
+            at_gradients = []
+            at_xx = t1.gradient(at_x,x)
+            at_gradients.append(at_xx)
+            if(self.n_input > 1):
+                at_yy = t1.gradient(at_y,y)
+                at_gradients.append(at_yy)
+                if(self.n_input == 3):
+                    at_zz = t1.gradient(at_z,z)
+                    at_gradients.append(at_zz)
 
 
 
 
         del t1
-        del t2
         return at_gradients,v
 
     # compute the loss and logloss of Physics Constrain (PDE constraint)
