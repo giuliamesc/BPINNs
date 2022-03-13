@@ -449,7 +449,7 @@ class MCMC_BayesNN(BayesNN):
         loss_1_scalar = tf.reduce_mean(loss_1_scalar)
         loss_2_scalar = loss_1_scalar
 
-        return log_loss_total, loss_1_scalar, loss_2_scalar
+        return log_loss_total, loss_1_scalar
 
 
     # save all the weights
@@ -847,7 +847,7 @@ class SVGD_BayesNN(BayesNN):
         loss_1_scalar = tf.reduce_mean(loss_1_scalar)
         loss_2_scalar = loss_1_scalar
 
-        return log_loss_total, loss_1_scalar, loss_2_scalar
+        return log_loss_total, loss_1_scalar
 
 
     def predict(self, inputs):

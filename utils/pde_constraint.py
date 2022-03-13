@@ -19,16 +19,17 @@ class pde_constraint:
         return 0.
 
 class laplace(pde_constraint):
+    # Anisotropic case
     def __init__(self, par):
 
         super().__init__(par.method, par.n_input, par.n_output_vel)
 
     def compute_pde_losses(self, u_gr_2, f):
         """
-        - Laplacian(u) = f -> f + Laplacian(u)=0
+        - Laplacian(u) = f -> f + Laplacian(u) = 0
         """
-        loss_1 = tf.reduce_sum(f[:,:,:self.n_input])
+        # compute the loss 1: residual of the PDE
+        loss_1 = tf.reduce_sum(f, axis=-1)
         for u_gr_2_comp in u_gr_2:
             loss_1 += u_gr_2_comp
-
         return loss_1

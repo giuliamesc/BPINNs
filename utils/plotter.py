@@ -448,15 +448,14 @@ def plot_losses(LOSSD, LOSS1, LOSS, path_plot):
     Plot log(losses)
     """
     plt.figure()
-    plt.plot(np.log(LOSSD),  lw=1.0, alpha=0.7,label = 'LossD')
-    plt.plot(np.log(LOSS1),  lw=1.0, alpha=0.7,label = 'Loss1')
-    plt.plot(np.log(LOSS),  lw=2.0, alpha=1.0,label = 'Loss tot')
+    plt.plot(np.log(LOSS),  "k--", lw=2.0, alpha=1.0, label = 'Loss Total')
+    plt.plot(np.log(LOSSD), "r-" , lw=1.0, alpha=0.7, label = 'Loss Fitting')
+    plt.plot(np.log(LOSS1), "b-" , lw=1.0, alpha=0.7, label = 'Loss Collocation')
     plt.xlabel('epochs')
-    plt.ylabel('Loss')
-    #plt.yscale('log')
+    plt.ylabel('LogLoss')
     plt.legend(prop={'size': 9})
     path = os.path.join(path_plot,"loss.png")
-    plt.savefig(path,bbox_inches= 'tight')
+    plt.savefig(path, bbox_inches= 'tight')
 
 def plot_log_betas(log_betaD, log_betaR, path_plot):
     """

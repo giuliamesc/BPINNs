@@ -65,7 +65,7 @@ class HMC_MCMC:
                 self.bayes_nn.log_joint(sp_output_times, sp_target)
 
         ## compute log likelihood of pde equation and losses for batch collocation points (PDE constraints)
-        log_eq, loss_1_scalar, _ = self.bayes_nn.pde_logloss(inputs)
+        log_eq, loss_1_scalar = self.bayes_nn.pde_logloss(inputs)
 
         ## compute u_theta
         log_total = log_likelihood_total[0,0] + log_eq[0]
@@ -324,7 +324,7 @@ class HMC_MCMC:
                 loss_d = losses[1].numpy()
 
                 if(accepted_total % 10 == 0):
-                    print(f"\nLoss 1:{loss_1 : 1.3e} | Loss d:{loss_d: 1.3e}")
+                    print(f"\nLoss Collocation:{loss_1 : 1.3e} | Loss Fitting:{loss_d: 1.3e}")
                     print("------------------------------")
 
                 # update theta0 and u_theta0
