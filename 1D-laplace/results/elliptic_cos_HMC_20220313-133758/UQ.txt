@@ -1,6 +1,0 @@
-relative error norm activation_times = 0.29144004
-relative error norm velocity = 0.3707792
-UQ activation_times mean = 0.0033710166
-UQ velocity mean = 0.011077819
-UQ activation_times max = 0.01320926
-UQ velocity max = 0.041585878
