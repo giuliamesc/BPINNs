@@ -108,12 +108,11 @@ class HMC_MCMC:
         h1 = self._h_fun(uu,rr)
         h0 = self._h_fun(u0,r0)
         h = h0-h1
-        #print(h1)
-        #print(h0)
 
         ## compute alpha as min between alpha_max ans exp(2h)
-        alpha = min(0.0, h)
+        alpha = min(0.0, tf.keras.backend.get_value(h))
         #alpha = 1-alpha
+        print("\nalpha",alpha,"\nexp_alpha",np.exp(alpha),"\nh",h,"\nh1",h1,"\nh0",h0)
         return alpha
 
 
@@ -276,7 +275,7 @@ class HMC_MCMC:
             alpha = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
 
 
-            debug_flag = False
+            debug_flag = True
             if(debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
                 fin_epochtime = time.time()-epochtime
@@ -286,8 +285,9 @@ class HMC_MCMC:
                 print("Log prior w:    ", log_prior_w.numpy()[0])
                 print("Log equation:   ", log_eq.numpy()[0])
                 print("time for this iteration = ", fin_epochtime)
-                print("alpha: ", np.exp(alpha))
-                print("p: ", np.exp(p))
+                print("log(alpha): ", alpha)
+                print(f"alpha: {np.exp(alpha): 1.6f}")
+                print(f"p: {np.exp(p): 1.6f}")
 
 
             ## if p>=alpha (and u_theta is not a NaN)
@@ -316,7 +316,7 @@ class HMC_MCMC:
 
                 # update accepted_total and accepted_after_burnin
                 accepted_total+=1
-                if(iteration>(self.N-self.M)):
+                if(iteration>=(self.N-self.M)):
                     accepted_after_burnin+=1
                     ttt.append(theta)
 
@@ -378,8 +378,8 @@ class HMC_MCMC:
             rec_log_betaR.append(self.bayes_nn.log_betas.log_betaR.numpy())
 
         ## print accepance rates
-        print("Total accepance rate:", accepted_total/self.N)
-        print(f"After burn-in accepance rate: {accepted_after_burnin/self.M : 1.4f}")
+        print(f"Total accepance rate: {100*accepted_total/self.N : 3.2f}%")
+        print(f"After burn-in accepance rate: {100*accepted_after_burnin/self.M : 3.2f}%")
 
         ## store thetas and log_betas(if trainable) (just the last M iterations) in bayes_nn
         ## so we can compute all the statistics we need
