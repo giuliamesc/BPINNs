@@ -1,2 +1,2 @@
-**/trash/
-**/__pycache__/
+**/trash/*
+**/__pycache__/*
