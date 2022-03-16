@@ -28,9 +28,9 @@
 	},
 
 	"HMC":{
-		"N_HMC":10,
-		"M_HMC":7,
-		"L_HMC":20,
+		"N_HMC":100,
+		"M_HMC":70,
+		"L_HMC":200,
 		"dt_HMC":4e-5,
 		"dt_noise_HMC":3e-4
 	},

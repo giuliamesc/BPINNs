@@ -52,8 +52,10 @@ class SVGD:
 
         ## input dimension
         self.n_input = self.bayes_nn.n_input
-        ## output dimension of conduction_velocity
-        self.n_output_vel = self.bayes_nn.n_output_vel
+        ## output dimension of solution
+        self.n_out_sol = self.bayes_nn.n_out_sol
+        ## output dimension of parametric field
+        self.n_out_par = self.bayes_nn.n_out_par
 
         ## parameter of repulsivity between the num_neural_networks different NNs
         self.param_repulsivity = tf.constant(parameters["param_repulsivity"],

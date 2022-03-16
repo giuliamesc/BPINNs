@@ -1,7 +1,5 @@
 import numpy as np
-import tensorflow as tf
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import os
 
 """
@@ -12,7 +10,7 @@ def plot_result(n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_p
     """
     plot mean and 2_std_bounds result
     """
-    if (n_output_vel == 1): # Anisotropic
+    if (n_output_vel == 1): 
 
         # get domain dataset
         inputs,at_true,v_true = datasets_class.get_dom_data()
@@ -273,10 +271,10 @@ def plot_all_result(x, at, v, at_NN, v_NN, datasets_class, n_input, n_output_vel
         plt.figure()
         if(method == "SVGD"):
             for i in range(v_NN.shape[1]):
-                plt.plot(x, v_NN[:,i,0])
+                plt.plot(x, v_NN[:,i])
         elif(method == "HMC"):
             for i in range(v_NN.shape[0]):
-                plt.plot(x, v_NN[i,:,0,0], 'b-',markersize=0.01, alpha=0.01)
+                plt.plot(x, v_NN[i,:], 'b-',markersize=0.01, alpha=0.01)
         else:
             print("No method")
 
@@ -371,8 +369,8 @@ def plot_axis_example(n_output_vel, datasets_class, bayes_nn, path_plot, add_nam
 
         at_NN = at_NN[:,0]
         at_std = at_std[:,0]
-        v_NN = v_NN[:,0,0]
-        v_std = v_std[:,0,0]
+        v_NN = v_NN[:,0]
+        v_std = v_std[:,0]
 
 
         plt.figure()
@@ -401,47 +399,6 @@ def plot_axis_example(n_output_vel, datasets_class, bayes_nn, path_plot, add_nam
         path = os.path.join(path_plot,name)
         plt.savefig(path,bbox_inches= 'tight')
 
-    else: #anisotropic
-        inputs,at,v = datasets_class.get_axis_data()
-        x = inputs[:,0]
-        at_NN, v_NN, at_std, v_std = bayes_nn.mean_and_std(inputs)
-
-        at_NN = at_NN[:,0]
-        at_std = at_std[:,0]
-        v_NN = v_NN[:,0,:]
-        v_std = v_std[:,0,:]
-
-        plt.figure()
-        plt.plot(x, at_NN, 'b--', label='mean')
-        plt.plot(x, at_NN-at_std, 'g--', label='mean-std')
-        plt.plot(x, at_NN+at_std, 'g--', label='mean+std')
-        plt.plot(x, at, 'r-', label='true')
-
-        plt.xlabel('x=y')
-        plt.ylabel('Activaion Times')
-        plt.legend(prop={'size': 9})
-        name = add_name_plot + "at_axis.png"
-        path = os.path.join(path_plot,name)
-        plt.savefig(path,bbox_inches= 'tight')
-
-        name_conduction_velocity = {0:"a",
-                                    1:"b",
-                                    2:"c"}
-
-        for i in range(v_NN.shape[1]):
-            plt.figure()
-            plt.plot(x, v_NN[:,i], 'b--', label='mean')
-            plt.plot(x, v_NN[:,i]-v_std[:,i], 'g--', label='mean-std')
-            plt.plot(x, v_NN[:,i]+v_std[:,i], 'g--', label='mean+std')
-            plt.plot(x, v[:,i], 'r-', label='true')
-
-            plt.xlabel('x=y')
-            name = 'Conduction Velocity ' + name_conduction_velocity[i]
-            plt.ylabel(name)
-            plt.legend(prop={'size': 9})
-            name = add_name_plot + "cv_axis_"+ name_conduction_velocity[i] +".png"
-            path = os.path.join(path_plot,name)
-            plt.savefig(path,bbox_inches= 'tight')
 
 def plot_losses(LOSSD, LOSS1, LOSS, path_plot):
     """

@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras import layers, activations
+from tensorflow.keras import layers
 
 
 class Net:
@@ -14,7 +14,7 @@ class Net:
     @param n_input input dimension (1, 2 or 3)
     @param n_hidden_layer number of hidden layers
     @param n_hidden_neuron number of neurons for each hidden layer
-    @param n_output dimension of output = n_output_vel+1 (1 node for activation times, n_output_vel for conduction velocity)
+    @param n_output dimension of output = n_out_sol+n_out_par
     """
     def __init__(self, n_input, n_hidden_layer, n_hidden_neuron, n_output):
         """Constructor: build our neural network architecture"""

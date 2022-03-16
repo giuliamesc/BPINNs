@@ -28,16 +28,7 @@ class Parser(argparse.ArgumentParser):
 
         # experiment
         self.add_argument('--dataset', type=str, help="""Choose the experiment :
-                                                        - exponential (1D, Isotropic)
-                                                        - circle (2D, Isotropic)
-                                                        - triflag (2D, Isotropic)
-                                                        - checkerboard (2D, Isotropic)
-                                                        - square_with_circle (2D, Isotropic)
-                                                        - anisotropic1 (2D, Anisotropic)
-                                                        - anisotropic2 (2D, Anisotropic)
-                                                        - cube3D (3D, Isotropic)
-                                                        - prolate3D (3D, Isotropic)
-                                                        - prolate3D_scar (3D, Isotropic)""")
+                                                        - elliptic_cos (1D, Laplace)""")
 
         self.add_argument('--prop_exact', type=float, help="Need to be between 0 and 1. Proportion of Domain Data to use as Sparse Exact data")
         self.add_argument('--prop_collocation', type=float, help="Need to be between 0 and 1. Proportion of Domain Data to use as collocation data")

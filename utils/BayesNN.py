@@ -14,14 +14,15 @@ class BayesNN:
     Bayesian-PINN: Parent class, inheritance in SVGD_BayesNN and MCMC_BayesNN
     """
     def __init__(self, num_neural_networks, sigmas,
-                nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed):
+                nFeature, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed):
         """!
         Constructor
         @param num_neural_networks number of neural networks for SVGD, 1 for MCMC
         @param sigmas parameters for sigmas
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
-        @param n_output_vel dim of output velocity
+        @param n_out_sol dim of output solution
+        @param n_out_par dim of output parametric fields
         @param parameters weights for posterior probability (pde, likelihood and prior)
         @param pde_constr object of pde_constraint class
         """
@@ -60,11 +61,14 @@ class BayesNN:
         self.n_neurons = architecture["n_neurons"]
 
         ## n output velocity
-        self.n_output_vel = nOutput_vel
+        self.n_out_sol = n_out_sol
+        
+        ## n output parametric field
+        self.n_out_par = n_out_par
 
         # append an instance of Net object
         self.nnets.append(Net(self.n_input, architecture["n_layers"],
-                              architecture["n_neurons"], self.n_output_vel+1))
+                              architecture["n_neurons"], self.n_out_sol+ self.n_out_par))
         # N_vel for u + 1 for f
         self.architecture_nn = self.nnets[0].get_dimensions()
 
@@ -122,20 +126,19 @@ class BayesNN:
         """
 
         # compute the output of NN at the inputs data
-        # shape = (input_len, 1+n_output_vel )
         output = self.nnets[0].forward(inputs)
-
-        # select times output
-        output_times = output[:,0] #shape = (input_len, )
-
-        # expand dims to obtains shape = (input_len, 1)
-        output_times = tf.expand_dims(output_times, axis=1)
-
-        # select velocity output
-        output_veloc = output[:,1:] #input_lenx1x(n_output_vel)
-        output_veloc = tf.expand_dims(output_veloc, axis=1)
-
-        return output_times, output_veloc
+        
+        # select solution output
+        output_sol = output[:,:self.n_out_sol]
+        if(len(output_sol.shape) == 1):
+            output_sol = tf.expand_dims(output_sol, axis=1)
+        
+        # select parametric field output
+        output_par = output[:,self.n_out_sol:]
+        if(len(output_par.shape) == 1):
+            output_par = tf.expand_dims(output_par, axis=1)
+        
+        return output_sol, output_par
 
     def get_trainable_weights(self):
         """Get all the trainable weights of the NN in a list"""
@@ -193,7 +196,6 @@ class BayesNN:
         log_prob_prior_w_0 = 0.
         for param in self.nnets[0].get_parameters():
             #breakpoint()
-            size = tf.size(param, out_type=tf.dtypes.float32)
             log_prob_prior_w_0 += (-0.5*(1.)*tf.reduce_sum(param**2) )#+ 0.50*size*1.)
 
 
@@ -268,19 +270,20 @@ class MCMC_BayesNN(BayesNN):
     """
     Define Bayesian-PINN for MCMC methods (from BayesNN)
     """
-    def __init__(self, sigmas, nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed, M):
+    def __init__(self, sigmas, nFeature, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed, M):
         """!
         Constructor
         @param sigmas parameters for sigmas
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
-        @param n_output_vel dim of output velocity
+        @param n_out_sol dim of output solution
+        @param n_out_par dim of output parametric fields
         @param parameters weights for posterior probability (pde, likelihood and prior)
         @param pde_constr object of pde_constraint class
         @param M param M in HMC (number of samples we want to keep after burn-in period)
         """
 
-        super().__init__(1, sigmas, nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed)
+        super().__init__(1, sigmas, nFeature, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed)
 
         ## list to store the thetas
         self._thetas = []
@@ -387,7 +390,6 @@ class MCMC_BayesNN(BayesNN):
 
         # compute the mean losses
         loss_1_scalar = tf.reduce_mean(loss_1_scalar)
-        loss_2_scalar = loss_1_scalar
 
         return log_loss_total, loss_1_scalar
 
@@ -418,7 +420,7 @@ class MCMC_BayesNN(BayesNN):
         Predict the output using input=inputs using all the thetas we have stored in self._thetas.
         return two tensors (samples_at and samples_v) of shape:
         samples_at shape = (M, len_inputs, 1)
-        samples_v shape = (M, len_inputs, n_output_vel)
+        samples_v shape = (M, len_inputs, n_out_par)
 
         @param inputs inputs data
         """
@@ -500,19 +502,20 @@ class SVGD_BayesNN(BayesNN):
     """
     Define Bayesian-PINN for SVGD methods (from BayesNN)
     """
-    def __init__(self, num_neural_networks, sigmas, nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed):
+    def __init__(self, num_neural_networks, sigmas, nFeature, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed):
         """!
         Constructor
         @param num_neural_networks number of neural networks ("number of particles") we want to use to approx the posterior distributions
         @param sigmas parameters for sigmas
         @param nFeature dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
-        @param n_output_vel dim of output velocity
+        @param n_out_sol dim of output solution
+        @param n_out_par dim of parametric field
         @param parameters weights for posterior probability (pde, likelihood and prior)
         @param pde_constr object of pde_constraint class
         """
 
-        super().__init__(num_neural_networks, sigmas, nFeature, architecture, nOutput_vel, parameters, pde_constr, random_seed)
+        super().__init__(num_neural_networks, sigmas, nFeature, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed)
 
         ## num num_neural_networks
         self.num_neural_networks = num_neural_networks
@@ -520,7 +523,7 @@ class SVGD_BayesNN(BayesNN):
         # add the others (num_neural_networks-1) NNs at the list self.nnets
         for i in range(self.num_neural_networks-1):
             new_instance = Net(nFeature, architecture["n_layers"],
-                            architecture["n_neurons"], self.n_output_vel+1)
+                            architecture["n_neurons"], self.n_out_par+self.n_out_sol)
 
             self.nnets.append(new_instance) # append the i-th NN
 
@@ -542,19 +545,12 @@ class SVGD_BayesNN(BayesNN):
             # append the output of each NN
             output.append(self.nnets[i].forward(inputs))
 
-        if(self.n_output_vel>0):
-            output = tf.squeeze(tf.stack(output,axis=1))
-        else:
-            output = tf.stack(output,axis=1)
+        output = tf.squeeze(tf.stack(output,axis=1))
 
+        output_sol = output[:,:,:self.n_out_sol]    # shape = (input_len, num_neural_networks, n_out_sol)
+        output_par = output[:,:,self.n_out_sol:]    # shape = (input_len, num_neural_networks, n_out_par)
 
-        output_times = output[:,:,0]    # shape = (input_len, num_neural_networks)
-        if(self.n_output_vel>0):
-            output_veloc = output[:,:,1:]   # shape = (input_len, num_neural_networks, n_output_vel)
-        else:
-            output_veloc = []
-
-        return output_times, output_veloc
+        return output_sol, output_par
 
     # used only in _gradients()
     def _forward_stacked(self, x_stacked, y_stacked=None, z_stacked=None):
@@ -572,18 +568,12 @@ class SVGD_BayesNN(BayesNN):
             output.append(self.nnets[i].forward(inputs))
 
         ## return act. times and velocity separately
-        if(self.n_output_vel>0):
-            output = tf.squeeze(tf.stack(output,axis=1))
-        else:
-            output = tf.stack(output,axis=1)
 
-        output_times = output[:,:,0]
-        if(self.n_output_vel>0):
-            output_veloc = output[:,:,1:]
-        else:
-            output_veloc = []
+        output = tf.squeeze(tf.stack(output,axis=1))
+        output_sol = output[:,:,:self.n_out_sol]
+        output_par = output[:,:,self.n_out_sol:]
 
-        return output_times, output_veloc
+        return output_sol, output_par
 
     def get_trainable_weights(self):
         """Get all the trainable weights of all the num_neural_networks NNs in a list"""
@@ -785,7 +775,6 @@ class SVGD_BayesNN(BayesNN):
 
         # compute the mean losses
         loss_1_scalar = tf.reduce_mean(loss_1_scalar)
-        loss_2_scalar = loss_1_scalar
 
         return log_loss_total, loss_1_scalar
 
@@ -795,7 +784,7 @@ class SVGD_BayesNN(BayesNN):
         Predict the output using input=inputs using all the num_neural_networks NNs.
         return two tensors (samples_at and samples_v) of shape:
         samples_at shape = (len_inputs, num_neural_networks)
-        samples_v shape = (len_inputs, n_output_vel, n_output_vel)
+        samples_v shape = (len_inputs, n_out_par, n_out_par)
 
         @param inputs inputs data
         """

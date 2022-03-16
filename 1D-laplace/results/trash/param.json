@@ -1,0 +1,8 @@
+{ 
+ "architecture": {"n_layers": 2, "n_neurons": 50}, 
+ "experiment": {"dataset": "elliptic_cos", "prop_exact": 0.01, "prop_collocation": 1.0, "is_uniform_exact": false, "noise_lv": 0.01, "batch_size": 1000}, 
+ "param": {"param_res": 0.01, "param_data": 10.0, "param_prior": 1.0, "random_seed": 42}, 
+ "sigmas": {"data_prior_noise": 0.0001, "pde_prior_noise": 1e-06, "data_prior_noise_trainable": false, "pde_prior_noise_trainable": false}, 
+ "HMC": {"N_HMC": 100, "M_HMC": 70, "L_HMC": 200, "dt_HMC": 4e-05, "dt_noise_HMC": 0.0003}, 
+ "utils": {"verbose": true, "save_flag": false, "save_every_n_epochs": 0}
+}

@@ -95,15 +95,13 @@ if(par.method == "SVGD"):
     if(par.pde == "laplace"):
         bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
                                 par.n_input, par.architecture,
-                                par.n_output_vel, par.param, pde_constr,
-                                par.param["random_seed"])
+                                par.n_out_sol, par.n_out_par, par.param, 
+                                pde_constr, par.param["random_seed"])
 else:
     if(par.pde == "laplace"):
-        bayes_nn = MCMC_BayesNN(par.sigmas,
-                                par.n_input, par.architecture,
-                                par.n_output_vel, par.param, pde_constr,
-                                par.param["random_seed"],
-                                par.param_method["M_HMC"])
+        bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
+                                par.n_out_sol, par.n_out_par, par.param, 
+                                pde_constr, par.param["random_seed"], par.param_method["M_HMC"])
 
 print("Building", par.method ,"algorithm...")
 
@@ -133,9 +131,9 @@ print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 print("--------------------------------------------")
 print("Computing errors...")
 # create the class to compute results and error
-c_e = compute_error(par.n_output_vel, bayes_nn, datasets_class, path_result)
+c_e = compute_error(par.n_out_sol, par.n_out_par, bayes_nn, datasets_class, path_result)
 # compute errors and return mean and std for both outputs
-at_NN, v_NN, at_std, v_std, errors = c_e.error()
+u_NN, f_NN, u_std, f_std, errors = c_e.error()
 print("Done")
 
 # %% Saving
@@ -159,11 +157,12 @@ print("Done")
 
 # %% Plotting
 
+par.n_output_vel = 1
 print("--------------------------------------------")
 print("Plotting the losses...")
 plot_losses(LOSSD, LOSS1, LOSS, path_plot)
 print("Plotting the results...")
-plot_result(par.n_output_vel, at_NN, v_NN, at_std, v_std, datasets_class, path_plot)
+plot_result(par.n_output_vel, u_NN, f_NN, u_std, f_std, datasets_class, path_plot)
 
 print("Plot all the NNs...")
 if(par.n_input == 1):

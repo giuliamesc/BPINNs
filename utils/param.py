@@ -41,11 +41,8 @@ class param:
         self.n_out_sol = n_output[self.experiment["dataset"]][0]
         ## dimension of parametric field
         self.n_out_par = n_output[self.experiment["dataset"]][1]
-        ## isotropic or anisotropic
+        ## pde of the problem
         self.pde = pde[self.experiment["dataset"]]
-
-        ## dimension of velocity: 1 if isotropic, >1 if anisotropic
-        self.n_output_vel = 1 # DA CANCELLARE
 
         # check possible errors in parameters
         self._check_parameter()
@@ -159,7 +156,8 @@ class param:
         print("utils: ", self.utils, " \n ")
         print("param_method: ", self.param_method, " \n ")
         print("n_input: ", self.n_input, " \n ")
-        print("n_output_vel: ", self.n_output_vel, " \n ")
+        print("n_out_par: ", self.n_output_par, " \n ")
+        print("n_out_sol: ", self.n_output_sol, " \n ")
         print("pde_type: ", self.pde, " \n ")
 
 

@@ -112,7 +112,7 @@ class HMC_MCMC:
         ## compute alpha as min between alpha_max ans exp(2h)
         alpha = min(0.0, tf.keras.backend.get_value(h))
         #alpha = 1-alpha
-        print("\nalpha",alpha,"\nexp_alpha",np.exp(alpha),"\nh",h,"\nh1",h1,"\nh0",h0)
+        #print("\nalpha",alpha,"\nexp_alpha",np.exp(alpha),"\nh",h,"\nh1",h1,"\nh0",h0)
         return alpha
 
 
@@ -275,7 +275,7 @@ class HMC_MCMC:
             alpha = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
 
 
-            debug_flag = True
+            debug_flag = False
             if(debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
                 fin_epochtime = time.time()-epochtime

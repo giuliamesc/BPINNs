@@ -23,7 +23,7 @@ class dataset_class:
         - par, a param object that store all the parameters
 
     Objects:
-        - pde_type = "Isotropic" or "Anisotropic"
+        - pde_type 
         - name_example = name of dataset we want to build/load
         - prop_exact = proportion of domain data to use as exact data
         - prop_collocation = proportion of domain data to use as collocation data
@@ -48,7 +48,8 @@ class dataset_class:
         self.n_input = par.n_input # 1D,2D,3D
 
         ## MODIFICARE
-        self.n_output_vel = par.n_output_vel
+        self.n_out_par = par.n_out_par
+        self.n_out_sol = par.n_out_sol
         self.noise_lv = par.experiment["noise_lv"]
 
         self._flag_dataset_build = False
@@ -81,7 +82,7 @@ class dataset_class:
 
             u = u[...,None]   # from shape (n_coll, ) -> (n_coll, 1)
             if(len(f.shape)==1):
-                f = f[...,None] # add the last dimension only if we are in Isotropic case
+                f = f[...,None] # add the last dimension only if we are in 1D case
 
             # store domain datasets
             self.inputs_dom = inputs
