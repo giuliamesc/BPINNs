@@ -1,3 +1,0 @@
-testo_inutile.txt
-**/trash/*
-**/__pycache__/*
