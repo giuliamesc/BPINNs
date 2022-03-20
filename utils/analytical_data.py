@@ -49,7 +49,12 @@ class AnalyticalData:
     
     def _create_sol(self, name):
         func = self.solution[name]
-        sol = func(self.grid.T)
+        grid_list = np.split(self.grid, self.dimension, axis = 0)
+        grid = [x.squeeze() for x in grid_list]
+        if self.dimension == 1:
+            sol = func(grid[0])
+        if self.dimension == 2:
+            sol = func(grid[0],grid[1])
         
         self._save_data(name, sol)
     
@@ -71,10 +76,18 @@ class AnalyticalData:
         if self.dimension == 1:
             plt.plot(load('x'),load('u'),'m')
             plt.title('u(x)')
+            plt.plot(load('x'),load('f'),'b')
+            plt.title('f(x)')
         if self.dimension == 2:
+            plt.figure()
             plt.scatter(load('x'), load('y'), c= load('u'), label = 'u', 
                         cmap = 'coolwarm', vmin = min(load('u')), vmax = max(load('u')))
             plt.title('u(x,y)')
+            plt.colorbar()
+            plt.figure()
+            plt.scatter(load('x'), load('y'), c= load('f'), label = 'f', 
+                        cmap = 'coolwarm', vmin = min(load('f')), vmax = max(load('f')))
+            plt.title('f(x,y)')
             plt.colorbar()
         
         
@@ -95,8 +108,8 @@ analytical_solution = {
         "f": lambda x: np.cos(x)
         },
     "ell_cos2d": {
-        "u": lambda x: np.cos(x[:,0])+np.cos(x[:,1]),
-        "f": lambda x: np.cos(x)
+        "u": lambda x,y: np.cos(x) + np.cos(y),
+        "f": lambda x,y: np.cos(x*y)
         }
     }
     
