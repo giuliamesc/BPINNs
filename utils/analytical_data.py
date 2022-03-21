@@ -34,7 +34,7 @@ class AnalyticalData:
         self._save_data(name, sol)        
 
     def _create_domain(self):
-        if domain_data["mesh_type"] == "uniform":
+        if self.domain_data["mesh_type"] == "uniform":
             self._create_uniform_domain()
         elif domain_data["mesh_type"] == "sobol":
             self._create_sobol_domain()
@@ -56,7 +56,6 @@ class AnalyticalData:
         self.grid = np.reshape(x,[self.dimension, resolution**self.dimension])
         names = ["x","y","z"]
         for i in range(self.dimension):
-            print(self.grid[i,:].shape)
             self._save_data(names[i], self.grid[i,:])
     
     def _create_sobol_domain(self):
@@ -99,12 +98,12 @@ class AnalyticalData:
         
 analytical_domain = {
     "ell_cos1d": {
-        "mesh_type": "uniform"
+        "mesh_type": "uniform",
         "resolution": 100,
         "domain": [(0,8)]
         },
     "ell_cos2d": {
-        "mesh_type": "uniform"
+        "mesh_type": "uniform",
         "resolution": 100,
         "domain": [(0,8),(0,6)]
         }
