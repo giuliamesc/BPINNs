@@ -26,9 +26,20 @@ class AnalyticalData:
         for key,_ in self.solution.items():
             self._create_sol(key)
 
-        
+    def _create_sol(self, name):
+        func = self.solution[name]
+        grid_list = np.split(self.grid, self.dimension, axis = 0)
+        grid = [x.squeeze() for x in grid_list]
+        sol = func(*grid)
+        self._save_data(name, sol)        
+
     def _create_domain(self):
-        self._create_uniform_domain()
+        if domain_data["mesh_type"] == "uniform":
+            self._create_uniform_domain()
+        elif domain_data["mesh_type"] == "sobol":
+            self._create_sobol_domain()
+        else:
+            raise Exception("This mesh type doesn't exists")
 
         
     def _create_uniform_domain(self):
@@ -45,18 +56,11 @@ class AnalyticalData:
         self.grid = np.reshape(x,[self.dimension, resolution**self.dimension])
         names = ["x","y","z"]
         for i in range(self.dimension):
+            print(self.grid[i,:].shape)
             self._save_data(names[i], self.grid[i,:])
     
-    def _create_sol(self, name):
-        func = self.solution[name]
-        grid_list = np.split(self.grid, self.dimension, axis = 0)
-        grid = [x.squeeze() for x in grid_list]
-        if self.dimension == 1:
-            sol = func(grid[0])
-        if self.dimension == 2:
-            sol = func(grid[0],grid[1])
-        
-        self._save_data(name, sol)
+    def _create_sobol_domain(self):
+        pass
     
     def _save_data(self, name, data):
         filename = os.path.join(self.save_path,name)
@@ -74,8 +78,10 @@ class AnalyticalData:
     def _plotter(self):
         load = lambda name : np.load(os.path.join(self.save_path, f'{name}.npy'))
         if self.dimension == 1:
+            plt.figure()
             plt.plot(load('x'),load('u'),'m')
             plt.title('u(x)')
+            plt.figure()
             plt.plot(load('x'),load('f'),'b')
             plt.title('f(x)')
         if self.dimension == 2:
@@ -93,10 +99,12 @@ class AnalyticalData:
         
 analytical_domain = {
     "ell_cos1d": {
+        "mesh_type": "uniform"
         "resolution": 100,
         "domain": [(0,8)]
         },
     "ell_cos2d": {
+        "mesh_type": "uniform"
         "resolution": 100,
         "domain": [(0,8),(0,6)]
         }
@@ -104,12 +112,12 @@ analytical_domain = {
 
 analytical_solution = {
     "ell_cos1d": {
-        "u": lambda x: np.cos(x),
-        "f": lambda x: np.cos(x)
+        "u": lambda *x: np.cos(x[0]),
+        "f": lambda *x: np.cos(x[0])
         },
     "ell_cos2d": {
-        "u": lambda x,y: np.cos(x) + np.cos(y),
-        "f": lambda x,y: np.cos(x*y)
+        "u": lambda *x: np.cos(x[0]) + np.cos(x[1]),
+        "f": lambda *x: np.cos(x[0]*x[1])
         }
     }
     
