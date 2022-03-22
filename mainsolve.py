@@ -15,6 +15,9 @@ import tensorflow as tf
 # %% Import Local Classes
 
 sys.path.append("utils") # local import from the subfolder "utils" -> all the code
+sys.path.append("utils\data_and_setup")
+sys.path.append("utils\models")
+sys.path.append("utils\postprocessing")
 
 from args import args   #command-line arg parser
 from param import param #parameter class
@@ -46,10 +49,10 @@ with open(os.path.join("config",args.config)) as hpFile:
 par = param(hp, args)
 
 # Print all the selected parameters
-if (verbose): 
+if (verbose):
     print("--------------------------------------------")
     par.print_parameter()
-    
+
 # Build the directories
 path_result, path_plot, path_weights = create_directories(par)
 # Save parameters
@@ -95,12 +98,12 @@ if(par.method == "SVGD"):
     if(par.pde == "laplace"):
         bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
                                 par.n_input, par.architecture,
-                                par.n_out_sol, par.n_out_par, par.param, 
+                                par.n_out_sol, par.n_out_par, par.param,
                                 pde_constr, par.param["random_seed"])
 else:
     if(par.pde == "laplace"):
         bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
-                                par.n_out_sol, par.n_out_par, par.param, 
+                                par.n_out_sol, par.n_out_par, par.param,
                                 pde_constr, par.param["random_seed"], par.param_method["M_HMC"])
 
 print("Building", par.method ,"algorithm...")
@@ -169,7 +172,7 @@ if(par.n_input == 1):
     inputs, u, f = datasets_class.get_dom_data()
     u_NN, f_NN = bayes_nn.predict(inputs)
     x = inputs[:,0]
-    plot_all_result(x, u, f, u_NN, f_NN, datasets_class, 
+    plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
                     par.n_input, par.n_output_vel, par.method, path_plot)
 else:
     print("Unable to plot all the NNs in 1D up to now")
