@@ -5,7 +5,7 @@
 	},
 
 "experiment":{
-	"dataset":"elliptic_cos",
+	"dataset":"laplace1D_cos",
 	"prop_exact":0.01,
 	"prop_collocation":1.00,
 	"is_uniform_exact":"False",

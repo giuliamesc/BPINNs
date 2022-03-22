@@ -62,7 +62,7 @@ class BayesNN:
 
         ## n output velocity
         self.n_out_sol = n_out_sol
-        
+
         ## n output parametric field
         self.n_out_par = n_out_par
 
@@ -127,17 +127,17 @@ class BayesNN:
 
         # compute the output of NN at the inputs data
         output = self.nnets[0].forward(inputs)
-        
+
         # select solution output
         output_sol = output[:,:self.n_out_sol]
         if(len(output_sol.shape) == 1):
             output_sol = tf.expand_dims(output_sol, axis=1)
-        
+
         # select parametric field output
         output_par = output[:,self.n_out_sol:]
         if(len(output_par.shape) == 1):
             output_par = tf.expand_dims(output_par, axis=1)
-        
+
         return output_sol, output_par
 
     def get_trainable_weights(self):

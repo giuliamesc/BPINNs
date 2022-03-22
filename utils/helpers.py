@@ -69,9 +69,9 @@ def create_directories(par):
     if(save_flag):
         ## if save_flag = True create new directories using datetime.now()
         now = datetime.now()
-        path = dataset_name + "_" + method_name + "_" + f"{now.strftime('%Y%m%d-%H%M%S')}"
+        path = method_name + "_" + f"{now.strftime('%Y.%m.%d-%H.%M.%S')}"
         ## path result
-        path_result = os.path.join(case_name,"results", path)
+        path_result = os.path.join(case_name, path)
         os.makedirs(path_result)
         ## path_plot
         path_plot = os.path.join(path_result, "plot")

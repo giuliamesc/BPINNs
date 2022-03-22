@@ -323,7 +323,7 @@ class HMC_MCMC:
                 loss_1 = losses[0].numpy()
                 loss_d = losses[1].numpy()
 
-                if(accepted_total % 10 == 0):
+                if(accepted_total % max(10,self.N//20) == 0):
                     print(f"\nLoss Collocation:{loss_1 : 1.3e} | Loss Fitting:{loss_d: 1.3e}")
                     print("------------------------------")
 
