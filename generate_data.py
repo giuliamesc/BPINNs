@@ -17,7 +17,7 @@ class AnalyticalData:
         self._creating_loop()
 
     def _creating_loop(self):
-        print(f"\n\nGenerating dataset: {self.test_case}")
+        print(f"\nGenerating dataset: {self.test_case}")
         self._build_directory()
         self._create_domain()
         self._create_solutions()
@@ -67,7 +67,7 @@ class AnalyticalData:
     def _save_data(self, name, data):
         filename = os.path.join(self.save_path,name)
         np.save(filename,data)
-        print(f'Saved {name}')
+        print(f'\tSaved {name}')
 
     def _build_directory(self):
         if self.test_only:
@@ -79,16 +79,18 @@ class AnalyticalData:
         else:
             print('Folder already present')
 
+    def _load(self,name):
+        return np.load(os.path.join(self.save_path, f'{name}.npy'))
+        
     def _plot(self, var_name):
-        load = lambda name : np.load(os.path.join(self.save_path, f'{name}.npy'))
-        var = load(var_name)
+        var = self._load(var_name)
         plt.figure()
         if self.dimension == 1:
             var_dim = "(x)"
-            plt.plot(load('x'),var,'b')
+            plt.plot(self._load('x'),var,'b')
         elif self.dimension == 2:
             var_dim = "(x,y)"
-            plt.scatter(load('x'), load('y'), c = var, cmap = 'coolwarm', 
+            plt.scatter(self._load('x'), self._load('y'), c = var, cmap = 'coolwarm', 
                         vmin = min(var), vmax = max(var))
             plt.colorbar()
         else:
@@ -98,6 +100,10 @@ class AnalyticalData:
             plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
 
     def _plotter(self):
+        if self.dimension == 2:
+            plt.figure()
+            plt.scatter(self._load("x"),self._load("y"), s = 1)
+            plt.title("{} mesh".format(self.domain_data["mesh_type"]))
         for var_file in os.listdir(self.save_path):
             if var_file[-4:] == ".npy":
                 var_name = var_file[:-4]
@@ -106,12 +112,12 @@ class AnalyticalData:
 
 
 analytical_domain = {
-    "test_ell_cos1d": {
+    "laplace1D_cos": {
         "mesh_type": "uniform",
         "resolution": 100,
         "domain": [(0,8)]
         },
-    "test_ell_cos2d": {
+    "laplace2D_cos": {
         "mesh_type": "uniform",
         "resolution": 100,
         "domain": [(0,8),(0,6)]
@@ -119,16 +125,16 @@ analytical_domain = {
     }
 
 analytical_solution = {
-    "test_ell_cos1d": {
+    "laplace1D_cos": {
         "u": lambda *x: np.cos(x[0]),
         "f": lambda *x: np.cos(x[0])
         },
-    "test_ell_cos2d": {
-        "u": lambda *x: np.cos(x[0]) + np.cos(x[1]),
-        "f": lambda *x: np.cos(x[0]*x[1])
+    "laplace2D_cos": {
+        "u": lambda *x: np.cos(x[0])*np.cos(x[1]),
+        "f": lambda *x: np.cos(x[0])*np.cos(x[1])
         }
     }
 
 if __name__ == "__main__":
-    AnalyticalData("test_ell_cos1d", do_plots = True, test_only = True, save_plot = True)
-    AnalyticalData("test_ell_cos2d", do_plots = True, test_only = True, save_plot = True)
+    AnalyticalData("laplace1D_cos", do_plots = True, test_only = True, save_plot = True)
+    AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)

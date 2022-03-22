@@ -14,7 +14,7 @@ import tensorflow as tf
 
 # %% Import Local Classes
 
-sys.path.append("utils") # local import from the subfolder "utils" -> all the code
+sys.path.append("utils")
 sys.path.append("utils\data_and_setup")
 sys.path.append("utils\models")
 sys.path.append("utils\postprocessing")
