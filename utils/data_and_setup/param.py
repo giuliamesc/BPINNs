@@ -195,15 +195,18 @@ class param:
 
 """dictionary for input dimension given the dataset used"""
 n_input = {
-"laplace1D_cos": 1
+"laplace1D_cos": 1,
+"laplace2D_cos": 2
 }
 
 """dictionary for output dimension given the dataset used"""
 n_output = {
-"laplace1D_cos": (1,1)
+"laplace1D_cos": (1,1),
+"laplace2D_cos": (1,1)
 }
 
 """dictionary for pde given the dataset used"""
 pde = {
-"laplace1D_cos": "laplace"
+"laplace1D_cos": "laplace",
+"laplace2D_cos": "laplace"
 }

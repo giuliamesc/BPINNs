@@ -1,6 +1,5 @@
 # %% Import Standard Packages
 
-import csv
 import json
 import os
 import sys
@@ -8,9 +7,7 @@ import time
 import datetime
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-import matplotlib.pylab as plt
 import numpy as np
-import tensorflow as tf
 
 # %% Import Local Classes
 
@@ -35,7 +32,7 @@ from SVGD import SVGD
 from HMC_MCMC import HMC_MCMC
 
 from compute_error import compute_error
-from plotter import plot_result, plot_axis_example, plot_losses, plot_log_betas, plot_all_result, plot_log_prob
+from plotter import plot_result, plot_losses, plot_log_betas, plot_all_result
 
 # %% Creating Parameters
 
@@ -70,7 +67,7 @@ print("Dataset creation...")
 datasets_class = dataset_class(par)
 
 # Plot the exact data
-datasets_class.plot(path_plot)
+#datasets_class.plot(path_plot)
 
 print("\tNumber of exact data:", datasets_class.n_exact)
 print("\tNumber of collocation data:", datasets_class.n_collocation)
@@ -158,27 +155,26 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
 print("Done")
 
-# %% Plotting
+# # %% Plotting
 
-par.n_output_vel = 1
-print("--------------------------------------------")
-print("Plotting the losses...")
-plot_losses(LOSSD, LOSS1, LOSS, path_plot)
-print("Plotting the results...")
-plot_result(par.n_output_vel, u_NN, f_NN, u_std, f_std, datasets_class, path_plot)
+# print("--------------------------------------------")
+# print("Plotting the losses...")
+# plot_losses(LOSSD, LOSS1, LOSS, path_plot)
+# print("Plotting the results...")
+# plot_result(par.n_out_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plot)
 
-print("Plot all the NNs...")
-if(par.n_input == 1):
-    inputs, u, f = datasets_class.get_dom_data()
-    u_NN, f_NN = bayes_nn.predict(inputs)
-    x = inputs[:,0]
-    plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
-                    par.n_input, par.n_output_vel, par.method, path_plot)
-else:
-    print("Unable to plot all the NNs in 1D up to now")
-if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("Plotting log betas")
-    plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
+# print("Plot all the NNs...")
+# if(par.n_input == 1):
+#     inputs, u, f = datasets_class.get_dom_data()
+#     u_NN, f_NN = bayes_nn.predict(inputs)
+#     x = inputs[:,0]
+#     plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
+#                     par.n_input, par.n_output_vel, par.method, path_plot)
+# else:
+#     print("Unable to plot all the NNs in 1D up to now")
+# if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
+#     print("Plotting log betas")
+#     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
-print("End")
-print("--------------------------------------------")
+# print("End")
+# print("--------------------------------------------")

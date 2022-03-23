@@ -77,7 +77,7 @@ class HMC_MCMC:
         """!
         Compute hamilotnian H(U,r) = U + 1/2*(r'*M*r)
         (Here we consider M = c*Identity, where c is set to 0.1 :
-            H(U,r) = U + 1/20*(||r||^2))
+            H(U,r) = U + 1/2*(||r||^2))
 
         @param u U(theta)
         @param r vector r
@@ -87,8 +87,7 @@ class HMC_MCMC:
         for rr in r:
             r_square += np.sum(rr**2)
 
-        ## H(U,r) = U + 1/2*(r'*M*r) = U + 1/20*(||r||^2)) since M=0.1*Identity
-        #breakpoint()
+        ## H(U,r) = U + 1/2*(r'*M*r) = U + 1/2*(||r||^2)) since M=0.1*Identity
         return (u + (1./2.)*r_square/self.constant_M )
 
     def _alpha_fun(self,uu,rr,u0,r0, iter):
@@ -113,7 +112,7 @@ class HMC_MCMC:
         alpha = min(0.0, tf.keras.backend.get_value(h))
         #alpha = 1-alpha
         #print("\nalpha",alpha,"\nexp_alpha",np.exp(alpha),"\nh",h,"\nh1",h1,"\nh0",h0)
-        return alpha
+        return alpha, (h0,h1,h)
 
 
     @tf.function # decorator @tf.function to speed up the computation
@@ -214,7 +213,6 @@ class HMC_MCMC:
             ## if we have additional trainable (log betas) create everything we need
             if(self.bayes_nn.log_betas.betas_trainable_flag()):
                 rr_log_b = []   ## rr for log betas
-                r0_log_b = []
                 theta0_log_b = [] ## theta for log betas
                 theta_log_b = []
                 ## for every log b trainable we have
@@ -222,7 +220,6 @@ class HMC_MCMC:
                     theta_log_b.append(log_b)   ## append the trainable log_b
                     rr_log_b.append(np.random.randn(1)) ## append a normal(0,1) values for every log_b
                 theta0_log_b = theta_log_b.copy() ## theta0_log_b is just a copy() (previous)
-                r0_log_b = rr_log_b.copy() ##r0_log_b is just a copy() (previous)
 
             ## for every step in 1,...,L (L = LEAPFROG STEPS)
             for s in range(self.L):
@@ -272,19 +269,22 @@ class HMC_MCMC:
             p = np.log(np.random.random())
             ## compute alpha prob using alpha_fun (since now alpha is 0.95 at most,
             ## we can have some instabilities and ending up with a NaN, see after)
-            alpha = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
+            alpha,h = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
 
 
-            debug_flag = False
+            debug_flag = True
             if(debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
                 fin_epochtime = time.time()-epochtime
+                print("Time for this iteration = ", fin_epochtime)
+                print("h0: ", tf.keras.backend.get_value(h[0]))
+                print("h1: ", tf.keras.backend.get_value(h[1]))
+                print("dh: ", tf.keras.backend.get_value(h[2]))
                 print("u_theta0: ",u_theta0.numpy())
-                print("u_theta: ",u_theta.numpy())
-                print("Log likelihood: ", log_likelihood.numpy()[0][0])
-                print("Log prior w:    ", log_prior_w.numpy()[0])
-                print("Log equation:   ", log_eq.numpy()[0])
-                print("time for this iteration = ", fin_epochtime)
+                print("u_theta:  ",u_theta.numpy())
+                # print("Log likelihood: ", log_likelihood.numpy()[0][0])
+                # print("Log prior w:    ", log_prior_w.numpy()[0])
+                # print("Log equation:   ", log_eq.numpy()[0])
                 print("log(alpha): ", alpha)
                 print(f"alpha: {np.exp(alpha): 1.6f}")
                 print(f"p: {np.exp(p): 1.6f}")
