@@ -1,7 +1,10 @@
+# %% Import of Packages
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import qmc
 import os
 
+# %% Class Setup
 class AnalyticalData:
     def __init__(self, test_case, do_plots = False, test_only = False, save_plot = False):
         self.test_case = test_case
@@ -25,6 +28,7 @@ class AnalyticalData:
             self._plotter()
         print(f"Dataset {self.test_case} generated!")
 
+# %% Build Solution
     def _create_solutions(self):
         for key,_ in self.solution.items():
             self._create_sol(key)
@@ -36,34 +40,46 @@ class AnalyticalData:
         sol = func(*grid)
         self._save_data(name, sol)
 
+# %% Build Domain
     def _create_domain(self):
         if self.domain_data["mesh_type"] == "uniform":
             self._create_uniform_domain()
-        elif domain_data["mesh_type"] == "sobol":
+        elif self.domain_data["mesh_type"] == "sobol":
             self._create_sobol_domain()
         else:
             raise Exception("This mesh type doesn't exists")
 
-
     def _create_uniform_domain(self):
-        resolution = self.domain_data["resolution"]
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
-            x[:,i] = np.linspace(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1], resolution)
+            x[:,i] = np.linspace(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1], 
+                                 self.domain_data["resolution"])
         if self.dimension == 2:
             x = np.meshgrid(x[:,0],x[:,1])
         if self.dimension == 3:
             x = np.meshgrid(x[:,0],x[:,1],x[:,2])
 
-        self.grid = np.reshape(x,[self.dimension, resolution**self.dimension])
+        self.grid = np.reshape(x,[self.dimension, self.domain_data["resolution"]**self.dimension])
         names = ["x","y","z"]
         for i in range(self.dimension):
-            self._save_data(names[i], self.grid[i,:])
+            self._save_data(names[i], self.grid[i])
 
     def _create_sobol_domain(self):
-        pass
+        l_bounds = [i[0] for i in self.domain_data["domain"]]
+        u_bounds = [i[1] for i in self.domain_data["domain"]]
+        sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
+        
+        sampler = qmc.Sobol(d=self.dimension, scramble=False)
+        sample = sampler.random_base2(m=sobolexp)
+        self.grid = qmc.scale(sample, l_bounds, u_bounds).T
+        
+        names = ["x","y","z"]
+        for i in range(self.dimension):
+            self._save_data(names[i], self.grid[i])
 
+
+# %% Loading and Saving
     def _save_data(self, name, data):
         filename = os.path.join(self.save_path,name)
         np.save(filename,data)
@@ -71,7 +87,10 @@ class AnalyticalData:
 
     def _build_directory(self):
         if self.test_only:
-            self.save_folder = os.path.join(self.save_folder,"trash")
+            trash_path = os.path.join(self.save_folder,"trash")
+            if not(os.path.isdir(trash_path)):
+                os.mkdir(trash_path)
+            self.save_folder = os.path.join(trash_path)
         self.save_path = os.path.join(self.save_folder,self.test_case)
         if not(os.path.isdir(self.save_path)):
             os.mkdir(self.save_path)
@@ -81,7 +100,8 @@ class AnalyticalData:
 
     def _load(self,name):
         return np.load(os.path.join(self.save_path, f'{name}.npy'))
-        
+  
+# %% Postprocess
     def _plot(self, var_name):
         var = self._load(var_name)
         plt.figure()
@@ -102,7 +122,7 @@ class AnalyticalData:
     def _plotter(self):
         if self.dimension == 2:
             plt.figure()
-            plt.scatter(self._load("x"),self._load("y"), s = 1)
+            plt.scatter(self._load("x"),self._load("y"), s=1)
             plt.title("{} mesh".format(self.domain_data["mesh_type"]))
         for var_file in os.listdir(self.save_path):
             if var_file[-4:] == ".npy":
@@ -110,16 +130,17 @@ class AnalyticalData:
                 if var_name not in ["x","y","z"]:
                     self._plot(var_name)
 
+# %% Main
 
 analytical_domain = {
     "laplace1D_cos": {
         "mesh_type": "uniform",
-        "resolution": 100,
+        "resolution": 1000,
         "domain": [(0,8)]
         },
     "laplace2D_cos": {
-        "mesh_type": "uniform",
-        "resolution": 100,
+        "mesh_type": "sobol",
+        "resolution": 10000,
         "domain": [(0,8),(0,6)]
         }
     }
