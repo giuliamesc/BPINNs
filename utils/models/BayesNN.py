@@ -326,31 +326,31 @@ class MCMC_BayesNN(BayesNN):
             else:
                 inputs = x
             # compute the output by forward pass of inputs
-            at,v = self.forward(inputs) #output after forward(input)
+            u,f = self.forward(inputs) #output after forward(input)
 
-            at_x = t1.gradient(at, x)   # dT/dx
+            u_x = t1.gradient(u, x)   # dT/dx
             if(self.n_input > 1):
-                at_y = t1.gradient(at, y) #dT/dy
+                u_y = t1.gradient(u, y) #dT/dy
                 if(self.n_input == 3):
-                    at_z = t1.gradient(at, z)   #dT/dz
+                    u_z = t1.gradient(u, z)   #dT/dz
 
             #breakpoint()
             # store the gradients
-            at_gradients = []
-            at_xx = t1.gradient(at_x,x)
-            at_gradients.append(at_xx)
+            u_gradients = []
+            u_xx = t1.gradient(u_x,x)
+            u_gradients.append(u_xx)
             if(self.n_input > 1):
-                at_yy = t1.gradient(at_y,y)
-                at_gradients.append(at_yy)
+                u_yy = t1.gradient(u_y,y)
+                u_gradients.append(u_yy)
                 if(self.n_input == 3):
-                    at_zz = t1.gradient(at_z,z)
-                    at_gradients.append(at_zz)
+                    u_zz = t1.gradient(u_z,z)
+                    u_gradients.append(u_zz)
 
 
 
 
         del t1
-        return at_gradients,v
+        return u_gradients,f
 
     # compute the loss and logloss of Physics Constrain (PDE constraint)
     @tf.function # decorator @tf.function to speed up the computation
@@ -361,10 +361,10 @@ class MCMC_BayesNN(BayesNN):
         @param inputs tensor of shape (batch_size, n_input) a single batch of the collocation points """
 
         # compute the derivatives
-        at_gr_2, v = self._gradients(inputs)
+        u_gr_2, f = self._gradients(inputs)
 
         # compute loss_1 and loss_2 using pde_constraint
-        loss_1 = self.pde_constraint.compute_pde_losses(at_gr_2, v)
+        loss_1 = self.pde_constraint.compute_pde_losses(u_gr_2, f)
 
         # compute loss_1_scalar and loss_2_scalar
         loss_1_scalar = tf.keras.losses.MSE(loss_1,tf.zeros_like(loss_1)) #shape (1,) for HMC; (num_neural_networks,) for SVGD
@@ -427,8 +427,8 @@ class MCMC_BayesNN(BayesNN):
         if(len(self._thetas)==0):
             print("You need to train the model before")
         else:
-            samples_at = []
-            samples_v = []
+            samples_u = []
+            samples_f = []
 
             # for loop over the last M thetas we have stored
             #for i in range(len(self._thetas[-self.M:])):
@@ -437,15 +437,15 @@ class MCMC_BayesNN(BayesNN):
                 #self.nnets[0].update_weights(self._thetas[-self.M:][i])
                 self.nnets[0].update_weights(self._thetas[i])
                 # forward pass of inputs
-                at_i,v_i = self.forward(inputs)
+                u_i,f_i = self.forward(inputs)
                 # append at_i and v_i
-                samples_at.append(at_i)
-                samples_v.append(v_i)
+                samples_u.append(u_i)
+                samples_f.append(f_i)
 
             # convert list to numpy tensor
-            samples_at = np.array(samples_at)
-            samples_v = np.array(samples_v)
-            return samples_at, samples_v
+            samples_u = np.array(samples_u)
+            samples_f = np.array(samples_f)
+            return samples_u, samples_f
 
 
     def mean_and_std(self, inputs):
@@ -457,8 +457,8 @@ class MCMC_BayesNN(BayesNN):
         if(len(self._thetas)==0):
             print("You need to train the model before")
         else:
-            samples_at = []
-            samples_v = []
+            samples_u = []
+            samples_f = []
 
             # for loop over the last M thetas we have stored
             #for i in range(len(self._thetas[-self.M:])):
@@ -467,20 +467,20 @@ class MCMC_BayesNN(BayesNN):
                 #self.nnets[0].update_weights(self._thetas[-self.M:][i])
                 self.nnets[0].update_weights(self._thetas[i])
                 # forward pass of inputs
-                at_i,v_i = self.forward(inputs)
+                u_i,f_i = self.forward(inputs)
                 # append at_i and v_i
-                samples_at.append(at_i)
-                samples_v.append(v_i)
+                samples_u.append(u_i)
+                samples_f.append(f_i)
 
             # convert list to numpy tensor
-            samples_at = np.array(samples_at)
-            samples_v = np.array(samples_v)
+            samples_u = np.array(samples_u)
+            samples_f = np.array(samples_f)
 
             # compute mean and standard deviation
-            at_mean = np.mean(samples_at, axis=0)
-            v_mean = np.mean(samples_v, axis=0)
-            at_std = np.std(samples_at, axis=0)
-            v_std = np.std(samples_v, axis=0)
+            u_mean = np.mean(samples_u, axis=0)
+            f_mean = np.mean(samples_f, axis=0)
+            u_std = np.std(samples_u, axis=0)
+            f_std = np.std(samples_f, axis=0)
 
             # add sigma_D or sigma_R if trainable
             sigma_D = 0.
@@ -495,7 +495,7 @@ class MCMC_BayesNN(BayesNN):
                 s = np.sqrt(np.reciprocal(b))
                 sigma_R += np.mean(s)
 
-            return at_mean,v_mean, at_std+sigma_D, v_std+sigma_R
+            return u_mean,f_mean, u_std+sigma_D, f_std+sigma_R
 
 
 class SVGD_BayesNN(BayesNN):
