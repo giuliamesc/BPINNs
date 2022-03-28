@@ -32,7 +32,7 @@ from SVGD import SVGD
 from HMC_MCMC import HMC_MCMC
 
 from compute_error import compute_error
-from plotter import plot_result, plot_losses, plot_log_betas, plot_all_result
+from plotter import plot_result, plot_log_betas, plot_all_result
 
 # %% Creating Parameters
 
@@ -133,7 +133,7 @@ print("Computing errors...")
 # create the class to compute results and error
 c_e = compute_error(par.n_out_sol, par.n_out_par, bayes_nn, datasets_class, path_result)
 # compute errors and return mean and std for both outputs
-u_NN, f_NN, u_std, f_std, errors = c_e.error()
+functions, errors = c_e.error()
 print("Done")
 
 # %% Saving
@@ -144,8 +144,8 @@ bayes_nn.save_networks(path_weights)
 
 print("Save losses...")
 np.savetxt(os.path.join(path_result,"Loss.csv" ),LOSS)
-np.savetxt(os.path.join(path_result,"LOSS1.csv"),LOSS1)
-np.savetxt(os.path.join(path_result,"LOSSD.csv"),LOSSD)
+np.savetxt(os.path.join(path_result,"Collocation.csv"),LOSS1)
+np.savetxt(os.path.join(path_result,"Fitting.csv"),LOSSD)
 
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
     print("Save log betass...")
@@ -155,26 +155,29 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
 print("Done")
 
-# # %% Plotting
+# %% Plotting
+from plotter2 import load_losses, plot_losses, plot_result2
 
-# print("--------------------------------------------")
-# print("Plotting the losses...")
-# plot_losses(LOSSD, LOSS1, LOSS, path_plot)
-# print("Plotting the results...")
+print("--------------------------------------------")
+print("Plotting the losses...")
+losses = load_losses(path_result)
+plot_losses(path_plot, losses)
+print("Plotting the results...")
 # plot_result(par.n_out_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plot)
+plot_result2(path_plot, datasets_class, functions, par.n_out_sol, par.n_out_par)
 
-# print("Plot all the NNs...")
-# if(par.n_input == 1):
-#     inputs, u, f = datasets_class.get_dom_data()
-#     u_NN, f_NN = bayes_nn.predict(inputs)
-#     x = inputs[:,0]
-#     plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
-#                     par.n_input, par.n_output_vel, par.method, path_plot)
-# else:
-#     print("Unable to plot all the NNs in 1D up to now")
-# if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-#     print("Plotting log betas")
-#     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
+print("Plot all the NNs...")
+if(par.n_input == 1):
+    inputs, u, f = datasets_class.get_dom_data()
+    u_NN, f_NN = bayes_nn.predict(inputs)
+    x = inputs[:,0]
+    plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
+                    par.n_input, par.n_out_par, par.method, path_plot)
+else:
+    print("Unable to plot all the NNs in 1D up to now")
+if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
+    print("Plotting log betas")
+    plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
-# print("End")
-# print("--------------------------------------------")
+print("End")
+print("--------------------------------------------")

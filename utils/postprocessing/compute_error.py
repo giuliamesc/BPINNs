@@ -94,6 +94,12 @@ class compute_error:
         path = os.path.join(self.path_result,"UQ.txt")
         with open(path, 'w') as f:
             f.write(string_error)
+            
+        functions = {'u_NN': u_NN, 
+                     'f_NN': f_NN, 
+                     'u_std': u_std,
+                     'f_std': f_std
+            }
 
         errors = {"error_u":error_u,
                         "error_f":error_f,
@@ -105,4 +111,4 @@ class compute_error:
                         "uq_f_max":uq_f_max
                     }
 
-        return u_NN, f_NN, u_std, f_std, errors
+        return  functions, errors

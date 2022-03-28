@@ -6,11 +6,11 @@ import os
 Define all the plot_results functions
 """
 
-def plot_result(n_output_vel, u_NN, f_NN, u_std, f_std, datasets_class, path_plot, add_name_plot=""):
+def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plot, add_name_plot=""):
     """
     plot mean and 2_std_bounds result
     """
-    if (n_output_vel == 1): 
+    if (n_output_par == 1): 
 
         # get domain dataset
         inputs,u_true,f_true = datasets_class.get_dom_data()
