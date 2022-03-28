@@ -59,12 +59,47 @@ def plot_1D(x, func, title, label = ("",""), fit = None):
     plt.title(title)
 
     
+def plot_all_result2(path_plot, datasets_class, u_NN, f_NN, n_out_sol, n_out_par, method):
+    inputs, u_true, f_true = datasets_class.get_dom_data()
+    u_points, u_values, _  = datasets_class.get_exact_data_with_noise()
+    
+    u = (u_true, u_NN)
+    u_fit = (u_points, u_values)
+    f = (f_true, f_NN)
+    plt.figure()
+
+
+    plot_1Dall(inputs, u, method, label = ('x','u'),  fit = u_fit)
+    save_plot(path_plot, 'u_all.png')
+    plot_1Dall(inputs, f, method, label = ('x','f'), fit = None)
+    save_plot(path_plot, 'f_all.png')
+        
+def plot_1Dall(x, func, method, label = ("",""), fit = None):
+    plt.figure()
+    if(method == "SVGD"):
+        for i in range(func[1].shape[1]):
+            plt.plot(x, func[1][:,i])
+    elif(method == "HMC"):
+        for i in range(func[1].shape[0]):
+            plt.plot(x, func[1][i,:,0], 'b-', markersize=0.01, alpha=0.01)
+    plt.plot(x, func[0], 'r-', label='true')
+    if fit is not None:
+        plt.plot(fit[0], fit[1], 'r*')
+
+    plt.xlabel(label[0])
+    plt.ylabel(label[1])
+    plt.legend(prop={'size': 9})
+    if method == "SVGD": 
+        plt.title('Output' + label[1] + 'of all networks')
+    elif method == "HMC":
+        plt.title('Samples from' + label[1] +  'reconstructed distribution')
+    
 def save_plot(path_plot, title):
     path = os.path.join(path_plot, title)
     plt.savefig(path,bbox_inches= 'tight')
-
+    
 if __name__ == "__main__":
     my_path = '../../1D-laplace/results/trash'
     losses = load_losses(my_path)
-    plot_losses(my_path, **losses)
+    plot_losses(my_path, losses)
     

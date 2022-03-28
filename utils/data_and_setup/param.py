@@ -65,6 +65,7 @@ class param:
         self.sigmas["pde_prior_noise_trainable"] = string_to_bool(self.sigmas["pde_prior_noise_trainable"])
         self.utils["verbose"] = string_to_bool(self.utils["verbose"])
         self.utils["save_flag"] = string_to_bool(self.utils["save_flag"])
+        self.utils["debug_flag"] = string_to_bool(self.utils["debug_flag"])
 
 
     def _update(self, args_dict):

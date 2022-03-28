@@ -44,6 +44,7 @@
 	},
 
 	"utils":{
+    	"debug_flag": "False",
 		"verbose":"True",
 		"save_flag":"False",
 		"save_every_n_epochs":0

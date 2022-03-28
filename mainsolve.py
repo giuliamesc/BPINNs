@@ -112,7 +112,7 @@ if(par.method == "SVGD"):
 elif(par.method == "HMC"):
     # Initialize HMC
     alg = HMC_MCMC(bayes_nn, batch_loader, datasets_class,
-                par.param_method, par.param["random_seed"])
+                par.param_method, par.param["random_seed"], par.utils["debug_flag"])
 else:
     raise Exception("Method not found")
 
@@ -156,25 +156,17 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
 print("Done")
 
 # %% Plotting
-from plotter2 import load_losses, plot_losses, plot_result2
+from plotter2 import load_losses, plot_losses, plot_result2, plot_all_result2
 
 print("--------------------------------------------")
 print("Plotting the losses...")
 losses = load_losses(path_result)
 plot_losses(path_plot, losses)
 print("Plotting the results...")
-# plot_result(par.n_out_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plot)
 plot_result2(path_plot, datasets_class, functions, par.n_out_sol, par.n_out_par)
-
-print("Plot all the NNs...")
-if(par.n_input == 1):
-    inputs, u, f = datasets_class.get_dom_data()
-    u_NN, f_NN = bayes_nn.predict(inputs)
-    x = inputs[:,0]
-    plot_all_result(x, u, f, u_NN, f_NN, datasets_class,
-                    par.n_input, par.n_out_par, par.method, path_plot)
-else:
-    print("Unable to plot all the NNs in 1D up to now")
+inputs, u_true, f_true = datasets_class.get_dom_data()
+u_NN, f_NN = bayes_nn.predict(inputs)
+plot_all_result2(path_plot, datasets_class, u_NN, f_NN, par.n_out_sol, par.n_out_par, par.method)
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
     print("Plotting log betas")
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)

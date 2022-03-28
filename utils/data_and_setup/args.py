@@ -65,6 +65,7 @@ class Parser(argparse.ArgumentParser):
         self.add_argument('--dt_noise_HMC', type=float, help="dt_noise: step size in HMC for log betas")
 
         # utilities
+        self.add_argument('--debug_flag', type=bool, help='prints loss value, h, h0, h1 at each iteration')
         self.add_argument('--verbose', type=bool, help='print all the info at every epoch')
         self.add_argument('--save_flag', type=bool, help='flag for save results in a new folder (or send it in "trash" folder)')
 

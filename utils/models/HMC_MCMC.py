@@ -15,7 +15,7 @@ class HMC_MCMC:
     Hamiltonian Monte Carlo (MCMC)
     """
 
-    def __init__(self, bayes_nn, train_loader, datasets_class, hmc_param, random_seed):
+    def __init__(self, bayes_nn, train_loader, datasets_class, hmc_param, random_seed, debug_flag):
         """!
         @param bayes_nn an object of type MCMC_BayesNN that collects the neural network and all the methods to compute the posterior
         @param train_loader the data loader in minibatch for the collocation points
@@ -43,6 +43,8 @@ class HMC_MCMC:
         self.dt_noise = hmc_param["dt_noise_HMC"]
 
         self.constant_M = 1.0
+        
+        self.debug_flag = debug_flag
 
         ## Set the random seed
         np.random.seed(random_seed)
@@ -271,9 +273,7 @@ class HMC_MCMC:
             ## we can have some instabilities and ending up with a NaN, see after)
             alpha,h = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
 
-
-            debug_flag = True
-            if(debug_flag and iteration>0):
+            if(self.debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
                 fin_epochtime = time.time()-epochtime
                 print("Time for this iteration = ", fin_epochtime)
@@ -309,7 +309,7 @@ class HMC_MCMC:
 
                 # store the new theta
                 thetas.append(theta)
-                if(debug_flag and iteration>0):
+                if(self.debug_flag and iteration>0):
                     print("Accept")
                     print("***********END DEBUG**************")
 
@@ -355,7 +355,7 @@ class HMC_MCMC:
 
                 ## store theta0
                 thetas.append(theta0.copy())
-                if(debug_flag and iteration>0):
+                if(self.debug_flag and iteration>0):
                     print("Reject")
                     print("***********END DEBUG**************")
 
