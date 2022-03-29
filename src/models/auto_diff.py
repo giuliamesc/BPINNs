@@ -103,20 +103,23 @@ class laplace(pde_constraint):
 
         super().__init__(par.n_input, par.n_out_sol, par.n_out_par)
         
-    def compute_pde_residual(self, x, u, f):
+    @tf.function
+    def compute_pde_residual(self, x, forward):
         op = operators()
         with tf.GradientTape(persistent=True) as tape:
+            u, f = forward(x)
             tape.watch(x)
             lap = op.laplacian_vector(tape, u, x, self.n_out_sol)
         return lap + f
 
-    def compute_pde_losses(self, x, u, f):
+    def compute_pde_losses(self, x, forward):
         """
         - Laplacian(u) = f -> f + Laplacian(u) = 0
         u shape: (n_sample x n_out_sol)
         f shape: (n_sample x n_out_par)    
         """
-        residual = compute_pde_residual(x, u, f)
+        residual = self.compute_pde_residual(x, forward)
+        ## AGGIUNGERE CALCOLO LOSS??
         return residual
 
 

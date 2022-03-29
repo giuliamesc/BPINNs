@@ -11,10 +11,10 @@ import numpy as np
 
 # %% Import Local Classes
 
-sys.path.append("utils")
-sys.path.append("utils\data_and_setup")
-sys.path.append("utils\models")
-sys.path.append("utils\postprocessing")
+sys.path.append("src")
+sys.path.append("src\data_and_setup")
+sys.path.append("src\models")
+sys.path.append("src\postprocessing")
 
 from args import args   #command-line arg parser
 from param import param #parameter class
@@ -24,9 +24,9 @@ from helpers import create_directories
 from dataset_creation import dataset_class
 from dataloader import dataloader
 
-from BayesNN import SVGD_BayesNN
 from BayesNN import MCMC_BayesNN
-from pde_constraint import laplace
+# from BayesNN import SVGD_BayesNN # WORK IN PROGRESS
+from auto_diff import laplace
 
 from SVGD import SVGD
 from HMC_MCMC import HMC_MCMC
@@ -85,7 +85,7 @@ print("--------------------------------------------")
 print("Building the PDE constraint...")
 # Build the pde constraint class that implements the computation of pde residual for each collocation point
 if(par.pde == "laplace"):
-    pde_constr = laplace(par)
+    pinn_loss = laplace(par)
 else:
     raise Exception("No other pde implemented")
 
@@ -96,12 +96,12 @@ if(par.method == "SVGD"):
         bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
                                 par.n_input, par.architecture,
                                 par.n_out_sol, par.n_out_par, par.param,
-                                pde_constr, par.param["random_seed"])
+                                pinn_loss, par.param["random_seed"])
 else:
     if(par.pde == "laplace"):
         bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
                                 par.n_out_sol, par.n_out_par, par.param,
-                                pde_constr, par.param["random_seed"], par.param_method["M_HMC"])
+                                pinn_loss, par.param["random_seed"], par.param_method["M_HMC"])
 
 print("Building", par.method ,"algorithm...")
 
