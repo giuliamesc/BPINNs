@@ -308,6 +308,7 @@ class MCMC_BayesNN(BayesNN):
         """
         # x,y,z inputs
         x = inputs[:,0:1]
+        print(x.shape)
         if(self.n_input>1):
             y = inputs[:,1:2]
             if(self.n_input == 3):
@@ -333,7 +334,8 @@ class MCMC_BayesNN(BayesNN):
                 u_y = t1.gradient(u, y) #dT/dy
                 if(self.n_input == 3):
                     u_z = t1.gradient(u, z)   #dT/dz
-
+            print(u.shape)
+            print(u_x.shape)
             #breakpoint()
             # store the gradients
             u_gradients = []
@@ -348,7 +350,7 @@ class MCMC_BayesNN(BayesNN):
 
 
 
-
+        print(f.shape)
         del t1
         return u_gradients,f
 

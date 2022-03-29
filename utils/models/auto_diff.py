@@ -1,5 +1,82 @@
 import tensorflow as tf
 
+class operators:
+    
+    """
+    Class for differential operators
+    
+    Notations:
+    x is the derivation variable (n_sample x dim_input)
+    d is dim_output
+    s is a scalar function (n_sample x 1)
+    v is a vector function (n_sample x dim_output)
+    A is a tensor function (n_sample x dim_output x dim_output)
+    """
+    
+    @staticmethod
+    def gradient_scalar(tape, s, x):
+        """
+        input  shape: (n_sample x 1)
+        output shape: (n_sample x 1 x dim_input)
+        """
+        return tf.expand_dims(tape.gradient(s, x), axis=1)
+    @staticmethod
+    def gradient_vector(tape, v, x, d):
+        """
+        input  shape: (n_sample x dim_output)
+        output shape: (n_sample x dim_output x dim_input)
+        """
+        return tf.stack([tape.gradient(v[:,i], x) for i in range(d)], axis = -2)
+    
+    @staticmethod
+    def derivate_scalar(tape, s, x):
+        """
+        input  shape: (n_sample x 1)
+        output shape: (n_sample x 1)
+        """
+        return tf.squeeze(operators.gradient_scalar(tape, s, x), axis =-1)
+    @staticmethod
+    def derivate_vector(tape, s, x, d):
+        """
+        input  shape: (n_sample x dim_output)
+        output shape: (n_sample x dim_output)
+        """
+        return tf.squeeze(operators.gradient_vector(tape, s, x, d), axis =-1)
+
+    @staticmethod
+    def divergence_vector(tape, v, x, d):
+        """
+        input  shape: (n_sample x dim_output) or
+        input  shape: (n_sample x 1 x dim_input)
+        output shape: (n_sample x 1)
+        """
+        if len(v.shape) == 3: v = tf.squeeze(v, axis = -2)
+        return tf.expand_dims(tf.linalg.trace(operators.gradient_vector(tape, v, x, d)), axis = -1)
+    @staticmethod
+    def divergence_tensor(tape, A, x, d):
+        """
+        input  shape: (n_sample x dim_output x dim_input)
+        output shape: (n_sample x dim_output)
+        """
+        divergences = [operators.divergence_vector(tape, A[:,i,:], x, d) for i in range(d)]
+        return tf.squeeze(tf.stack(divergences, axis = -1), axis = -2)
+
+    @staticmethod
+    def laplacian_scalar(tape, s, x, d):
+        """
+        input  shape: (n_sample x 1)
+        output shape: (n_sample x 1)
+        """
+        return operators.divergence_vector(tape, operators.gradient_scalar(tape, s, x), x, d)
+    @staticmethod
+    def laplacian_vector(tape, v, x, d):
+        """
+        input  shape: (n_sample x dim_output)
+        output shape: (n_sample x dim_output)
+        """
+        return operators.divergence_tensor(tape, operators.gradient_vector(tape, v, x, d), x, d)
+
+
 class pde_constraint:
     """
     Class for the pde_constraint
@@ -20,75 +97,70 @@ class pde_constraint:
         """compute the pde losses, need to be override in child classes"""
         return 0.
     
-class operators:
-    """
-    Class for differential operators
-    
-    Notations
-    d is the dimension of the space
-    x is the derivation variable (n_sample x 1)
-    s is a scalar function (n_sample x 1)
-    v is a vector function (n_sample x d)
-    A is a tensor function (n_sample x d x d)
-    """
-    @staticmethod
-    def gradient_scalar(tape, s, x):
-        return tape.gradient(s, x)
-
-    @staticmethod
-    def gradient_vector(tape, v, x, d):
-        # d = int(tf.shape(x)[-1])
-        return  tf.stack([tape.gradient(v[:,i], x) for i in range(d)], axis = -2)
-
-    @staticmethod
-    def divergence_vector(tape, v, x, d):
-        # d = int(tf.shape(x)[-1])
-        # return sum([tape.gradient(v[:,i], x)[:,i] for i in range(d)])
-        return tf.linalg.trace(tens_style.gradient_vector(tape, v, x, d))
-
-    @staticmethod
-    def divergence_tensor(tape, A, x, d):
-        # d = int(tf.shape(x)[-1])
-        return tf.stack([tens_style.divergence_vector(tape, A[:,i,:], x, d) for i in range(d)], axis = -1)
-
-    @staticmethod
-    def laplacian_scalar(tape, s, x, d):
-        return operators.divergence_vector(tape, tape.gradient(s, x), x, d)
-
-    @staticmethod
-    def laplacian_vector(tape, v, x, d):
-        return operators.divergence_tensor(tape, tens_style.gradient_vector(tape, v, x, d), x, d)
-
-    
 
 class laplace(pde_constraint):
     def __init__(self, par):
 
         super().__init__(par.n_input, par.n_out_sol, par.n_out_par)
+        
+    def compute_pde_residual(self, x, u, f):
+        op = operators()
+        with tf.GradientTape(persistent=True) as tape:
+            tape.watch(x)
+            lap = op.laplacian_vector(tape, u, x, self.n_out_sol)
+        return lap + f
 
-    def compute_pde_losses(self, u_gr_2, f):
+    def compute_pde_losses(self, x, u, f):
         """
         - Laplacian(u) = f -> f + Laplacian(u) = 0
+        u shape: (n_sample x n_out_sol)
+        f shape: (n_sample x n_out_par)    
         """
-        # compute the loss 1: residual of the PDE
-
-        loss_1 = tf.expand_dims(tf.reduce_sum(f, axis=-1),axis=-1)
-
-        for u_gr_2_comp in u_gr_2:
-            loss_1 += u_gr_2_comp
-        
-        return loss_1
+        residual = compute_pde_residual(x, u, f)
+        return residual
 
 
 if __name__ == "__main__":
-    w1 = tf.Variable(tf.random.normal((3, 2)), name='w1')
-    b1 = tf.Variable(tf.random.normal((2)), name='b1')
-    w2 = tf.Variable(tf.random.normal((2, 2)), name='w2')
-    b2 = tf.Variable(tf.random.normal((2)), name='b2')
-    x = [[1., 2., 3.]]
+    ns = 4
+    di = 3
+    do = 1
+    x  = tf.sort(tf.Variable(tf.random.normal((ns, di))), axis=0)
 
+    op = operators()
     with tf.GradientTape(persistent=True) as tape:
-        y1 = x @ w + b
-        y2 = x @ w + b
-        loss = tf.reduce_mean(y2**2)
-    print(y)
+        tape.watch(x)
+        us = tf.sin(x[:,0:1])
+        uv = tf.stack([us[:,0]]*do, axis = -1)
+        ut = tf.stack([uv]*di, axis = -1)
+        
+        us_x = op.gradient_scalar(tape, us, x)
+        uv_x = op.gradient_vector(tape, uv, x, do)
+        
+        if di == 1:
+            us_d = op.derivate_scalar(tape, us, x)
+            uv_d = op.derivate_vector(tape, uv, x, do)
+        
+        print("us:   ", us.shape)
+        print("us_x: ", us_x.shape)
+        if di == 1: 
+            print("us_d: ", us_d.shape)
+        
+        
+        print("uv:   ", uv.shape)
+        print("uv_x: ", uv_x.shape)
+        if di == 1: 
+            print("uv_d: ", uv_d.shape)
+        
+        
+        print("div_v:", op.divergence_vector(tape,uv,x,do).shape)
+        print("div_v:", op.divergence_vector(tape,us_x,x,do).shape)
+        
+        print("div_A:", op.divergence_tensor(tape,ut,x,do).shape)
+        
+        print("Lap_s:", op.laplacian_scalar(tape, us, x, do).shape)
+        print("Lap_v:", op.laplacian_vector(tape, uv, x, do).shape)
+        
+
+
+    
+    

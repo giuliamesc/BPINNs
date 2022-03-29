@@ -81,7 +81,7 @@ def create_directories(par):
         os.makedirs(path_weights)
     else:
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
-        path_result = os.path.join(case_name,"results", "trash")
+        path_result = os.path.join(case_name, "trash")
         try: os.makedirs(path_result)
         except: pass
         path_plot = os.path.join(path_result, "plot")
