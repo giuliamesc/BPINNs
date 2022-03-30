@@ -59,15 +59,14 @@ def plot_1D(x, func, title, label = ("",""), fit = None):
     plt.title(title)
 
 
-def plot_all_result2(path_plot, datasets_class, u_NN, f_NN, n_out_sol, n_out_par, method):
+def plot_all_result2(path_plot, datasets_class, functions_all, n_out_sol, n_out_par, method):
     inputs, u_true, f_true = datasets_class.get_dom_data()
     u_points, u_values, _  = datasets_class.get_exact_data_with_noise()
 
-    u = (u_true, u_NN)
+    u = (u_true, functions_all['u_NN'])
     u_fit = (u_points, u_values)
-    f = (f_true, f_NN)
+    f = (f_true, functions_all['f_NN'])
     plt.figure()
-
 
     plot_1Dall(inputs, u, method, label = ('x','u'),  fit = u_fit)
     save_plot(path_plot, 'u_all.png')

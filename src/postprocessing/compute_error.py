@@ -100,7 +100,13 @@ class compute_error:
                      'u_std': u_std,
                      'f_std': f_std
             }
-
+        
+        uu_NN, ff_NN = self.bayes_nn.predict(inputs)
+        
+        functions_all = {'u_NN': uu_NN,
+                         'f_NN': ff_NN
+                        }
+        
         errors = {"error_u":error_u,
                         "error_f":error_f,
                         "relative_error_u":relative_error_u,
@@ -111,4 +117,4 @@ class compute_error:
                         "uq_f_max":uq_f_max
                     }
 
-        return  functions, errors
+        return  functions, functions_all, errors
