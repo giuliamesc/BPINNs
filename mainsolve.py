@@ -32,7 +32,7 @@ from SVGD import SVGD
 from HMC_MCMC import HMC_MCMC
 
 from compute_error import compute_error
-from plotter import plot_result, plot_log_betas, plot_all_result
+from plotter_old import plot_log_betas
 
 # %% Creating Parameters
 
@@ -133,7 +133,7 @@ print("Computing errors...")
 # create the class to compute results and error
 c_e = compute_error(par.n_out_sol, par.n_out_par, bayes_nn, datasets_class, path_result)
 # compute errors and return mean and std for both outputs
-functions, functions_all, errors = c_e.error()
+functions_confidence, functions_nn_samples, errors = c_e.error()
 print("Done")
 
 # %% Saving
@@ -156,16 +156,17 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
 print("Done")
 
 # %% Plotting
-from plotter2 import load_losses, plot_losses, plot_result2, plot_all_result2
+from plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
 
 print("--------------------------------------------")
 print("Plotting the losses...")
 losses = load_losses(path_result)
 plot_losses(path_plot, losses)
+
 print("Plotting the results...")
-plot_result2(path_plot, datasets_class, functions, par.n_out_sol, par.n_out_par)
-inputs, u_true, f_true = datasets_class.get_dom_data()
-plot_all_result2(path_plot, datasets_class, functions_all, par.n_out_sol, par.n_out_par, par.method)
+plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
+plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
+
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
     print("Plotting log betas")
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)

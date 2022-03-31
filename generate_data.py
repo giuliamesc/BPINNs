@@ -107,7 +107,7 @@ class AnalyticalData:
         plt.figure()
         if self.dimension == 1:
             var_dim = "(x)"
-            plt.plot(self._load('x'),var,'b')
+            plt.scatter(self._load('x'), var, c = 'b', s = 0.1)
         elif self.dimension == 2:
             var_dim = "(x,y)"
             plt.scatter(self._load('x'), self._load('y'), c = var, cmap = 'coolwarm', 

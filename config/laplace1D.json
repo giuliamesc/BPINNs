@@ -9,12 +9,12 @@
 		"prop_exact":0.01,
 		"prop_collocation":1.0,
 		"is_uniform_exact":"False",
-		"noise_lv":0.01,
+		"noise_lv":0.02,
 		"batch_size":1000
 	},
 
 	"param":{
-		"param_res":0.01,
+		"param_res":0.1,
 		"param_data":10.0,
 		"param_prior":1.0,
 		"random_seed":42
@@ -46,7 +46,7 @@
 	"utils":{
     "debug_flag": "False",
 		"verbose":"True",
-		"save_flag":"False",
+		"save_flag":"True",
 		"save_every_n_epochs":0
 	}
 }
