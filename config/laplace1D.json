@@ -9,7 +9,7 @@
 		"prop_exact":0.01,
 		"prop_collocation":1.0,
 		"is_uniform_exact":"False",
-		"noise_lv":0.02,
+		"noise_lv":0.05,
 		"batch_size":1000
 	},
 

@@ -3,10 +3,10 @@ import os
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-tfd = tfp.distributions
+# tfd = tfp.distributions ## CONTROLLARE
 
 from FCN import Net
-from other_trainable_parameters import trainable_param
+from prior_trainable import trainable_param
 
 
 class BayesNN:

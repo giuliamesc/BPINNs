@@ -15,7 +15,7 @@ class AnalyticalData:
         self.solution = analytical_solution[self.test_case]
         self.domain_data = analytical_domain[self.test_case]
         self.dimension = len(self.domain_data["domain"])
-        self.save_folder = 'data'
+        self.save_folder = '../data'
 
         self._creating_loop()
 
@@ -53,7 +53,7 @@ class AnalyticalData:
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
-            x[:,i] = np.linspace(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1], 
+            x[:,i] = np.linspace(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1],
                                  self.domain_data["resolution"])
         if self.dimension == 2:
             x = np.meshgrid(x[:,0],x[:,1])
@@ -69,11 +69,11 @@ class AnalyticalData:
         l_bounds = [i[0] for i in self.domain_data["domain"]]
         u_bounds = [i[1] for i in self.domain_data["domain"]]
         sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
-        
+
         sampler = qmc.Sobol(d=self.dimension, scramble=False)
         sample = sampler.random_base2(m=sobolexp)
         self.grid = qmc.scale(sample, l_bounds, u_bounds).T
-        
+
         names = ["x","y","z"]
         for i in range(self.dimension):
             self._save_data(names[i], self.grid[i])
@@ -100,7 +100,7 @@ class AnalyticalData:
 
     def _load(self,name):
         return np.load(os.path.join(self.save_path, f'{name}.npy'))
-  
+
 # %% Postprocess
     def _plot(self, var_name):
         var = self._load(var_name)
@@ -110,7 +110,7 @@ class AnalyticalData:
             plt.scatter(self._load('x'), var, c = 'b', s = 0.1)
         elif self.dimension == 2:
             var_dim = "(x,y)"
-            plt.scatter(self._load('x'), self._load('y'), c = var, cmap = 'coolwarm', 
+            plt.scatter(self._load('x'), self._load('y'), c = var, cmap = 'coolwarm',
                         vmin = min(var), vmax = max(var))
             plt.colorbar()
         else:

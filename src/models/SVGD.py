@@ -1,19 +1,15 @@
 # module import
-import numpy as np
-import matplotlib.pylab as plt
 import tensorflow as tf
 import tensorflow_probability as tfp
 
 # standard import
 import time
 import math
-import sys
 import os
-import gc
 from tqdm import tqdm
 
 # local import
-from helpers import get_trainable_weights_flatten, memory
+from SVGD_helpers import get_trainable_weights_flatten, memory
 
 ### Stein Variational Gradient Descend
 class SVGD:

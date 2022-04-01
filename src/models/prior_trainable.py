@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow_probability as tfp
+import tensorflow_probability as tfp ## SOLO LA RIGA SOTTO
 tfd = tfp.distributions
 
 class trainable_param:

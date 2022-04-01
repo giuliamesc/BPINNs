@@ -1,0 +1,4 @@
+{
+  "SuppressConfigureTestFrameworkPrompt": "true",
+  "Interpreter": "Workspace|Workspace|.venv"
+}

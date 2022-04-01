@@ -2,24 +2,23 @@
 
 import json
 import os
-import sys
 import time
 import datetime
+import numpy as np
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-import numpy as np
 
 # %% Import Local Classes
 
-sys.path.append("src")
-sys.path.append("src\data_and_setup")
-sys.path.append("src\models")
-sys.path.append("src\postprocessing")
+import sys
+sys.path.append("data_and_setup")
+sys.path.append("models")
+sys.path.append("postprocessing")
 
 from args import args   #command-line arg parser
 from param import param #parameter class
 
-from helpers import create_directories
+from create_directories import create_directories
 
 from dataset_creation import dataset_class
 from dataloader import dataloader
@@ -39,7 +38,7 @@ from plotter_old import plot_log_betas
 verbose = False
 
 # Load the json file with all the parameters
-with open(os.path.join("config",args.config)) as hpFile:
+with open(os.path.join("../config",args.config)) as hpFile:
     hp = json.load(hpFile)
 
 # Create a param object with hp (param from json file) and args (command-line param)
@@ -58,16 +57,13 @@ par.save_parameter(path_result)
 
 print("--------------------------------------------")
 print("Bayesian PINN with", par.method)
-print("Solve the inverse problem of "+str(par.n_input)+ "D " + par.pde)
+print("Solve the inverse problem of " + str(par.n_input) + "D " + par.pde)
 print("Dataset used:", par.experiment["dataset"])
 
 print("--------------------------------------------")
 print("Dataset creation...")
 # Datasets Creation
 datasets_class = dataset_class(par)
-
-# Plot the exact data
-#datasets_class.plot(path_plot)
 
 print("\tNumber of exact data:", datasets_class.n_exact)
 print("\tNumber of collocation data:", datasets_class.n_collocation)
@@ -90,7 +86,7 @@ else:
     raise Exception("No other pde implemented")
 
 print("Initializing the Bayesian PINN...")
-# Initialize the correct Bayesian NN (SVGD_BayesNN for "SVGD" method, MCMC_BayesNN for every other MCMC-like method)
+# Initialize the correct Bayesian NN
 if(par.method == "SVGD"):
     if(par.pde == "laplace"):
         bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
@@ -132,7 +128,7 @@ print("--------------------------------------------")
 print("Computing errors...")
 # create the class to compute results and error
 c_e = compute_error(par.n_out_sol, par.n_out_par, bayes_nn, datasets_class, path_result)
-# compute errors and return mean and std for both outputs
+# compute errors and return outputs
 functions_confidence, functions_nn_samples, errors = c_e.error()
 print("Done")
 

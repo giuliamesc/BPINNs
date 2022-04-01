@@ -1,13 +1,15 @@
-#
 import json
 import os
 
-# local import
-from helpers import string_to_bool
+def string_to_bool(s):
+    """
+    Convert string "True","False" to boolean True and False
+    """
+    if s=="False" or s=="false": return False
+    elif s=="True" or s=="true": return True
+    else: print("no boolean string")
 
-"""
-Class to handle all the parameters
-"""
+
 class param:
     """Initializer"""
     def __init__(self, hp, args):
@@ -47,7 +49,6 @@ class param:
         # check possible errors in parameters
         self._check_parameter()
 
-################################################################################
 
     def _length_additional(self, args_dict):
         """Compute the lenght of additional parameters specified by command-line"""
