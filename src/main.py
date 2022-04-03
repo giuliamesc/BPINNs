@@ -99,7 +99,7 @@ print("Building", par.method ,"algorithm...")
 # Build the method class
 if(par.method == "SVGD"):
     # Initialize SVGD
-    alg = SVGD(bayes_nn, batch_loader, datasets_class, par.param_method)
+    raise Exception("Work in Progress")
 elif(par.method == "HMC"):
     # Initialize HMC
     alg = HMC_MCMC(bayes_nn, batch_loader, datasets_class,
