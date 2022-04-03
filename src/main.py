@@ -15,7 +15,7 @@ sys.path.append("data_and_setup")
 sys.path.append("models")
 sys.path.append("postprocessing")
 
-from args import args   #command-line arg parser
+from args import Parser   #command-line arg parser
 from param import param #parameter class
 
 from create_directories import create_directories
@@ -35,25 +35,20 @@ from plotter_old import plot_log_betas
 
 # %% Creating Parameters
 
-verbose = False
+# Load a param object from command-line
+args = Parser().parse_args()
 
 # Load the json file with all the parameters
 with open(os.path.join("../config",args.config)) as hpFile:
     hp = json.load(hpFile)
 
-# Create a param object with hp (param from json file) and args (command-line param)
+# Combine a param object with hp (param from json file) and args (command-line param)
 par = param(hp, args)
-
-# Print all the selected parameters
-if (verbose):
-    print("--------------------------------------------")
-    par.print_parameter()
 
 # Build the directories
 path_result, path_plot, path_weights = create_directories(par)
 # Save parameters
 par.save_parameter(path_result)
-
 
 print("--------------------------------------------")
 print("Bayesian PINN with", par.method)
@@ -92,12 +87,12 @@ if(par.method == "SVGD"):
         bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
                                 par.n_input, par.architecture,
                                 par.n_out_sol, par.n_out_par, par.param,
-                                pinn_loss, par.param["random_seed"])
+                                pinn_loss, par.utils["random_seed"])
 else:
     if(par.pde == "laplace"):
         bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
                                 par.n_out_sol, par.n_out_par, par.param,
-                                pinn_loss, par.param["random_seed"], par.param_method["M_HMC"])
+                                pinn_loss, par.utils["random_seed"], par.param_method["M_HMC"])
 
 print("Building", par.method ,"algorithm...")
 
@@ -108,7 +103,7 @@ if(par.method == "SVGD"):
 elif(par.method == "HMC"):
     # Initialize HMC
     alg = HMC_MCMC(bayes_nn, batch_loader, datasets_class,
-                par.param_method, par.param["random_seed"], par.utils["debug_flag"])
+                par.param_method, par.utils["random_seed"], par.utils["debug_flag"])
 else:
     raise Exception("Method not found")
 

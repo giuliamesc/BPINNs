@@ -1,3 +1,4 @@
+## TO BE DEPRECATED
 import numpy as np
 from matplotlib import pyplot as plt
 import os
@@ -10,7 +11,7 @@ def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plo
     """
     plot mean and 2_std_bounds result
     """
-    if (n_output_par == 1): 
+    if (n_output_par == 1):
 
         # get domain dataset
         inputs,u_true,f_true = datasets_class.get_dom_data()

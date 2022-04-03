@@ -61,7 +61,6 @@ class param:
 
     def _change_string_to_bool(self):
         """Change "True" and "False" string to boolean for each bool parameter """
-        self.experiment["is_uniform_exact"] = string_to_bool(self.experiment["is_uniform_exact"])
         self.sigmas["data_prior_noise_trainable"] = string_to_bool(self.sigmas["data_prior_noise_trainable"])
         self.sigmas["pde_prior_noise_trainable"] = string_to_bool(self.sigmas["pde_prior_noise_trainable"])
         self.utils["verbose"] = string_to_bool(self.utils["verbose"])

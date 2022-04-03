@@ -55,8 +55,8 @@ class Net:
     def forward(self, x):
         """!
         forward pass of the input x
-
-        @param x input"""
+        @param x input
+        """
         return self._features(x)
 
     # return a list of all the matrix W and bias vectors in the network (e.g. shape=(8,))

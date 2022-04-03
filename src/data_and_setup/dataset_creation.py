@@ -41,7 +41,7 @@ class dataset_class:
 
         self._flag_dataset_build = False
         self._flag_dataset_noise = False
-        np.random.seed(par.param["random_seed"])
+        np.random.seed(par.utils["random_seed"])
 
         self.n_domain = 0
         self.n_collocation = 0
