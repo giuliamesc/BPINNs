@@ -157,5 +157,9 @@ analytical_solution = {
     }
 
 if __name__ == "__main__":
+    if os.getcwd()[-3:] != "src":
+        new_dir = os.path.join(os.getcwd(),"src")
+        os.chdir(new_dir)
+        print(f"Working Directory moved to: {new_dir}")
     AnalyticalData("laplace1D_cos", do_plots = True, test_only = True, save_plot = True)
     AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)

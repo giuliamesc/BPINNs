@@ -7,8 +7,8 @@
 	"experiment":{
 		"dataset":"laplace1D_cos",
 		"prop_collocation":1.0,
-		"prop_exact":0.01,
-		"noise_lv":0.05,
+		"prop_exact":0.1,
+		"noise_lv":0.1,
 		"batch_size":1000
 	},
 
@@ -28,7 +28,7 @@
 	"HMC":{
 		"N_HMC": 100,
 		"M_HMC": 70,
-		"L_HMC": 200,
+		"L_HMC": 20,
 		"dt_HMC":4e-5,
 		"dt_noise_HMC":3e-4
 	},

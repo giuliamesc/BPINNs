@@ -6,6 +6,11 @@ import time
 import datetime
 import numpy as np
 
+# Move into src if necessary
+if os.getcwd()[-3:] != "src":
+    new_dir = os.path.join(os.getcwd(),"src")
+    os.chdir(new_dir)
+    print(f"Working Directory moved to: {new_dir}")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # %% Import Local Classes
@@ -15,21 +20,25 @@ sys.path.append("data_and_setup")
 sys.path.append("models")
 sys.path.append("postprocessing")
 
-from args import Parser   #command-line arg parser
+# Setup
+from args import Parser #command-line arg parser
 from param import param #parameter class
-
 from create_directories import create_directories
 
+# Dataset Ceìreation
 from dataset_creation import dataset_class
 from dataloader import dataloader
 
+# Model
 from BayesNN import MCMC_BayesNN
 # from BayesNN import SVGD_BayesNN # WORK IN PROGRESS
 from auto_diff import laplace
 
+# Training
 from SVGD import SVGD
 from HMC_MCMC import HMC_MCMC
 
+# Postprocessing
 from compute_error import compute_error
 from plotter_old import plot_log_betas
 
