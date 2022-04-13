@@ -3,7 +3,7 @@ import argparse
 """
 Class to handle all the command-line arguments:
 the first [--method] is mandatory (can be SVGD or HMC) and specify the BayesianNN method to use;
-the second [--config] is a json file (in the subfolder "config") where we can find all the parameters (default is "default.json")
+the second [--config] is a json file (in the subfolder "config") where we can find all the parameters (default is "defaul.json")
 
 You can also overspecified all the parameters in the json file here, directly from command-line.
 """
@@ -16,10 +16,10 @@ class Parser(argparse.ArgumentParser):
         															- HMC  (Hamiltonian Monte Carlo)
         															- SVGD (Stein Variational Gradient Descent)""")
 
-        self.add_argument('--config', type=str, default="default.json", help="""name of json file where we can find all the parameters. 
-        																		You have to provide the parameters for at least the method you've selected.
-        																		You can also overwrite some parameters directly from terminal
-        																		""")
+        self.add_argument('--config', type=str, default="default", help="""name of json file where we can find all the parameters. 
+        																	You have to provide the parameters for at least the method you've selected.
+        																	You can also overwrite some parameters directly from terminal
+        																	""")
 
 
         # Architecture

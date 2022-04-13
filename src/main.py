@@ -44,7 +44,7 @@ from postprocessing.plotter import load_losses, plot_losses, plot_confidence, pl
 args = Parser().parse_args()
 
 # Load the json file with all the parameters
-with open(os.path.join("../config",args.config)) as hpFile:
+with open(os.path.join("../config",args.config+".json")) as hpFile:
     hp = json.load(hpFile)
 
 # Combine a param object with hp (param from json file) and args (command-line param)
