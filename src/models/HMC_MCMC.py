@@ -60,20 +60,16 @@ class HMC_MCMC:
         @param collocation points input
         """
         ## compute our prediction on the sparse inputs, collecting our sparse activation times
-        sp_output_times, _ = self.bayes_nn.forward(sp_inputs)
+        sp_output_sol, _ = self.bayes_nn.forward(sp_inputs)
 
         ## compute the log likelihood of exact data (sp_target - sp_output_times) and log prior
-        log_likelihood_total, loss_d_scalar, log_likelihood, log_prior_w = \
-                self.bayes_nn.log_joint(sp_output_times, sp_target)
-
+        loss_data, log_data, log_prior = self.bayes_nn.log_joint(sp_output_sol, sp_target)
         ## compute log likelihood of pde equation and losses for batch collocation points (PDE constraints)
-        log_eq, loss_1_scalar = self.bayes_nn.pde_logloss(inputs)
-
+        loss_pde, log_pde = self.bayes_nn.pde_logloss(inputs)
         ## compute u_theta
-        log_total = log_likelihood_total[0,0] + log_eq[0]
-        u_theta = -log_total
+        u_theta = - log_data - log_pde - log_prior
 
-        return u_theta, log_likelihood, log_prior_w, log_eq, loss_1_scalar, loss_d_scalar
+        return u_theta, log_data, log_prior, log_pde, loss_pde, loss_data
 
     def _h_fun(self,u,r):
         """!
@@ -117,7 +113,7 @@ class HMC_MCMC:
         return alpha, (h0,h1,h)
 
 
-    @tf.function # decorator @tf.function to speed up the computation
+    @tf.function # decorator to speed up the computation
     def _grad_U_theta(self, sp_inputs, sp_target, inputs):
         """!
         Compute gradient of U wrt theta (param of NN and log betas if trainable)
@@ -131,9 +127,7 @@ class HMC_MCMC:
         param = self.bayes_nn.get_trainable_weights()
         ## flag if there are some log_betas (or scalar v) trainable
         flag = self.bayes_nn.log_betas.betas_trainable_flag()
-        if(flag):
-            ## if there are, collect them
-            betas_trainable = self.bayes_nn.log_betas.get_trainable_log_betas()
+        if(flag): betas_trainable = self.bayes_nn.log_betas.get_trainable_log_betas()
 
         ## GradientTape
         with tf.GradientTape(persistent=True) as tape:
@@ -146,7 +140,7 @@ class HMC_MCMC:
             u_theta, log_likelihood, log_prior_w, log_eq, *losses = self._u_fun(sp_inputs, sp_target, inputs)
         ## compute the gradient of NN param (by backpropagation)
         grad_theta = tape.gradient(u_theta, param)
-        grad_theta = grad_theta[0]
+
         ## if flag=True compute also the gradient of every log_beta and append it to grad_theta
         if(flag):
             for log_beta in betas_trainable:
@@ -155,7 +149,7 @@ class HMC_MCMC:
         del tape
         return grad_theta, u_theta, log_likelihood, log_prior_w, log_eq, losses
 
-    def train_all(self, verbosity):
+    def train_all(self):
         """ Train using HMC algorithm """
 
         loss_1 = 1.    # Initialize the losses (only in case we reject the first iteration)
@@ -175,7 +169,7 @@ class HMC_MCMC:
 
         ## Initialize all the "previous step" things we'll need
         theta0 = self.bayes_nn.nnets[0].get_weights().copy()
-        len_theta = len(theta0)
+        len_theta = len(theta0) ## DA VALUTARE
         u_theta0 = 1e+9
         r0 = []
 
@@ -184,8 +178,8 @@ class HMC_MCMC:
         accepted_after_burnin = 0
 
         ## get noisy sparse exact data
-        sp_inputs ,sp_at,sp_v = self.datasets_class.get_exact_data_with_noise()
-        sp_target = sp_at
+        sp_inputs, sp_sol, _ = self.datasets_class.get_exact_data_with_noise()
+        sp_target = sp_sol ### RINOMINARE
 
         ## for every iteration in 1,...,N
         for iteration in tqdm(range(self.N), desc="HMC_MCMC", leave=False):
@@ -200,15 +194,15 @@ class HMC_MCMC:
             ## rr will be a list of the same shape of theta and theta0
             rr = []
             ## for every i in len(theta0)
-            for i in range(len(theta0)): # i = 2*hidden_layer + 2
+            for i, t0 in enumerate(theta0): # i = 2*hidden_layer + 2
                 if i%2==0:
                     ## append a matrix of shape=(theta0[i].shape[0], theta0[i].shape[1]))
                     ## (W matrix of that layer) of Normal(0,1) values
-                    rr.append(np.random.randn(theta0[i].shape[0], theta0[i].shape[1])*np.sqrt(self.constant_M) )
+                    rr.append(np.random.randn(t0.shape[0], t0.shape[1])*np.sqrt(self.constant_M))
                 else:
                     ## append a vector of shape=(theta0[i].shape[0])
                     ## (b bias vector of that layer) of Normal(0,1) values
-                    rr.append(np.random.randn(theta0[i].shape[0],)*np.sqrt(self.constant_M))
+                    rr.append(np.random.randn(t0.shape[0],)*np.sqrt(self.constant_M))
             ## save the rr before we update it
             r0 = rr.copy()
 
@@ -224,9 +218,9 @@ class HMC_MCMC:
                 theta0_log_b = theta_log_b.copy() ## theta0_log_b is just a copy() (previous)
 
             ## for every step in 1,...,L (L = LEAPFROG STEPS)
-            for s in range(self.L):
+            for _ in range(self.L):
                 ## iterate over all the batches of collocation data
-                for batch_idx,inputs in enumerate(self.train_loader):
+                for inputs in self.train_loader:
                     #############################################################
                     #################      Leapfrog step   ######################
                     #############################################################
@@ -320,8 +314,8 @@ class HMC_MCMC:
                     accepted_after_burnin+=1
                     ttt.append(theta)
 
-                loss_1 = losses[0].numpy()
-                loss_d = losses[1].numpy()
+                loss_1 = losses[0]
+                loss_d = losses[1]
 
                 if(accepted_total % max(10,self.N//20) == 0):
                     print(f"\nLoss Collocation:{loss_1 : 1.3e} | Loss Fitting:{loss_d: 1.3e}")

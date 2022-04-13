@@ -1,5 +1,4 @@
 import os
-
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -41,8 +40,7 @@ class BayesNN:
 
         # append an instance of Net object
         self.nnets.append(Net(self.n_input, architecture["n_layers"],
-                              architecture["n_neurons"], self.n_out_sol+ self.n_out_par))
-        # N_vel for u + 1 for f
+                              architecture["n_neurons"], self.n_out_sol + self.n_out_par))
         self.architecture_nn = self.nnets[0].get_dimensions()
 
 
@@ -62,15 +60,14 @@ class BayesNN:
         bool_log_betaR = sigmas["pde_prior_noise_trainable"]
 
         param = {"beta_prior_shape" : self.beta_prior_shape,
-                    "beta_prior_rate" : self.beta_prior_rate,
-                    "beta_pde_shape" : self.beta_pde_shape,
-                    "beta_pde_rate" : self.beta_pde_rate}
+                "beta_prior_rate"   : self.beta_prior_rate,
+                "beta_pde_shape"    : self.beta_pde_shape,
+                "beta_pde_rate"     : self.beta_pde_rate}
 
         # an object of "trainable_param" class that contains:
         # log_betaD (where log_betaD = log(betaD) = log(1/sigma_D^2), and sigma_D standard deviation of sparse data)
         # log_betaR (where log_betaR = log(betaR) = log(1/sigma_R^2), and sigma_R standard deviation of pde residual in collocation points)
-        self.log_betas = trainable_param(bool_log_betaD, bool_log_betaR,
-                                            param, num_neural_networks, random_seed)
+        self.log_betas = trainable_param(bool_log_betaD, bool_log_betaR, param, num_neural_networks, random_seed)
 
         # store the posterior weights
         self.param_res   = parameters["param_res"]   # weights for pde in posterior
@@ -86,50 +83,34 @@ class BayesNN:
         self.prior_logloss = list() # list to store prior log losses
 
 
-    #def __getitem__(self, idx):
-    #    """Get the idx neural networks"""
-    #    return self.nnets[idx]
-
     def forward(self, inputs):
         """!
         forward pass of inputs data through the neural network
         @param inputs inputs points of shape (input_len, input_dim)
         """
-
         # compute the output of NN at the inputs data
         output = self.nnets[0].forward(inputs)
-
         # select solution output
         output_sol = output[:,:self.n_out_sol]
-        if(len(output_sol.shape) == 1):
-            output_sol = tf.expand_dims(output_sol, axis=1)
-
         # select parametric field output
         output_par = output[:,self.n_out_sol:]
-        if(len(output_par.shape) == 1):
-            output_par = tf.expand_dims(output_par, axis=1)
 
         return output_sol, output_par
 
     def get_trainable_weights(self):
         """Get all the trainable weights of the NN in a list"""
-        weights = []
-        weights.append(self.nnets[0].get_parameters())
-        return weights
+        return self.nnets[0].get_parameters()
 
     def get_trainable_weights_flatten(self):
         """Get all the trainable weights of the NN in a flatten vector"""
-        w = []
-        w_0 = []
-        for param in self.nnets[0].get_parameters() :
-            w_0.append(tf.reshape(param,[-1]))
-        w.append(tf.concat(w_0, axis=0))
-
-        return tf.convert_to_tensor(w)
+        w = list()
+        for param in self.nnets[0].get_parameters():
+            w.append(tf.reshape(param,[-1]))
+        return tf.convert_to_tensor(tf.concat(w, axis=0))
 
 
-    # compute the log joint probability = loglikelihood of data + log_prior_w (+ log_prior_log_betaD if trainable)
-    @tf.function    # decorator @tf.function to speed up the computation
+    # compute the log joint probability = log of data + log_prior (+ log_prior_log_betaD if trainable)
+    @tf.function # decorator to speed up the computation
     def log_joint(self, output, target):
         """!
         Log joint probability: log likelihood of sparse exact (noisy) data and prior of weights
@@ -140,50 +121,28 @@ class BayesNN:
         """
         # likelihood of exact data:
         # Normal(output | target, 1 / betaD * I)
-
-        loss_d_scalar = 0.  # MSE of exact data
-        log_likelihood = [] # compute log likelihood of exact data
-        log_likelihood.append(-0.50*tf.math.exp(self.log_betas.log_betaD)*tf.reduce_sum((target[:,0] - output[:,0])**2)
-                                + 0.50 * (tf.size(target[:,0], out_type = tf.dtypes.float32)) * self.log_betas.log_betaD)
-        loss_d_scalar += tf.keras.losses.MSE(output[:,0], target[:,0])
-
-        # divide by the numerosity of target (number of exact)
-        #log_likelihood/= tf.size(target[:,0], out_type = tf.dtypes.float32)
-        # multiply by param_data
-        log_likelihood = tf.convert_to_tensor(log_likelihood)
-        log_likelihood*=self.param_data
+        mse_data = tf.reduce_mean(tf.keras.losses.MSE(output, target))
+        n_d = output.shape[0]
+        log_data = (- 0.5 * n_d * mse_data * tf.math.exp(self.log_betas.log_betaD)
+                    + 0.5 * n_d * self.log_betas.log_betaD)
+        log_data*=self.param_data
 
         # compute log prior of w (t-student)
-        log_prob_prior_w = []
-        log_prob_prior_w_0 = 0.
+        log_prior = 0.
         for param in self.nnets[0].get_parameters():
-            #breakpoint()
-            log_prob_prior_w_0 += (-0.5*(1.)*tf.reduce_sum(param**2) )#+ 0.50*size*1.)
+            log_prior += -0.5*tf.reduce_sum(param**2)
+        log_prior*=self.param_prior
 
-
-            #(tf.reduce_sum( tf.math.log1p( 0.5 / self.w_prior_rate * (param**2) ) ) )
-        #log_prob_prior_w_0 *= -(self.w_prior_shape + 0.5)
-
-        log_prob_prior_w.append(log_prob_prior_w_0)
-        log_prob_prior_w = tf.convert_to_tensor(log_prob_prior_w)
-        # divide by numerosity of neurons ( ~ hidden_layers * n_neurons)
-        #log_prob_prior_w /= tf.dtypes.cast(self.n_layers*self.n_neurons, dtype=tf.float32)
-        # multiply by param_prior
-        log_prob_prior_w*=self.param_prior
-
-        # if log_betaD trainable -> add prior of log_betaD
+        # log prior of a log(inverse gamma)
         if(self.log_betas._bool_log_betaD):
-            # log prior of a log(inverse gamma)
             log_prob_log_betaD = (self.beta_prior_shape-1) * self.log_betas.log_betaD - \
                             self.beta_prior_rate * (tf.math.exp(self.log_betas.log_betaD))
-            log_likelihood+=log_prob_log_betaD
-        # compute the sum of everything (log_likelihood of exact data + log prior w + log prior of log_betaD)
-        log_likelihood_total = log_likelihood + log_prob_prior_w
+            log_data+=log_prob_log_betaD
 
-        return log_likelihood_total, loss_d_scalar, log_likelihood,log_prob_prior_w
+        return tf.cast(mse_data,dtype=tf.float32), tf.cast(log_data,dtype=tf.float32), tf.cast(log_prior,dtype=tf.float32)
 
     # compute the loss and logloss of Physics Constrain (PDE constraint)
-    @tf.function
+    @tf.function # decorator to speed up the computation
     def pde_logloss(self,inputs):
         pass
 
@@ -218,15 +177,13 @@ class MCMC_BayesNN(BayesNN):
         self._log_betaRs = [] ## list to store log betas R
         self.M = M  ## number of samples we want to keep after burn-in period
 
-
     # compute the loss and logloss of Physics Constrain (PDE constraint)
-    @tf.function # decorator @tf.function to speed up the computation
+    @tf.function # decorator to speed up the computation
     def pde_logloss(self,inputs):
         """!
         Compute the loss and logloss of the PDE constraint
         @param inputs tensor of shape (batch_size, n_input)
         """
-
         # compute loss_1 and loss_2 using pde_constraint
         pde_residual = self.pde_constraint.compute_pde_losses(inputs, self.forward)
         mse_residual = tf.reduce_mean(tf.keras.losses.MSE(pde_residual,tf.zeros_like(pde_residual)))
@@ -236,8 +193,8 @@ class MCMC_BayesNN(BayesNN):
         logloss = (- 0.5 * n_r * mse_residual * tf.math.exp(self.log_betas.log_betaR)
                    + 0.5 * n_r * self.log_betas.log_betaR)
 
-        log_loss_total = logloss # sum here all physical losses
-        log_loss_total *= self.param_res # multiply by param_res
+        log_loss_total = logloss 
+        log_loss_total *= self.param_res 
 
         # if log_betaR trainable add his prior (Inv-Gamma)
         if(self.log_betas._bool_log_betaR):
@@ -246,7 +203,7 @@ class MCMC_BayesNN(BayesNN):
             log_prob_log_betaR *= self.param_prior
             log_loss_total += log_prob_log_betaR
 
-        return log_loss_total, mse_residual
+        return tf.cast(mse_residual,dtype=tf.float32), tf.cast(log_loss_total,dtype=tf.float32)
 
 
     # save all the weights

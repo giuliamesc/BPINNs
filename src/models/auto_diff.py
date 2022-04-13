@@ -103,7 +103,6 @@ class laplace(pde_constraint):
 
         super().__init__(par.n_input, par.n_out_sol, par.n_out_par)
         
-    @tf.function
     def compute_pde_residual(self, x, forward):
         op = operators()
         with tf.GradientTape(persistent=True) as tape:

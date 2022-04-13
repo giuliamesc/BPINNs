@@ -120,7 +120,7 @@ print("Done")
 print("--------------------------------------------")
 print('Start training...')
 t0 = time.time()
-rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD = alg.train_all(par.utils["verbose"])
+rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD = alg.train_all()
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))

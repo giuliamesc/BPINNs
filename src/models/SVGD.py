@@ -117,7 +117,7 @@ class SVGD:
 
 
     # backpropagation -> compute the gradients of the parameters of NN and of log_beta for index=i
-    @tf.function()    # decorator @tf.function to speed up the computation
+    @tf.function() # decorator to speed up the computation
     def _compute_backprop_gradients(self, sp_inputs, sp_target, inputs):
         """!
         Compute gradient of theta (for each one of the num_neural_networks NNs)
@@ -231,7 +231,7 @@ class SVGD:
         return par_grad_theta
 
     # Train of the SVGD BPINN #
-    def train_all(self, verbosity):
+    def train_all(self):
         """ Train using SVGD algorithm """
 
         rec_log_betaD = []  # list that collects all the log_betaD during training
