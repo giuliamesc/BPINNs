@@ -1,4 +1,3 @@
-from email.mime import base
 import os
 from datetime import datetime
 
