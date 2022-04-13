@@ -42,13 +42,46 @@ class HMC_MCMC:
         ## Step size for log betas (if trainable)
         self.dt_noise = hmc_param["dt_noise_HMC"]
 
+        ## Utils
+        np.random.seed(random_seed)
         self.constant_M = 1.0
-        
         self.debug_flag = debug_flag
 
-        ## Set the random seed
-        np.random.seed(random_seed)
+    def _h_fun(self,u,r):
+        """!
+        Compute hamilotnian H(U,r) = U + 1/2*(r'*M*r)
+        (Here we consider M = c*Identity, where c is set to 0.1 :
+            H(U,r) = U + 1/2*(||r||^2))
 
+        @param u U(theta)
+        @param r vector r
+        """
+        ## compute the (norm of r)^2
+        r_square = sum([np.sum(rr**2) for rr in r])
+        ## H(U,r) = U + 1/2*(r'*M*r) = U + 1/2*(||r||^2)) since M=0.1*Identity
+        return (u + (1./2.)*r_square/self.constant_M )
+
+    def _alpha_fun(self,uu,rr,u0,r0, iter):
+        """!
+        Compute alpha=acceptance rate. We modify the formula in order to prevent getting stuck in local minimum.
+        First compute h = H(U,r)-H(U0,r0).
+        If this is positive -> we want to reject, so we return an high alpha (max 0.95 and not 1.0 for the previous reason)
+        If this is negative we'll return a  small alpha, using the formula alpha = exp(2*h), with h negative
+
+        @param u actual U
+        @param r actual r
+        @param u0 previous U (U0)
+        @param r0 previous r (r0)
+        """
+        ## compute h
+        h1 = self._h_fun(uu,rr)
+        h0 = self._h_fun(u0,r0)
+        h = h0-h1
+        ## compute alpha as min between alpha_max ans exp(h)
+        alpha = min(0.0, h) #alpha = 1-alpha
+        return alpha, (h0,h1,h)
+
+    @tf.function # decorator to speed up the computation
     def _u_fun(self, sp_inputs, sp_target, inputs):
         """!
         Compute the function U(theta) in HMC algorithm. Return u_theta and
@@ -69,49 +102,19 @@ class HMC_MCMC:
         ## compute u_theta
         u_theta = - log_data - log_pde - log_prior
 
-        return u_theta, log_data, log_prior, log_pde, loss_pde, loss_data
+        losses = {
+            "loss": {
+                "data" : loss_data,
+                "pde"  : loss_pde,
+            },
+            "log" : {
+                "data" : log_data,
+                "pde"  : log_pde,
+                "prior": log_prior
+            }
+        }
 
-    def _h_fun(self,u,r):
-        """!
-        Compute hamilotnian H(U,r) = U + 1/2*(r'*M*r)
-        (Here we consider M = c*Identity, where c is set to 0.1 :
-            H(U,r) = U + 1/2*(||r||^2))
-
-        @param u U(theta)
-        @param r vector r
-        """
-        ## compute the (norm of r)^2
-        r_square = 0.
-        for rr in r:
-            r_square += np.sum(rr**2)
-
-        ## H(U,r) = U + 1/2*(r'*M*r) = U + 1/2*(||r||^2)) since M=0.1*Identity
-        return (u + (1./2.)*r_square/self.constant_M )
-
-    def _alpha_fun(self,uu,rr,u0,r0, iter):
-        """!
-        Compute alpha=acceptance rate. We modify the formula in order to prevent getting stuck in local minimum.
-        First compute h = H(U,r)-H(U0,r0).
-        If this is positive -> we want to reject, so we return an high alpha (max 0.95 and not 1.0 for the previous reason)
-        If this is negative we'll return a  small alpha, using the formula alpha = exp(2*h), with h negative
-
-        @param u actual U
-        @param r actual r
-        @param u0 previous U (U0)
-        @param r0 previous r (r0)
-        """
-        ## compute h
-
-        h1 = self._h_fun(uu,rr)
-        h0 = self._h_fun(u0,r0)
-        h = h0-h1
-
-        ## compute alpha as min between alpha_max ans exp(2h)
-        alpha = min(0.0, tf.keras.backend.get_value(h))
-        #alpha = 1-alpha
-        #print("\nalpha",alpha,"\nexp_alpha",np.exp(alpha),"\nh",h,"\nh1",h1,"\nh0",h0)
-        return alpha, (h0,h1,h)
-
+        return u_theta, losses
 
     @tf.function # decorator to speed up the computation
     def _grad_U_theta(self, sp_inputs, sp_target, inputs):
@@ -137,7 +140,7 @@ class HMC_MCMC:
                 ## if flag=True watch also log_betas trainable
                 tape.watch(betas_trainable)
             ## Compute U(theta) calling the u_fun method
-            u_theta, log_likelihood, log_prior_w, log_eq, *losses = self._u_fun(sp_inputs, sp_target, inputs)
+            u_theta, losses = self._u_fun(sp_inputs, sp_target, inputs)
         ## compute the gradient of NN param (by backpropagation)
         grad_theta = tape.gradient(u_theta, param)
 
@@ -147,7 +150,7 @@ class HMC_MCMC:
                 grad_theta.append( tape.gradient(u_theta, log_beta) )
         ## delete the tape
         del tape
-        return grad_theta, u_theta, log_likelihood, log_prior_w, log_eq, losses
+        return grad_theta, u_theta, losses
 
     def train_all(self):
         """ Train using HMC algorithm """
@@ -221,13 +224,9 @@ class HMC_MCMC:
             for _ in range(self.L):
                 ## iterate over all the batches of collocation data
                 for inputs in self.train_loader:
-                    #############################################################
-                    #################      Leapfrog step   ######################
-                    #############################################################
 
                     ## backpropagation using method grad_U_theta
-                    grad_theta, u_theta, log_likelihood, log_prior_w, log_eq, losses = \
-                        self._grad_U_theta(sp_inputs, sp_target, inputs)
+                    grad_theta, u_theta, losses = self._grad_U_theta(sp_inputs, sp_target, inputs)
 
                     ## update rr = rr - (self.dt/2)*grad_theta
                     rr = list_update(rr, grad_theta, -self.dt/2)
@@ -246,8 +245,7 @@ class HMC_MCMC:
                         self.bayes_nn.log_betas.log_betas_update(theta_log_b)
 
                     ## backpropagation using method grad_U_theta (now with the new theta)
-                    grad_theta, u_theta, log_likelihood, log_prior_w, log_eq, losses = \
-                        self._grad_U_theta(sp_inputs, sp_target, inputs)
+                    grad_theta, u_theta, losses = self._grad_U_theta(sp_inputs, sp_target, inputs)
 
                     ## update rr = rr - (dt/2)*grad_theta
                     rr = list_update(rr, grad_theta, -self.dt/2)
@@ -256,16 +254,16 @@ class HMC_MCMC:
                         rr_log_b = list_update(rr_log_b, grad_theta[len_theta:], -self.dt_noise/2)
 
                     ## save all the three posterior components
-                    self.bayes_nn.data_logloss.append(log_likelihood)
-                    self.bayes_nn.prior_logloss.append(log_prior_w)
-                    self.bayes_nn.res_logloss.append(log_eq)
+                    self.bayes_nn.data_logloss.append(losses["log"]["data"])
+                    self.bayes_nn.res_logloss.append(losses["log"]["pde"])
+                    self.bayes_nn.prior_logloss.append(losses["log"]["prior"])
 
             ## accept vs reject step
             ## sample p from a Uniform(0,1)
             p = np.log(np.random.random())
             ## compute alpha prob using alpha_fun (since now alpha is 0.95 at most,
             ## we can have some instabilities and ending up with a NaN, see after)
-            alpha,h = self._alpha_fun(u_theta,rr,u_theta0,r0, iteration)
+            alpha, h = self._alpha_fun(u_theta, rr, u_theta0, r0, iteration)
 
             if(self.debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
@@ -314,8 +312,8 @@ class HMC_MCMC:
                     accepted_after_burnin+=1
                     ttt.append(theta)
 
-                loss_1 = losses[0]
-                loss_d = losses[1]
+                loss_1 = losses["loss"]["pde"]
+                loss_d = losses["loss"]["data"]
 
                 if(accepted_total % max(10,self.N//20) == 0):
                     print(f"\nLoss Collocation:{loss_1 : 1.3e} | Loss Fitting:{loss_d: 1.3e}")
@@ -383,4 +381,4 @@ class HMC_MCMC:
         if(self.bayes_nn.log_betas._bool_log_betaD):
             self.bayes_nn._log_betaRs = log_betaRs[-self.M:]
 
-        return rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD
+        return LOSS, LOSSD, LOSS1, rec_log_betaD, rec_log_betaR

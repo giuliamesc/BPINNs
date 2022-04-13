@@ -120,7 +120,7 @@ print("Done")
 print("--------------------------------------------")
 print('Start training...')
 t0 = time.time()
-rec_log_betaD, rec_log_betaR, LOSS,LOSS1,LOSSD = alg.train_all()
+loss_total, loss_data, loss_pde, rec_log_betaD, rec_log_betaR = alg.train_all()
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
@@ -128,7 +128,7 @@ print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 print("--------------------------------------------")
 print("Computing errors...")
 # create the class to compute results and error
-c_e = compute_error(par.n_out_sol, par.n_out_par, bayes_nn, datasets_class, path_result)
+c_e = compute_error(bayes_nn, datasets_class, path_result)
 # compute errors and return outputs
 functions_confidence, functions_nn_samples, errors = c_e.error()
 print("Done")
@@ -140,9 +140,9 @@ print("Saving networks weights...")
 bayes_nn.save_networks(path_weights)
 
 print("Save losses...")
-np.savetxt(os.path.join(path_result,"Loss.csv" ),LOSS)
-np.savetxt(os.path.join(path_result,"Collocation.csv"),LOSS1)
-np.savetxt(os.path.join(path_result,"Fitting.csv"),LOSSD)
+np.savetxt(os.path.join(path_result,"Loss.csv" ), loss_total)
+np.savetxt(os.path.join(path_result,"Collocation.csv"), loss_pde)
+np.savetxt(os.path.join(path_result,"Fitting.csv"), loss_data)
 
 if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
     print("Save log betass...")

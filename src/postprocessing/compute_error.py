@@ -7,7 +7,7 @@ class compute_error:
     Useful class to compute errors and uncertainty quantification
     """
 
-    def __init__(self, n_out_sol, n_out_par, bayes_nn, datasets_class, path_result):
+    def __init__(self, bayes_nn, datasets_class, path_result):
         """!
         Constructor
 
@@ -17,8 +17,6 @@ class compute_error:
         @param path_result where we are goint to save all the error/UQ results
         """
 
-        self.n_out_sol = n_out_sol
-        self.n_out_par = n_out_par
         ## Bayesian neural network
         self.bayes_nn = bayes_nn
         ## Datasets
