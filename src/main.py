@@ -15,32 +15,27 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # %% Import Local Classes
 
-import sys
-sys.path.append("data_and_setup")
-sys.path.append("models")
-sys.path.append("postprocessing")
-
 # Setup
-from args import Parser #command-line arg parser
-from param import param #parameter class
-from create_directories import create_directories
+from data_and_setup.args import Parser #command-line arg parser
+from data_and_setup.param import param #parameter class
+from data_and_setup.create_directories import create_directories
 
 # Dataset Ceìreation
-from dataset_creation import dataset_class
-from dataloader import dataloader
+from data_and_setup.dataset_creation import dataset_class
+from data_and_setup.dataloader import dataloader
 
 # Model
-from BayesNN import MCMC_BayesNN
+from models.BayesNN import MCMC_BayesNN
 # from BayesNN import SVGD_BayesNN # WORK IN PROGRESS
-from auto_diff import laplace
+from models.auto_diff import laplace
 
 # Training
-from SVGD import SVGD
-from HMC_MCMC import HMC_MCMC
+from models.SVGD import SVGD
+from models.HMC_MCMC import HMC_MCMC
 
 # Postprocessing
-from compute_error import compute_error
-from plotter_old import plot_log_betas
+from postprocessing.compute_error import compute_error
+from postprocessing.plotter_old import plot_log_betas
 
 # %% Creating Parameters
 
@@ -156,7 +151,7 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
 print("Done")
 
 # %% Plotting
-from plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
+from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
 
 print("--------------------------------------------")
 print("Plotting the losses...")
