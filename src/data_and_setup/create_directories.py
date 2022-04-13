@@ -1,5 +1,11 @@
+from email.mime import base
 import os
 from datetime import datetime
+
+def create_single_dir(base_path, last_path):
+    try: os.makedirs(base_path)
+    except: pass
+    return os.path.join(base_path, last_path)
 
 def create_directories(par):
     """!
@@ -9,35 +15,21 @@ def create_directories(par):
     """
     save_flag = par.utils["save_flag"]
     n_input = par.n_input
-    dataset_name = par.experiment["dataset"]
     pde_type = par.pde
     method_name = par.method
 
     case_name = str(n_input)+"D-"+pde_type
+    path_case = os.path.join("../results",case_name)
 
     if(save_flag):
         ## if save_flag = True create new directories using datetime.now()
         now = datetime.now()
-        path = method_name + "_" + f"{now.strftime('%Y.%m.%d-%H.%M.%S')}"
-        ## path result
-        path_result = os.path.join("../results",os.path.join(case_name, path))
-        os.makedirs(path_result)
-        ## path_plot
-        path_plot = os.path.join(path_result, "plot")
-        os.makedirs(path_plot)
-        ## path_weights
-        path_weights = os.path.join(path_result, "weights")
-        os.makedirs(path_weights)
+        path_test = method_name + "_" + f"{now.strftime('%Y.%m.%d-%H.%M.%S')}"
+        path_result = create_single_dir(path_case, path_test)
     else:
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
-        path_result = os.path.join(case_name, "trash")
-        try: os.makedirs(path_result)
-        except: pass
-        path_plot = os.path.join(path_result, "plot")
-        try: os.makedirs(path_plot)
-        except: pass
-        path_weights = os.path.join(path_result, "weights")
-        try: os.makedirs(path_weights)
-        except: pass
+        path_result = create_single_dir(path_case,"trash")
+    path_plot    = create_single_dir(path_result, "plot")
+    path_weights = create_single_dir(path_result, "weights")
 
     return path_result, path_plot, path_weights

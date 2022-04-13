@@ -163,3 +163,4 @@ if __name__ == "__main__":
         print(f"Working Directory moved to: {new_dir}")
     AnalyticalData("laplace1D_cos", do_plots = True, test_only = True, save_plot = True)
     AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)
+    plt.show(block=True)

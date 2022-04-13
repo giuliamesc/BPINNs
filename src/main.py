@@ -36,7 +36,7 @@ from models.HMC_MCMC import HMC_MCMC
 # Postprocessing
 from postprocessing.compute_error import compute_error
 from postprocessing.plotter_old import plot_log_betas
-from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
+from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
 
 # %% Creating Parameters
 
@@ -167,5 +167,6 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     print("Plotting log betas")
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
+show_plot()
 print("End")
 print("--------------------------------------------")

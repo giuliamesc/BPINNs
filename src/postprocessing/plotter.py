@@ -90,13 +90,17 @@ def plot_1Dall(x, func, method, label = ("",""), fit = None):
     if method == "SVGD":
         plt.title('Output ' + label[1] + ' of all networks')
     elif method == "HMC":
-        plt.title('Samples from ' + label[1] +  ' reconstructed distribution')
+        plt.title('Samples from ' + label[1] + ' reconstructed distribution')
 
 def save_plot(path_plot, title):
     path = os.path.join(path_plot, title)
-    plt.savefig(path,bbox_inches= 'tight')
+    plt.savefig(path, bbox_inches = 'tight')
     
+def show_plot():
+    plt.show(block = True)
+
 if __name__ == "__main__":
     my_path = '../../1D-laplace/trash'
     losses = load_losses(my_path)
     plot_losses(my_path, losses)
+    show_plot()
