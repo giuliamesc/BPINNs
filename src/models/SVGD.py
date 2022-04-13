@@ -8,9 +8,6 @@ import math
 import os
 from tqdm import tqdm
 
-# local import
-from models.SVGD_helpers import get_trainable_weights_flatten, memory
-
 ### Stein Variational Gradient Descend
 class SVGD:
     """
@@ -173,6 +170,23 @@ class SVGD:
         del tape
         return grad_parameters, grad_log_betas, loss_1, loss_2, loss_d, log_total, log_likelihood, log_prior_w, log_eq
 
+    def get_trainable_weights_flatten(grad_parameters):
+        """!
+        For SVGD alg.
+        flatten the list of list of parameters in input into a tensor of shape (num_neural_networks, lenght_of_theta)
+        """
+        w = []
+        ## for loop over num_neural_networks
+        for i in range( len(grad_parameters) ):
+            w_i = []
+            ## for loop on list of parameter
+            for param in grad_parameters[i] :
+                ## reshape
+                w_i.append(tf.reshape(param,[-1]))
+            w.append(tf.concat(w_i, axis=0))
+
+        ## return a tensor of shape=(num_neural_networks, num_total_parameters_theta)
+        return tf.convert_to_tensor(w)
 
     def _from_vector_to_parameter(self,grad_theta):
         """!
@@ -274,7 +288,7 @@ class SVGD:
                 ## build a flatten vector of theta
                 theta = self.bayes_nn.get_trainable_weights_flatten() # shape=(num_neural_networks, num_total_parameters_theta)
                 ## build a flatten vector of grad_theta
-                grad_theta = get_trainable_weights_flatten(grad_parameters) # shape=(num_neural_networks, num_total_parameters_theta)
+                grad_theta = self.get_trainable_weights_flatten(grad_parameters) # shape=(num_neural_networks, num_total_parameters_theta)
 
                 ######## SVGD modify the gradients of theta #########
                 # calculating the kernel matrix and its gradients
