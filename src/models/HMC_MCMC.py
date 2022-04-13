@@ -61,7 +61,7 @@ class HMC_MCMC:
         ## H(U,r) = U + 1/2*(r'*M*r) = U + 1/2*(||r||^2)) since M=0.1*Identity
         return (u + (1./2.)*r_square/self.constant_M )
 
-    def _alpha_fun(self,uu,rr,u0,r0, iter):
+    def _alpha_fun(self,uu,rr,u0,r0):
         """!
         Compute alpha=acceptance rate. We modify the formula in order to prevent getting stuck in local minimum.
         First compute h = H(U,r)-H(U0,r0).
@@ -82,7 +82,7 @@ class HMC_MCMC:
         return alpha, (h0,h1,h)
 
     @tf.function # decorator to speed up the computation
-    def _u_fun(self, sp_inputs, sp_target, inputs):
+    def _u_fun(self, fit_inputs, fit_target, col_inputs):
         """!
         Compute the function U(theta) in HMC algorithm. Return u_theta and
         all the three components of the posterior and
@@ -93,12 +93,11 @@ class HMC_MCMC:
         @param collocation points input
         """
         ## compute our prediction on the sparse inputs, collecting our sparse activation times
-        sp_output_sol, _ = self.bayes_nn.forward(sp_inputs)
-
+        sp_output_sol, _ = self.bayes_nn.forward(fit_inputs)
         ## compute the log likelihood of exact data (sp_target - sp_output_times) and log prior
-        loss_data, log_data, log_prior = self.bayes_nn.log_joint(sp_output_sol, sp_target)
+        loss_data, log_data, log_prior = self.bayes_nn.log_joint(sp_output_sol, fit_target)
         ## compute log likelihood of pde equation and losses for batch collocation points (PDE constraints)
-        loss_pde, log_pde = self.bayes_nn.pde_logloss(inputs)
+        loss_pde, log_pde = self.bayes_nn.pde_logloss(col_inputs)
         ## compute u_theta
         u_theta = - log_data - log_pde - log_prior
 
@@ -134,39 +133,38 @@ class HMC_MCMC:
 
         ## GradientTape
         with tf.GradientTape(persistent=True) as tape:
-            ## watch all the parameters of the NN
-            tape.watch(param)
-            if(flag):
-                ## if flag=True watch also log_betas trainable
-                tape.watch(betas_trainable)
+            tape.watch(param)  ## watch all the parameters of the NN
+            if flag: tape.watch(betas_trainable)
+
             ## Compute U(theta) calling the u_fun method
             u_theta, losses = self._u_fun(sp_inputs, sp_target, inputs)
-        ## compute the gradient of NN param (by backpropagation)
-        grad_theta = tape.gradient(u_theta, param)
+            ## Compute the gradient of NN param (by backpropagation)
+            grad_theta = tape.gradient(u_theta, param)
 
-        ## if flag=True compute also the gradient of every log_beta and append it to grad_theta
-        if(flag):
-            for log_beta in betas_trainable:
-                grad_theta.append( tape.gradient(u_theta, log_beta) )
-        ## delete the tape
-        del tape
+            ## Compute also the gradient of every log_beta and append it to grad_theta
+            if flag: 
+                for log_beta in betas_trainable:
+                    grad_theta.append( tape.gradient(u_theta, log_beta) )
+            
+            del tape ## Delete the tape
+
         return grad_theta, u_theta, losses
 
     def train_all(self):
         """ Train using HMC algorithm """
 
-        loss_1 = 1.    # Initialize the losses (only in case we reject the first iteration)
-        loss_d = 1.
+        loss_col = 1.    # Initialize the losses (only in case we reject the first iteration)
+        loss_fit = 1.
 
-        rec_log_betaD = []  # list that collects all the log_betaD during training
-        rec_log_betaR = []  # list that collects all the log_betaR during training
-        LOSS = []   # list that collects total loss during training
-        LOSS1 = []  # list that collects loss of pde during training
-        LOSSD = []  # list that collects loss of exact noisy data during training
+        rec_log_betaD = list()  # list that collects all the log_betaD during training
+        rec_log_betaR = list()  # list that collects all the log_betaR during training
+        hist_data  = list()  # list that collects loss of exact noisy data during training
+        hist_pde   = list()  # list that collects loss of pde during training
+        hist_total = list()  # list that collects total loss during training
 
-        thetas = [] # list to collect all the parameters of NN during training
-        log_betaDs = [] # list to collect all the log_betaD of NN during training
-        log_betaRs = [] # list to collect all the log_betaR of NN during training
+        thetas = list() # list to collect all the parameters of NN during training
+        log_betaDs = list() # list to collect all the log_betaD of NN during training
+        log_betaRs = list() # list to collect all the log_betaR of NN during training
 
         ttt = []
 
@@ -196,7 +194,7 @@ class HMC_MCMC:
             ## compute the auxiliary momentum variable rr
             ## rr will be a list of the same shape of theta and theta0
             rr = []
-            ## for every i in len(theta0)
+
             for i, t0 in enumerate(theta0): # i = 2*hidden_layer + 2
                 if i%2==0:
                     ## append a matrix of shape=(theta0[i].shape[0], theta0[i].shape[1]))
@@ -226,7 +224,7 @@ class HMC_MCMC:
                 for inputs in self.train_loader:
 
                     ## backpropagation using method grad_U_theta
-                    grad_theta, u_theta, losses = self._grad_U_theta(sp_inputs, sp_target, inputs)
+                    grad_theta, u_theta, _ = self._grad_U_theta(sp_inputs, sp_target, inputs)
 
                     ## update rr = rr - (self.dt/2)*grad_theta
                     rr = list_update(rr, grad_theta, -self.dt/2)
@@ -247,6 +245,7 @@ class HMC_MCMC:
                     ## backpropagation using method grad_U_theta (now with the new theta)
                     grad_theta, u_theta, losses = self._grad_U_theta(sp_inputs, sp_target, inputs)
 
+                    ## PERCHE DOPO ??
                     ## update rr = rr - (dt/2)*grad_theta
                     rr = list_update(rr, grad_theta, -self.dt/2)
                     ## if betas_trainable update also rr_log_b
@@ -263,7 +262,7 @@ class HMC_MCMC:
             p = np.log(np.random.random())
             ## compute alpha prob using alpha_fun (since now alpha is 0.95 at most,
             ## we can have some instabilities and ending up with a NaN, see after)
-            alpha, h = self._alpha_fun(u_theta, rr, u_theta0, r0, iteration)
+            alpha, h = self._alpha_fun(u_theta, rr, u_theta0, r0)
 
             if(self.debug_flag and iteration>0):
                 print("\n**********START DEBUG*************")
@@ -274,9 +273,6 @@ class HMC_MCMC:
                 print("dh: ", tf.keras.backend.get_value(h[2]))
                 print("u_theta0: ",u_theta0.numpy())
                 print("u_theta:  ",u_theta.numpy())
-                # print("Log likelihood: ", log_likelihood.numpy()[0][0])
-                # print("Log prior w:    ", log_prior_w.numpy()[0])
-                # print("Log equation:   ", log_eq.numpy()[0])
                 print("log(alpha): ", alpha)
                 print(f"alpha: {np.exp(alpha): 1.6f}")
                 print(f"p: {np.exp(p): 1.6f}")
@@ -312,11 +308,11 @@ class HMC_MCMC:
                     accepted_after_burnin+=1
                     ttt.append(theta)
 
-                loss_1 = losses["loss"]["pde"]
-                loss_d = losses["loss"]["data"]
+                loss_col = losses["loss"]["pde"]
+                loss_fit = losses["loss"]["data"]
 
                 if(accepted_total % max(10,self.N//20) == 0):
-                    print(f"\nLoss Collocation:{loss_1 : 1.3e} | Loss Fitting:{loss_d: 1.3e}")
+                    print(f"\nLoss Collocation:{loss_col : 1.3e} | Loss Fitting:{loss_fit: 1.3e}")
                     print("------------------------------")
 
                 # update theta0 and u_theta0
@@ -342,8 +338,8 @@ class HMC_MCMC:
 
                 ## store the previous losses since we have rejected (after the first iteration where we don't have previous values )
                 if(iteration>0):
-                    loss_1 = LOSS1[-1]
-                    loss_d = LOSSD[-1]
+                    loss_col = hist_pde[-1]
+                    loss_fit = hist_data[-1]
 
                 ## store theta0
                 thetas.append(theta0.copy())
@@ -363,9 +359,9 @@ class HMC_MCMC:
                         if(self.bayes_nn.log_betas._bool_log_betaR):
                             self.bayes_nn.log_betas.log_betaR.assign(log_betaRs[-4])
             ## store all the losses and log_betas
-            LOSS1.append(loss_1)
-            LOSSD.append(loss_d)
-            LOSS.append(loss_1+loss_d)
+            hist_pde.append(loss_col)
+            hist_data.append(loss_fit)
+            hist_total.append(loss_col+loss_fit)
             rec_log_betaD.append(self.bayes_nn.log_betas.log_betaD.numpy())
             rec_log_betaR.append(self.bayes_nn.log_betas.log_betaR.numpy())
 
@@ -381,4 +377,4 @@ class HMC_MCMC:
         if(self.bayes_nn.log_betas._bool_log_betaD):
             self.bayes_nn._log_betaRs = log_betaRs[-self.M:]
 
-        return LOSS, LOSSD, LOSS1, rec_log_betaD, rec_log_betaR
+        return hist_total, hist_data, hist_pde, rec_log_betaD, rec_log_betaR
