@@ -9,7 +9,7 @@ import os
 from tqdm import tqdm
 
 # local import
-from SVGD_helpers import get_trainable_weights_flatten, memory
+from models.SVGD_helpers import get_trainable_weights_flatten, memory
 
 ### Stein Variational Gradient Descend
 class SVGD:

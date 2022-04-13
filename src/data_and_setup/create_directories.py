@@ -13,14 +13,14 @@ def create_directories(par):
     pde_type = par.pde
     method_name = par.method
 
-    case_name = "../" + str(n_input)+"D-"+pde_type
+    case_name = str(n_input)+"D-"+pde_type
 
     if(save_flag):
         ## if save_flag = True create new directories using datetime.now()
         now = datetime.now()
         path = method_name + "_" + f"{now.strftime('%Y.%m.%d-%H.%M.%S')}"
         ## path result
-        path_result = os.path.join(case_name, path)
+        path_result = os.path.join("../results",os.path.join(case_name, path))
         os.makedirs(path_result)
         ## path_plot
         path_plot = os.path.join(path_result, "plot")

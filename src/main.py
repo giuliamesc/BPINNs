@@ -26,16 +26,17 @@ from data_and_setup.dataloader import dataloader
 
 # Model
 from models.BayesNN import MCMC_BayesNN
-# from BayesNN import SVGD_BayesNN # WORK IN PROGRESS
+# from models.BayesNN import SVGD_BayesNN # WORK IN PROGRESS
 from models.auto_diff import laplace
 
 # Training
-from models.SVGD import SVGD
+# from models.SVGD import SVGD
 from models.HMC_MCMC import HMC_MCMC
 
 # Postprocessing
 from postprocessing.compute_error import compute_error
 from postprocessing.plotter_old import plot_log_betas
+from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
 
 # %% Creating Parameters
 
@@ -87,11 +88,12 @@ else:
 print("Initializing the Bayesian PINN...")
 # Initialize the correct Bayesian NN
 if(par.method == "SVGD"):
-    if(par.pde == "laplace"):
-        bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
-                                par.n_input, par.architecture,
-                                par.n_out_sol, par.n_out_par, par.param,
-                                pinn_loss, par.utils["random_seed"])
+    pass
+    # if(par.pde == "laplace"):
+        #bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
+        #                        par.n_input, par.architecture,
+        #                        par.n_out_sol, par.n_out_par, par.param,
+        #                        pinn_loss, par.utils["random_seed"])
 else:
     if(par.pde == "laplace"):
         bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
@@ -151,7 +153,6 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
 print("Done")
 
 # %% Plotting
-from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples
 
 print("--------------------------------------------")
 print("Plotting the losses...")

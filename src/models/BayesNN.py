@@ -5,8 +5,8 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 # tfd = tfp.distributions ## CONTROLLARE
 
-from FCN import Net
-from prior_trainable import trainable_param
+from models.FCN import Net
+from models.prior_trainable import trainable_param
 
 
 class BayesNN:
@@ -243,7 +243,7 @@ class MCMC_BayesNN(BayesNN):
         if(self.log_betas._bool_log_betaR):
             log_prob_log_betaR = (self.beta_pde_shape-1) * self.log_betas.log_betaR - \
                             self.beta_pde_rate * (tf.math.exp(self.log_betas.log_betaR))
-            log_prob_log_betaR *= param_prior
+            log_prob_log_betaR *= self.param_prior
             log_loss_total += log_prob_log_betaR
 
         return log_loss_total, mse_residual
