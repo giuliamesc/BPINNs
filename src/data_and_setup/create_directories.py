@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 def create_single_dir(base_path, last_path):
-    try: os.makedirs(base_path)
+    try: os.makedirs(os.path.join(base_path, last_path))
     except: pass
     return os.path.join(base_path, last_path)
 
@@ -28,6 +28,7 @@ def create_directories(par):
     else:
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
         path_result = create_single_dir(path_case,"trash")
+
     path_plot    = create_single_dir(path_result, "plot")
     path_weights = create_single_dir(path_result, "weights")
 
