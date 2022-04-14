@@ -1,21 +1,21 @@
 {
 	"architecture":{
-		"n_layers":2,
-		"n_neurons":50
+		"n_layers":1,
+		"n_neurons":5
 	},
 
 	"experiment":{
 		"dataset":"laplace1D_cos",
 		"prop_collocation":1.0,
 		"prop_exact":0.1,
-		"noise_lv":0.1,
+		"noise_lv":0.2,
 		"batch_size":1000
 	},
 
 	"param":{
-		"param_res":   0.1,
-		"param_data":  10.0,
-		"param_prior": 1.0
+		"param_res":   0.000,
+		"param_data":  1.0,
+		"param_prior": 0.0
 	},
 
 	"sigmas":{
@@ -26,10 +26,10 @@
 	},
 
 	"HMC":{
-		"N_HMC": 100,
-		"M_HMC": 70,
-		"L_HMC": 20,
-		"dt_HMC":4e-5,
+		"N_HMC": 500,
+		"M_HMC": 300,
+		"L_HMC": 100,
+		"dt_HMC":5e-4,
 		"dt_noise_HMC":3e-4
 	},
 
@@ -43,7 +43,7 @@
 
 	"utils":{
     	"random_seed": 42,
-        "debug_flag": "False",
+        "debug_flag": "True",
 		"save_flag":  "False",
 		"verbose":    "True"
 	}

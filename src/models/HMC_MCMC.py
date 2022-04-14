@@ -76,7 +76,7 @@ class HMC_MCMC:
         ## compute h
         h1 = self._h_fun(uu,rr)
         h0 = self._h_fun(u0,r0)
-        h = h0-h1
+        h = h1-h0
         ## compute alpha as min between alpha_max ans exp(h)
         alpha = min(0.0, h) #alpha = 1-alpha
         return alpha, (h0,h1,h)
@@ -142,10 +142,10 @@ class HMC_MCMC:
             grad_theta = tape.gradient(u_theta, param)
 
             ## Compute also the gradient of every log_beta and append it to grad_theta
-            if flag: 
+            if flag:
                 for log_beta in betas_trainable:
                     grad_theta.append( tape.gradient(u_theta, log_beta) )
-            
+
             del tape ## Delete the tape
 
         return grad_theta, u_theta, losses
@@ -271,16 +271,17 @@ class HMC_MCMC:
                 print("h0: ", tf.keras.backend.get_value(h[0]))
                 print("h1: ", tf.keras.backend.get_value(h[1]))
                 print("dh: ", tf.keras.backend.get_value(h[2]))
-                print("u_theta0: ",u_theta0.numpy())
-                print("u_theta:  ",u_theta.numpy())
+                print("u_theta0: ",u_theta0)
+                print("u_theta:  ",u_theta)
                 print("log(alpha): ", alpha)
-                print(f"alpha: {np.exp(alpha): 1.6f}")
+                #import pdb; pdb.set_trace()
+                #print(f"alpha: {np.exp(alpha): 1.6f}")
                 print(f"p: {np.exp(p): 1.6f}")
 
 
             ## if p>=alpha (and u_theta is not a NaN)
             ##          ACCEPT THE NEW VALUES
-            if(alpha>=p and not math.isnan(u_theta) and not math.isinf(u_theta)):
+            if(p>=alpha and not math.isnan(u_theta) and not math.isinf(u_theta)):
                 ## update_weights with the new theta
                 self.bayes_nn.nnets[0].update_weights(theta)
                 ## if betas_trainable_flag=True update also the other trainable parameters
@@ -312,7 +313,8 @@ class HMC_MCMC:
                 loss_fit = losses["loss"]["data"]
 
                 if(accepted_total % max(10,self.N//20) == 0):
-                    print(f"\nLoss Collocation:{loss_col : 1.3e} | Loss Fitting:{loss_fit: 1.3e}")
+                    print(f"\nLoss Collocation:{loss_col : 1.3e} | Loss Fitting:{loss_fit: 1.3e}"+
+                    f"|Acceptance Rate:{accepted_total/(iteration+1)*100:3.2f}%")
                     print("------------------------------")
 
                 # update theta0 and u_theta0

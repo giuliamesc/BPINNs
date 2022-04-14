@@ -193,8 +193,8 @@ class MCMC_BayesNN(BayesNN):
         logloss = (- 0.5 * n_r * mse_residual * tf.math.exp(self.log_betas.log_betaR)
                    + 0.5 * n_r * self.log_betas.log_betaR)
 
-        log_loss_total = logloss 
-        log_loss_total *= self.param_res 
+        log_loss_total = logloss
+        log_loss_total *= self.param_res
 
         # if log_betaR trainable add his prior (Inv-Gamma)
         if(self.log_betas._bool_log_betaR):
@@ -265,6 +265,8 @@ class MCMC_BayesNN(BayesNN):
         """
 
         samples_u, samples_f = self.predict(inputs)
+
+        import pdb; pdb.set_trace()
 
         # compute mean and standard deviation
         u_mean = np.mean(samples_u, axis=0)
