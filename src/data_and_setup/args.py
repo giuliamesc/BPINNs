@@ -65,7 +65,6 @@ class Parser(argparse.ArgumentParser):
 
         # Utils
         self.add_argument('--random_seed', type=int,  help="random seed for numpy and tf random generator")
-        self.add_argument('--debug_flag' , type=bool, help='prints loss value, h, h0, h1 at each iteration')
+        self.add_argument('--debug_flag' , type=bool, help='prints loss value, h, h0, h1 and general debug utilities at each iteration')
         self.add_argument('--save_flag'  , type=bool, help='flag for save results in a new folder')
-        self.add_argument('--verbose'    , type=bool, help='print all the info at every epoch')
         

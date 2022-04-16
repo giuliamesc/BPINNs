@@ -4,5 +4,5 @@
  "param": {"param_res": 0.1, "param_data": 10.0, "param_prior": 1.0}, 
  "sigmas": {"data_prior_noise": 0.0001, "pde_prior_noise": 1e-06, "data_prior_noise_trainable": false, "pde_prior_noise_trainable": false}, 
  "HMC": {"N_HMC": 100, "M_HMC": 70, "L_HMC": 200, "dt_HMC": 4e-05, "dt_noise_HMC": 0.0003}, 
- "utils": {"random_seed": 42, "debug_flag": false, "save_flag": true, "verbose": true}
+ "utils": {"random_seed": 42, "debug_flag": false, "save_flag": true}
 }
