@@ -266,8 +266,6 @@ class MCMC_BayesNN(BayesNN):
 
         samples_u, samples_f = self.predict(inputs)
 
-        import pdb; pdb.set_trace()
-
         # compute mean and standard deviation
         u_mean = np.mean(samples_u, axis=0)
         f_mean = np.mean(samples_f, axis=0)

@@ -14,10 +14,10 @@ def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plo
     if (n_output_par == 1):
 
         # get domain dataset
-        inputs,u_true,f_true = datasets_class.get_dom_data()
+        inputs,u_true,f_true = datasets_class.dom_data
 
 
-        if(datasets_class.get_n_input()==3): # 3D plot
+        if(datasets_class.n_input==3): # 3D plot
             x = inputs[:,0]
             y = inputs[:,1]
             z = inputs[:,2]
@@ -91,7 +91,7 @@ def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plo
             fig.savefig(path)
 
 
-        elif(datasets_class.get_n_input()==2): # 2D plot
+        elif(datasets_class.n_input==2): # 2D plot
             x = inputs[:,0]
             y = inputs[:,1]
 
@@ -101,7 +101,7 @@ def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plo
             fontsize = 18
 
             # Load the sparse data used for training -> 100 true observations
-            inputs_train,_,_ = datasets_class.get_exact_data()
+            inputs_train,_,_ = datasets_class.exact_data
             xtrain = inputs_train[:,0]
             ytrain = inputs_train[:,1]
 
@@ -196,7 +196,7 @@ def plot_result(n_output_par, u_NN, f_NN, u_std, f_std, datasets_class, path_plo
             x = inputs[:,0]
 
             # Load the sparse data used for training -> 100 true observations
-            inputs_train,at_train,_ = datasets_class.get_exact_data_with_noise()
+            inputs_train,at_train,_ = datasets_class.exact_data_noise
             xtrain = inputs_train[:,0]
 
             # Plot u (Real, Mean_NN and Standard Deviation buonds)
@@ -239,7 +239,7 @@ def plot_all_result(x, u, f, u_NN, f_NN, datasets_class, n_input, n_output_vel, 
     - If method == SVGD : plot all the num_neural_networks prediction
     """
     if(n_input == 1):  # 1D plot
-        inputs_train,u_train,_ = datasets_class.get_exact_data_with_noise()
+        inputs_train,u_train, _ = datasets_class.exact_data_noise
         xtrain = inputs_train[:,0]
 
         plt.figure()

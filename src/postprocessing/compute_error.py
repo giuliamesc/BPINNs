@@ -29,7 +29,7 @@ class compute_error:
         Compute errors and UQs
         """
         ## get the domain data
-        inputs, u_true, f_true = self.datasets_class.get_dom_data()
+        inputs, u_true, f_true = self.datasets_class.dom_data
         ## we are going to use the numpy vector notations shape=(len, )
         u_true = u_true.squeeze() ## TO CHECK IN HIGHER DIMENSION
         f_true = f_true.squeeze() ## TO CHECK IN HIGHER DIMENSION

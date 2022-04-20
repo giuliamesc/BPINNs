@@ -8,8 +8,8 @@ class PhysicsNN():
     def __init__(self, par, dataset, model):
         self.par = par
         self.model = model
-        self.col_data = dataset.get_coll_data()
-        self.fit_data = dataset.get_exact_data_with_noise()
+        self.col_data = dataset.coll_data
+        self.fit_data = dataset.exact_data_noise
         self.equation = self.build_equation(self.par.pde)
 
     def build_equation(self, name_equation):

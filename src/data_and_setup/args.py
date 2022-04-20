@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser
 
 """
 Class to handle all the command-line arguments:
@@ -7,7 +7,7 @@ the second [--config] is a json file (in the subfolder "config") where we can fi
 
 You can also overspecified all the parameters in the json file here, directly from command-line.
 """
-class Parser(argparse.ArgumentParser):
+class Parser(ArgumentParser):
     def __init__(self):
         """Initializer"""
         super(Parser, self).__init__(description='Bayesian PINN for Inverse Eikonal')

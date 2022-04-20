@@ -31,8 +31,8 @@ def load_losses(path_result):
     return losses
 
 def plot_confidence(path_plot, datasets_class, functions, n_out_sol, n_out_par):
-    inputs, u_true, f_true = datasets_class.get_dom_data()
-    u_points, u_values, _  = datasets_class.get_exact_data_with_noise()
+    inputs, u_true, f_true = datasets_class.dom_data
+    u_points, u_values, _  = datasets_class.exact_data_noise
 
     u = (u_true, functions['u_NN'], functions['u_std'])
     u_fit = (u_points, u_values)
@@ -60,8 +60,8 @@ def plot_1D(x, func, title, label = ("",""), fit = None):
 
 
 def plot_nn_samples(path_plot, datasets_class, functions_all, n_out_sol, n_out_par, method):
-    inputs, u_true, f_true = datasets_class.get_dom_data()
-    u_points, u_values, _  = datasets_class.get_exact_data_with_noise()
+    inputs, u_true, f_true = datasets_class.dom_data
+    u_points, u_values, _  = datasets_class.exact_data_noise
 
     u = (u_true, functions_all['u_NN'])
     u_fit = (u_points, u_values)

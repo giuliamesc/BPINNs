@@ -1,16 +1,8 @@
 import json
 import os
 
-def string_to_bool(s):
-    """
-    Convert string "True","False" to boolean True and False
-    """
-    if s=="False" or s=="false": return False
-    elif s=="True" or s=="true": return True
-    else: print("no boolean string")
 
-
-class param:
+class Param:
     """Initializer"""
     def __init__(self, hp, args):
         ## method used: SVGD or HMC
@@ -28,13 +20,10 @@ class param:
 
         ## specific param for the selected method
         self.param_method = hp[args.method]
-
         ## convert all the string "True" or "False" to boolean
-        self._change_string_to_bool()
-
+        self.__change_string_to_bool()
         # if we have some additional parameters from the command-line
-        if(self._length_additional(vars(args)) > 0):
-            self._update(vars(args))    # update param overspecified by command-line
+        self.__update(vars(args))
 
         # for these parameters we use the dictionaries specified at the bottom (n_input/output, pde)
         ## store the dimension input (1D, 2D or 3D)
@@ -47,71 +36,53 @@ class param:
         self.pde = pde[self.experiment["dataset"]]
 
         # check possible errors in parameters
-        self._check_parameter()
+        self.__check_parameters()
 
+    def __string_to_bool(self, s):
+        """
+        Convert string "True","False" to boolean True and False
+        """
+        if s=="False" or s=="false": return False
+        elif s=="True" or s=="true": return True
+        else: print("no boolean string")
 
-    def _length_additional(self, args_dict):
-        """Compute the lenght of additional parameters specified by command-line"""
-        i = 0
-        for key in args_dict:
-            if(args_dict[key] != None):
-                i+=1
-        return (i-2)    # the first 2 are mandatory (method and config) and dont count as additional param
-
-
-    def _change_string_to_bool(self):
+    def __change_string_to_bool(self):
         """Change "True" and "False" string to boolean for each bool parameter """
-        self.sigmas["data_prior_noise_trainable"] = string_to_bool(self.sigmas["data_prior_noise_trainable"])
-        self.sigmas["pde_prior_noise_trainable"] = string_to_bool(self.sigmas["pde_prior_noise_trainable"])
-        self.utils["save_flag"] = string_to_bool(self.utils["save_flag"])
-        self.utils["debug_flag"] = string_to_bool(self.utils["debug_flag"])
+        self.sigmas["data_prior_noise_trainable"] = self.__string_to_bool(self.sigmas["data_prior_noise_trainable"])
+        self.sigmas["pde_prior_noise_trainable"] = self.__string_to_bool(self.sigmas["pde_prior_noise_trainable"])
+        self.utils["save_flag"] = self.__string_to_bool(self.utils["save_flag"])
+        self.utils["debug_flag"] = self.__string_to_bool(self.utils["debug_flag"])
 
 
-    def _update(self, args_dict):
+    def __update(self, args_dict):
         """Update the parameter given by json file using args (overspecification by command-line)"""
-        i = 0
+        self.json_dict = [self.architecture, self.experiment, self.param, self.sigmas, self.utils]
         for key in args_dict:
-            if(i > 2):
-                if args_dict[key] != None:
-                    if key in self.architecture:
-                        self.architecture[key] = args_dict[key]
-                    elif key in self.experiment:
-                        self.experiment[key] = args_dict[key]
-                    elif key in self.param:
-                        self.param[key] = args_dict[key]
-                    elif key in self.sigmas:
-                        self.sigmas[key] = args_dict[key]
-                    elif key in self.utils:
-                        self.utils[key] = args_dict[key]
-                    else: #param_method...
-                        if key in self.param_method:
-                            self.param_method[key] = args_dict[key]
-                        else:
-                            print("Wrong parameter ", key," for the selected method: ", self.method)
-            i+=1
+            if args_dict[key] is None: continue
+            for jdict in self.json_dict:
+                if key in jdict:
+                    jdict[key] = args_dict[key]
+            if key in self.param_method:
+                self.param_method[key] = args_dict[key]
 
-    def _check_parameter(self):
+    def __check_parameters(self):
         """Check the parameters"""
         if(self.method != "HMC" and self.method != "SVGD"):
             raise Exception("method not supported")
-
         if (not isinstance(self.architecture["n_layers"], int) or not isinstance(self.architecture["n_neurons"],int)):
             raise TypeError("n_layers and n_neurons must be integer")
-
         if (not isinstance(self.experiment["prop_exact"], float) or not isinstance(self.experiment["prop_collocation"],float)):
             raise TypeError("prop_coll and prop_exact must be float")
         if self.experiment["prop_exact"]<0 or self.experiment["prop_exact"]>1:
             raise Exception("Prop exact must be between 0 and 1")
         if self.experiment["prop_collocation"]<0 or self.experiment["prop_collocation"]>1:
             raise Exception("Prop coll must be between 0 and 1")
-
         if (not isinstance(self.experiment["noise_lv"],float)):
             raise TypeError("noise level must be float")
         if self.experiment["noise_lv"]<0:
             raise Exception("noise level must be >= 0")
         if self.experiment["batch_size"]<0:
             raise Exception("Batch size must be >=0")
-
         if self.sigmas["data_prior_noise"]<0:
             raise Exception("data_prior_noise must be >= 0")
         if self.sigmas["pde_prior_noise"]<0:
@@ -143,7 +114,6 @@ class param:
                 raise TypeError("N_HMC, M_HMC and L_HMC must be integers")
             if self.param_method["N_HMC"]<0 or self.param_method["M_HMC"]<0 or self.param_method["N_HMC"]<self.param_method["M_HMC"]:
                 raise Exception(" problem in definition of N and M ")
-
 
 
     def print_parameter(self):

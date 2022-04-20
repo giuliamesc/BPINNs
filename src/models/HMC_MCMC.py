@@ -179,7 +179,7 @@ class HMC_MCMC:
         accepted_after_burnin = 0
 
         ## get noisy sparse exact data
-        sp_inputs, sp_sol, _ = self.datasets_class.get_exact_data_with_noise()
+        sp_inputs, sp_sol, _ = self.datasets_class.exact_data_noise
         sp_target = sp_sol ### RINOMINARE
 
         ## for every iteration in 1,...,N
@@ -274,7 +274,7 @@ class HMC_MCMC:
                 print("u_theta0: ",u_theta0)
                 print("u_theta:  ",u_theta)
                 print("log(alpha): ", alpha)
-                #import pdb; pdb.set_trace()
+
                 #print(f"alpha: {np.exp(alpha): 1.6f}")
                 print(f"p: {np.exp(p): 1.6f}")
 

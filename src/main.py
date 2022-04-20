@@ -17,7 +17,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # Setup
 from data_and_setup.args import Parser #command-line arg parser
-from data_and_setup.param import param #parameter class
+from data_and_setup.param import Param #parameter class
 from data_and_setup.create_directories import create_directories
 
 # Dataset Ceìreation
@@ -48,7 +48,8 @@ with open(os.path.join("../config",args.config+".json")) as hpFile:
     hp = json.load(hpFile)
 
 # Combine a param object with hp (param from json file) and args (command-line param)
-par = param(hp, args)
+par = Param(hp, args)
+#import pdb; pdb.set_trace()
 
 # Build the directories
 path_result, path_plot, path_weights = create_directories(par)

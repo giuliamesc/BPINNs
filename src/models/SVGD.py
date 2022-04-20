@@ -242,7 +242,7 @@ class SVGD:
         LOSSD = []  # list that collects loss of exact noisy data during training
 
         # get noisy sparse exact data
-        sp_inputs ,sp_at,sp_v = self.datasets_class.get_exact_data_with_noise()
+        sp_inputs ,sp_at,sp_v = self.datasets_class.exact_data_noise
         sp_target = sp_at
 
         # training for epoch in self.epochs
