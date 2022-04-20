@@ -20,7 +20,7 @@ class AnalyticalData:
         self._creating_loop()
 
     def _creating_loop(self):
-        print(f"\nGenerating dataset: {self.test_case}")
+        print(f"Generating dataset: {self.test_case}".center(os.get_terminal_size().columns,'*'))
         self._build_directory()
         self._create_domain()
         self._create_solutions()

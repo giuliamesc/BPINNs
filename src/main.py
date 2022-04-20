@@ -10,7 +10,7 @@ import numpy as np
 if os.getcwd()[-3:] != "src":
     new_dir = os.path.join(os.getcwd(),"src")
     os.chdir(new_dir)
-    print(f"Working Directory moved to: {new_dir}")
+    print(f"Working Directory moved to: {new_dir}".center(os.get_terminal_size().columns,'*'))
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 # %% Import Local Classes
@@ -74,7 +74,7 @@ batch_size = par.experiment["batch_size"]
 reshuffle_every_epoch = True
 batch_loader  = dataloader(datasets_class, batch_size, reshuffle_every_epoch)
 batch_loader, batch_loader_size = batch_loader.dataload_collocation()
-print("Done")
+print("DONE".center(os.get_terminal_size().columns,'*'))
 
 # %% Model Building
 
@@ -114,11 +114,11 @@ elif(par.method == "HMC"):
 else:
     raise Exception("Method not found")
 
-print("Done")
+print("DONE".center(os.get_terminal_size().columns,'*'))
 
 # %% Training
 
-print("--------------------------------------------")
+#print("--------------------------------------------")
 print('Start training...')
 t0 = time.time()
 loss_total, loss_data, loss_pde, rec_log_betaD, rec_log_betaR = alg.train_all()
@@ -126,17 +126,17 @@ training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 
-print("--------------------------------------------")
+#print("--------------------------------------------")
 print("Computing errors...")
 # create the class to compute results and error
 c_e = compute_error(bayes_nn, datasets_class, path_result)
 # compute errors and return outputs
 functions_confidence, functions_nn_samples, errors = c_e.error()
-print("Done")
+print("DONE".center(os.get_terminal_size().columns,'*'))
 
 # %% Saving
 
-print("--------------------------------------------")
+#print("--------------------------------------------")
 print("Saving networks weights...")
 bayes_nn.save_networks(path_weights)
 
@@ -151,11 +151,11 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     rec_log_betaR = np.array(rec_log_betaR)
     np.save(os.path.join(path_result,"log_betaD.npy"),rec_log_betaD)
     np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
-print("Done")
+print("DONE".center(os.get_terminal_size().columns,'*'))
 
 # %% Plotting
 
-print("--------------------------------------------")
+#print("--------------------------------------------")
 print("Plotting the losses...")
 losses = load_losses(path_result)
 plot_losses(path_plot, losses)
@@ -169,5 +169,5 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
 show_plot()
-print("End")
-print("--------------------------------------------")
+print("END".center(os.get_terminal_size().columns,'*'))
+#print("--------------------------------------------")

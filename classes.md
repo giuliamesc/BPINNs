@@ -1,20 +1,8 @@
 ```mermaid
 classDiagram
-Class01 <|-- AveryLongClass : Cool
-<<Interface>> Class01
-Class09 --> C2 : scritta sulla freccia
-Class09 --> C3
-Class09 --> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int poul()
-Class01 : int gorilla
-class Class10 {
-  <<service>>
-  int id
-  size()
-}
+BayesPiNN --> BayesNN
+BayesPiNN --> PhysicsNN
+Laplace --> pde_constraint
 class Param{
     <<param.py>>
     - string method
@@ -78,4 +66,59 @@ class DatasetCreation{
     -load_dataset()
 
 }
+class BayesNN{
+    <<BayesNN.py>>
+    +sample()
+    +forward()
+    +predict()
+    -init()
+}
+
+class BayesPiNN{
+    <<BayesPiNN.py>>
+    -init()
+}
+
+class Operators{
+    <<Operators.py>>
+    +gradient_scalar()
+    +gradient_vector()
+    +derivate_scalar()
+    +derivate_vector()
+    +divergence_scalar()
+    +divergence_vector()
+    +laplacian_scalar()
+    +laplacian_vector()
+}
+
+class PhysicsNN{
+    <<PhysicsNN.py>>
+    +build_equation(name_equation)
+    +loss_total()
+    -init(par, dataset, model)
+    -loss_residual(inputs)
+    -loss_data(outputs,targets)
+    -loss_prior()
+    -convert(tensor)
+    -normal_loglikelihood(mse, n, log_var)
+}
+
+class pde_constraint{
+    <<PhysicsNN.py>>
+    +compute_pde_residual()=0
+    -init(inputs_pts, forward_pass, par)
+}
+
+class Laplace{
+    <<PhysicsNN.py>>
+    +compute_pde_residual()
+    -init(inputs_pts, forward_pass, par)
+}
+
+class compute_error{
+    <<compute_error.py>>
+    +error()
+    -init(bayes_nn, datasets_class, path_result)
+}
+
 ```
