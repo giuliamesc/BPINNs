@@ -31,7 +31,7 @@ from models.auto_diff import laplace
 
 # Training
 # from models.SVGD import SVGD
-from models.HMC_MCMC import HMC_MCMC
+from models.HMC import HMC
 
 # Postprocessing
 from postprocessing.compute_error import compute_error
@@ -109,7 +109,7 @@ if(par.method == "SVGD"):
     raise Exception("Work in Progress")
 elif(par.method == "HMC"):
     # Initialize HMC
-    alg = HMC_MCMC(bayes_nn, batch_loader, datasets_class,
+    alg = HMC(bayes_nn, batch_loader, datasets_class,
                 par.param_method, par.utils["random_seed"], par.utils["debug_flag"])
 else:
     raise Exception("Method not found")

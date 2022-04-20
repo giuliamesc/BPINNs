@@ -10,7 +10,7 @@ def list_update(left, right, mult):
     return [x+mult*y for x,y in zip(left,right)]
 
 ### Hamiltonian Monte Carlo
-class HMC_MCMC:
+class HMC:
     """
     Hamiltonian Monte Carlo (MCMC)
     """
@@ -183,7 +183,7 @@ class HMC_MCMC:
         sp_target = sp_sol ### RINOMINARE
 
         ## for every iteration in 1,...,N
-        for iteration in tqdm(range(self.N), desc="HMC_MCMC", leave=False):
+        for iteration in tqdm(range(self.N), desc="HMC", leave=False):
             epochtime = time.time()
 
             ## save the previous theta->theta0 (make a copy() of the list)
