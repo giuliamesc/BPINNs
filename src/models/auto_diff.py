@@ -106,8 +106,8 @@ class laplace(pde_constraint):
     def compute_pde_residual(self, x, forward):
         op = operators()
         with tf.GradientTape(persistent=True) as tape:
-            u, f = forward(x)
             tape.watch(x)
+            u, f = forward(x)
             lap = op.laplacian_vector(tape, u, x, self.n_out_sol)
         return lap + f
 
