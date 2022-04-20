@@ -112,7 +112,7 @@ class Param:
             if not( isinstance(self.param_method["N_HMC"],int) and isinstance(self.param_method["M_HMC"],int)
                     and isinstance(self.param_method["L_HMC"],int) ):
                 raise TypeError("N_HMC, M_HMC and L_HMC must be integers")
-            if self.param_method["N_HMC"]<0 or self.param_method["M_HMC"]<0  or self.param_method["L_HMC"]:
+            if (self.param_method["N_HMC"]<0 or self.param_method["M_HMC"]<0  or self.param_method["L_HMC"]<0):
                 raise Exception(" N_HMC, M_HMC and L_HMC must be non-negative")
             if self.param_method["N_HMC"]<self.param_method["M_HMC"]:
                 raise Exception("M_HMC must be smaller than N_HMC")
