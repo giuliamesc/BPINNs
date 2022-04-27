@@ -31,12 +31,10 @@ class Parser(ArgumentParser):
                                                         - laplace1D_cos (1D, Laplace)
                                                         - laplace2D_cos (2D, Laplace)
                                                         """)
-        self.add_argument('--prop_collocation', type=float, help="Need to be between 0.0 and 1.0. Proportion of Domain Data to use as collocation data")
-        self.add_argument('--prop_exact',       type=float, help="Need to be between 0.0 and 1.0. Proportion of Domain Data to use as sparse Exact data")
-        self.add_argument('--noise_lv',         type=float, help="Artificial noise in exact dataset")
-        self.add_argument('--batch_size',       type=int,   help="""Batch size for training collocation.
-                                                                    Need to be <= (Num of Domain)*prop_collocation.
-                                                                    Select 0 if you don't want a batch""")
+        self.add_argument('--num_collocation', type=int,   help="Need to be integer. Number of Domain Data to use as collocation data")
+        self.add_argument('--num_fitting',     type=int,   help="Need to be integer. Number of Domain Data to use as sparse Exact data")
+        self.add_argument('--noise_lv',        type=float, help="Artificial noise in exact dataset")
+        self.add_argument('--batch_size',      type=int,   help="Batch size for training collocation. Select 0 if you don't want a batch")
 
         # Param
         self.add_argument('--param_res'  , type=float, help="weight for pde log loss")

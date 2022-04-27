@@ -71,12 +71,8 @@ class Param:
             raise Exception("method not supported")
         if (not isinstance(self.architecture["n_layers"], int) or not isinstance(self.architecture["n_neurons"],int)):
             raise TypeError("n_layers and n_neurons must be integer")
-        if (not isinstance(self.experiment["prop_exact"], float) or not isinstance(self.experiment["prop_collocation"],float)):
-            raise TypeError("prop_coll and prop_exact must be float")
-        if self.experiment["prop_exact"]<0 or self.experiment["prop_exact"]>1:
-            raise Exception("Prop exact must be between 0 and 1")
-        if self.experiment["prop_collocation"]<0 or self.experiment["prop_collocation"]>1:
-            raise Exception("Prop coll must be between 0 and 1")
+        if (not isinstance(self.experiment["num_fitting"], int) or not isinstance(self.experiment["num_collocation"],int)):
+            raise TypeError("prop_coll and prop_exact must be int")
         if (not isinstance(self.experiment["noise_lv"],float)):
             raise TypeError("noise level must be float")
         if self.experiment["noise_lv"]<0:

@@ -50,7 +50,6 @@ with open(os.path.join("../config",args.config+".json")) as hpFile:
 
 # Combine a param object with hp (param from json file) and args (command-line param)
 par = Param(hp, args)
-#import pdb; pdb.set_trace()
 
 # Build the directories
 path_result, path_plot, path_weights = create_directories(par)
@@ -67,14 +66,13 @@ print("Dataset creation...")
 # Datasets Creation
 datasets_class = dataset_class(par)
 
-print("\tNumber of exact data:", datasets_class.n_exact)
-print("\tNumber of collocation data:", datasets_class.n_collocation)
+print("\tNumber of fitting data:", datasets_class.num_fitting)
+print("\tNumber of collocation data:", datasets_class.num_collocation)
 print("Building dataloader...")
 # Build the dataloader for minibatch training (of just collocation points)
-batch_size = par.experiment["batch_size"]
-reshuffle_every_epoch = True
-batch_loader  = dataloader(datasets_class, batch_size, reshuffle_every_epoch)
-batch_loader, batch_loader_size = batch_loader.dataload_collocation()
+
+batch_loader = dataloader(datasets_class, par.experiment["batch_size"], par.utils['random_seed'])
+batch_loader = batch_loader.dataload_collocation()
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
@@ -165,6 +163,5 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     print("Plotting log betas")
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
-show_plot()
 print(" END ".center(gui_len,'*'))
-
+show_plot()

@@ -6,8 +6,8 @@
 
 	"experiment":{
 		"dataset":"laplace1D_cos",
-		"prop_collocation":1.0,
-		"prop_exact":0.01,
+		"num_collocation":1.0,
+		"num_fitting":0.01,
 		"noise_lv":0.05,
 		"batch_size":1000
 	},

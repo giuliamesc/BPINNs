@@ -48,8 +48,8 @@ class DatasetCreation{
 
     -string pde_type
     -string name_example
-    -float prop_exact 
-    -float prop_collocation 
+    -int num_fitting 
+    -int num_collocation 
     -int n_input 
     -int n_out_par
     -int n_out_sol

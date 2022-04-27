@@ -17,39 +17,39 @@ class AnalyticalData:
         self.dimension = len(self.domain_data["domain"])
         self.save_folder = '../data'
 
-        self._creating_loop()
+        self.__creating_loop()
 
-    def _creating_loop(self):
+    def __creating_loop(self):
         print(f"Generating dataset: {self.test_case}".center(os.get_terminal_size().columns,'*'))
-        self._build_directory()
-        self._create_domain()
-        self._create_solutions()
+        self.__build_directory()
+        self.__create_domain()
+        self.__create_solutions()
         if self.do_plots:
-            self._plotter()
+            self.__plotter()
         print(f"Dataset {self.test_case} generated!")
 
 # %% Build Solution
-    def _create_solutions(self):
+    def __create_solutions(self):
         for key,_ in self.solution.items():
-            self._create_sol(key)
+            self.__create_sol(key)
 
-    def _create_sol(self, name):
+    def __create_sol(self, name):
         func = self.solution[name]
         grid_list = np.split(self.grid, self.dimension, axis = 0)
         grid = [x.squeeze() for x in grid_list]
         sol = func(*grid)
-        self._save_data(name, sol)
+        self.__save_data(name, sol)
 
 # %% Build Domain
-    def _create_domain(self):
+    def __create_domain(self):
         if self.domain_data["mesh_type"] == "uniform":
-            self._create_uniform_domain()
+            self.__create_uniform_domain()
         elif self.domain_data["mesh_type"] == "sobol":
-            self._create_sobol_domain()
+            self.__create_sobol_domain()
         else:
             raise Exception("This mesh type doesn't exists")
 
-    def _create_uniform_domain(self):
+    def __create_uniform_domain(self):
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
@@ -63,9 +63,9 @@ class AnalyticalData:
         self.grid = np.reshape(x,[self.dimension, self.domain_data["resolution"]**self.dimension])
         names = ["x","y","z"]
         for i in range(self.dimension):
-            self._save_data(names[i], self.grid[i])
+            self.__save_data(names[i], self.grid[i])
 
-    def _create_sobol_domain(self):
+    def __create_sobol_domain(self):
         l_bounds = [i[0] for i in self.domain_data["domain"]]
         u_bounds = [i[1] for i in self.domain_data["domain"]]
         sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
@@ -76,16 +76,16 @@ class AnalyticalData:
 
         names = ["x","y","z"]
         for i in range(self.dimension):
-            self._save_data(names[i], self.grid[i])
+            self.__save_data(names[i], self.grid[i])
 
 
 # %% Loading and Saving
-    def _save_data(self, name, data):
+    def __save_data(self, name, data):
         filename = os.path.join(self.save_path,name)
         np.save(filename,data)
         print(f'\tSaved {name}')
 
-    def _build_directory(self):
+    def __build_directory(self):
         if self.test_only:
             trash_path = os.path.join(self.save_folder,"trash")
             if not(os.path.isdir(trash_path)):
@@ -98,19 +98,19 @@ class AnalyticalData:
         else:
             print('Folder already present')
 
-    def _load(self,name):
+    def __load(self,name):
         return np.load(os.path.join(self.save_path, f'{name}.npy'))
 
 # %% Postprocess
-    def _plot(self, var_name):
-        var = self._load(var_name)
+    def __plot(self, var_name):
+        var = self.__load(var_name)
         plt.figure()
         if self.dimension == 1:
             var_dim = "(x)"
-            plt.scatter(self._load('x'), var, c = 'b', s = 0.1)
+            plt.scatter(self.__load('x'), var, c = 'b', s = 0.1)
         elif self.dimension == 2:
             var_dim = "(x,y)"
-            plt.scatter(self._load('x'), self._load('y'), c = var, cmap = 'coolwarm',
+            plt.scatter(self.__load('x'), self.__load('y'), c = var, cmap = 'coolwarm',
                         vmin = min(var), vmax = max(var))
             plt.colorbar()
         else:
@@ -119,22 +119,22 @@ class AnalyticalData:
         if self.save_plot:
             plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
 
-    def _plotter(self):
+    def __plotter(self):
         if self.dimension == 2:
             plt.figure()
-            plt.scatter(self._load("x"),self._load("y"), s=1)
+            plt.scatter(self.__load("x"),self.__load("y"), s=1)
             plt.title("{} mesh".format(self.domain_data["mesh_type"]))
         for var_file in os.listdir(self.save_path):
             if var_file[-4:] == ".npy":
                 var_name = var_file[:-4]
                 if var_name not in ["x","y","z"]:
-                    self._plot(var_name)
+                    self.__plot(var_name)
 
 # %% Main
 
 analytical_domain = {
     "laplace1D_cos": {
-        "mesh_type": "uniform",
+        "mesh_type": "sobol",
         "resolution": 1000,
         "domain": [(0,8)]
         },
@@ -161,6 +161,6 @@ if __name__ == "__main__":
         new_dir = os.path.join(os.getcwd(),"src")
         os.chdir(new_dir)
         print(f"Working Directory moved to: {new_dir}")
-    AnalyticalData("laplace1D_cos", do_plots = True, test_only = True, save_plot = True)
+    AnalyticalData("laplace1D_cos", do_plots = True, test_only = False, save_plot = True)
     AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)
     plt.show(block=True)
