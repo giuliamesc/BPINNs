@@ -13,7 +13,7 @@ if os.getcwd()[-3:] != "src":
     print(f"Working Directory moved to: {new_dir}")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
-gui_len = max(50,os.get_terminal_size().columns/3)
+gui_len = max(50,int(os.get_terminal_size().columns/3))
 # %% Import Local Classes
 
 # Setup
