@@ -10,9 +10,10 @@ import numpy as np
 if os.getcwd()[-3:] != "src":
     new_dir = os.path.join(os.getcwd(),"src")
     os.chdir(new_dir)
-    print(f"Working Directory moved to: {new_dir}".center(os.get_terminal_size().columns,'*'))
+    print(f"Working Directory moved to: {new_dir}")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
+gui_len = max(50,os.get_terminal_size().columns/3)
 # %% Import Local Classes
 
 # Setup
@@ -56,12 +57,12 @@ path_result, path_plot, path_weights = create_directories(par)
 # Save parameters
 par.save_parameter(path_result)
 
-print("--------------------------------------------")
+print(" START ".center(gui_len,'*'))
 print("Bayesian PINN with", par.method)
 print("Solve the inverse problem of " + str(par.n_input) + "D " + par.pde)
 print("Dataset used:", par.experiment["dataset"])
 
-print("--------------------------------------------")
+print(" DONE ".center(gui_len,'*'))
 print("Dataset creation...")
 # Datasets Creation
 datasets_class = dataset_class(par)
@@ -74,11 +75,10 @@ batch_size = par.experiment["batch_size"]
 reshuffle_every_epoch = True
 batch_loader  = dataloader(datasets_class, batch_size, reshuffle_every_epoch)
 batch_loader, batch_loader_size = batch_loader.dataload_collocation()
-print("DONE".center(os.get_terminal_size().columns,'*'))
+print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
-print("--------------------------------------------")
 print("Building the PDE constraint...")
 # Build the pde constraint class that implements the computation of pde residual for each collocation point
 if(par.pde == "laplace"):
@@ -114,11 +114,10 @@ elif(par.method == "HMC"):
 else:
     raise Exception("Method not found")
 
-print("DONE".center(os.get_terminal_size().columns,'*'))
+print(" DONE ".center(gui_len,'*'))
 
 # %% Training
 
-#print("--------------------------------------------")
 print('Start training...')
 t0 = time.time()
 loss_total, loss_data, loss_pde, rec_log_betaD, rec_log_betaR = alg.train_all()
@@ -126,17 +125,15 @@ training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 
-#print("--------------------------------------------")
 print("Computing errors...")
 # create the class to compute results and error
 c_e = compute_error(bayes_nn, datasets_class, path_result)
 # compute errors and return outputs
 functions_confidence, functions_nn_samples, errors = c_e.error()
-print("DONE".center(os.get_terminal_size().columns,'*'))
+print(" DONE ".center(gui_len,'*'))
 
 # %% Saving
 
-#print("--------------------------------------------")
 print("Saving networks weights...")
 bayes_nn.save_networks(path_weights)
 
@@ -151,11 +148,10 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     rec_log_betaR = np.array(rec_log_betaR)
     np.save(os.path.join(path_result,"log_betaD.npy"),rec_log_betaD)
     np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
-print("DONE".center(os.get_terminal_size().columns,'*'))
+print(" DONE ".center(gui_len,'*'))
 
 # %% Plotting
 
-#print("--------------------------------------------")
 print("Plotting the losses...")
 losses = load_losses(path_result)
 plot_losses(path_plot, losses)
@@ -169,5 +165,5 @@ if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trai
     plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
 show_plot()
-print("END".center(os.get_terminal_size().columns,'*'))
-#print("--------------------------------------------")
+print(" END ".center(gui_len,'*'))
+
