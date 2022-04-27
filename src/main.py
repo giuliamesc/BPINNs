@@ -124,6 +124,7 @@ loss_total, loss_data, loss_pde, rec_log_betaD, rec_log_betaR = alg.train_all()
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
+print(" DONE ".center(gui_len,'*'))
 
 print("Computing errors...")
 # create the class to compute results and error
