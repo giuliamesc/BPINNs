@@ -5,6 +5,7 @@ import os
 import time
 import datetime
 import numpy as np
+import logging
 
 # Move into src if necessary
 if os.getcwd()[-3:] != "src":
@@ -13,6 +14,7 @@ if os.getcwd()[-3:] != "src":
     print(f"Working Directory moved to: {new_dir}")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
+logging.basicConfig(level=logging.ERROR)
 gui_len = max(50,int(os.get_terminal_size().columns/3))
 # %% Import Local Classes
 

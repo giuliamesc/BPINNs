@@ -1,8 +1,8 @@
 # User Defined
-**/trash/**
+**/trash
 **/prova.py
+**/prova.txt
 TODO_LIST.txt
-.vs/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -102,6 +102,8 @@ ENV/
 env.bak/
 venv.bak/
 pacsenv/
+.vs/**
+
 
 # Spyder project settings
 .spyderproject

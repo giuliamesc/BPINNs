@@ -99,7 +99,6 @@ class dataset_class:
 
         # n_domain is simply the length of one of the dataset, x for instance
         index = list(range(inputs.shape[0]))
-        import pdb; pdb.set_trace()
 
         # build collocation dataset from domain dataset
         # np.random.shuffle(index) USE ONLY FOR LINSPACE!
