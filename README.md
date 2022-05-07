@@ -7,7 +7,7 @@
 ## :gear: Installation 
 ### Windows
 1. Go into the directory of your project with `cd project_folder_path`
-2. Create an empty *virtual environment* with `python -m virtualenv .\my_env_name`
+2. Create an empty *virtual environment* with `py -m venv .\my_env_name`
 3. Enter into the virtual environment with `my_env_name\scripts\activate`
 4. Check that the environment is empty with `pip freeze`; normally, it should print nothing
 5. Install the required packages from the `.txt` file `requirements.txt` with `pip install -r requirements.txt`
