@@ -31,6 +31,7 @@ def load_losses(path_result):
     return losses
 
 def plot_confidence(path_plot, datasets_class, functions, n_out_sol, n_out_par):
+
     inputs, u_true, f_true = datasets_class.dom_data
     u_points, u_values, _  = datasets_class.exact_data_noise
 
@@ -38,13 +39,18 @@ def plot_confidence(path_plot, datasets_class, functions, n_out_sol, n_out_par):
     u_fit = (u_points, u_values)
     f = (f_true, functions['f_NN'], functions['f_std'])
 
-    plot_1D(inputs, u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
+    plot_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
     save_plot(path_plot, 'u_confidence.png')
-    plot_1D(inputs, f, 'Confidence interval for f(x)', label = ('x','f'))
+    plot_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
     save_plot(path_plot, 'f_confidence.png')
 
 
 def plot_1D(x, func, title, label = ("",""), fit = None):
+    
+    idx = np.argsort(x)
+    x = x[idx]
+    func = [i[idx] for i in func]
+
     plt.figure()
     plt.plot(x, func[0], 'r-', label='true')
     plt.plot(x, func[1], 'b--', label='mean')
@@ -67,20 +73,25 @@ def plot_nn_samples(path_plot, datasets_class, functions_all, n_out_sol, n_out_p
     u_fit = (u_points, u_values)
     f = (f_true, functions_all['f_NN'])
 
-    plot_1Dall(inputs, u, method, label = ('x','u'),  fit = u_fit)
+    plot_1Dall(inputs[:,0], u, method, label = ('x','u'),  fit = u_fit)
     save_plot(path_plot, 'u_nn_samples.png')
-    plot_1Dall(inputs, f, method, label = ('x','f'), fit = None)
+    plot_1Dall(inputs[:,0], f, method, label = ('x','f'), fit = None)
     save_plot(path_plot, 'f_nn_samples.png')
 
 def plot_1Dall(x, func, method, label = ("",""), fit = None):
+
+    idx = np.argsort(x)
+    x = x[idx]
+
     plt.figure()
+
     if(method == "SVGD"):
         for i in range(func[1].shape[1]):
-            plt.plot(x, func[1][:,i])
+            plt.plot(x, func[1][idx,i])
     elif(method == "HMC"):
         for i in range(func[1].shape[0]):
-            plt.plot(x, func[1][i,:,0], 'b-', markersize=0.01, alpha=0.01)
-    plt.plot(x, func[0], 'r-', label='true')
+            plt.plot(x, func[1][i,idx,0], 'b-', markersize=0.01, alpha=0.01)
+    plt.plot(x, func[0][idx], 'r-', label='true')
     if fit is not None:
         plt.plot(fit[0], fit[1], 'r*')
 

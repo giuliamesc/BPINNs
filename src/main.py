@@ -157,9 +157,6 @@ print("Plotting the losses...")
 losses = load_losses(path_result)
 plot_losses(path_plot, losses)
 
-import pdb
-pdb.set_trace()
-
 print("Plotting the results...")
 plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
 plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
