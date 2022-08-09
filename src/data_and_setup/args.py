@@ -10,7 +10,7 @@ You can also overspecified all the parameters in the json file here, directly fr
 class Parser(ArgumentParser):
     def __init__(self):
         """Initializer"""
-        super(Parser, self).__init__(description='Bayesian PINN for Inverse Eikonal')
+        super(Parser, self).__init__(description='Bayesian PINN for Inverse Eikonal') ## DA SISTEMARE
 
         self.add_argument('--method', type=str, default="HMC", help="""Methods to use for BPINN. Available:
         															- HMC  (Hamiltonian Monte Carlo)

@@ -134,16 +134,12 @@ class dataset_class:
         """
         self.build_dataset()
         if self.__flag_dataset_noise: return  # we add the noise only the first time
+        
+        u_error = np.random.normal(0, self.noise_lv, self.U_exact.shape).astype("float32")
+        self.U_with_noise = self.U_exact + u_error
 
-        self.U_with_noise = np.zeros_like(self.U_exact)
-        self.F_with_noise = np.zeros_like(self.F_exact)
-
-        for i in range(0,len(self.U_exact)):
-            u_error = np.random.normal(0, self.noise_lv, 1)
-            self.U_with_noise[i,:] = self.U_exact[i,:] + u_error
-
-            # not so useful... we use onlt U_with_noise, not F 
-            f_error = np.random.normal(0, self.noise_lv, self.F_exact.shape[1]) #1, 2 or 3
-            self.F_with_noise[i,:] = self.F_exact[i,:] + f_error
+        # not so useful... we use onlt U_with_noise, not F 
+        f_error = np.random.normal(0, self.noise_lv, self.F_exact.shape).astype("float32")
+        self.F_with_noise = self.F_exact + f_error
 
         self.__flag_dataset_noise = True

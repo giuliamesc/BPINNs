@@ -2,6 +2,26 @@ import json
 import os
 
 
+# Sistema in modo che non siano salvate nel main!
+"""dictionary for input dimension given the dataset used"""
+n_input = {
+"laplace1D_cos": 1,
+"laplace2D_cos": 2
+}
+
+"""dictionary for output dimension given the dataset used"""
+n_output = {
+"laplace1D_cos": (1,1),
+"laplace2D_cos": (1,1)
+}
+
+"""dictionary for pde given the dataset used"""
+pde = {
+"laplace1D_cos": "laplace",
+"laplace2D_cos": "laplace"
+}
+
+
 class Param:
     """Initializer"""
     def __init__(self, hp, args):
@@ -25,7 +45,7 @@ class Param:
         # if we have some additional parameters from the command-line
         self.__update(vars(args))
 
-        # for these parameters we use the dictionaries specified at the bottom (n_input/output, pde)
+        # for these parameters we use the dictionaries specified at the top (n_input/output, pde)
         ## store the dimension input (1D, 2D or 3D)
         self.n_input = n_input[self.experiment["dataset"]]
         ## dimension of solution
@@ -108,7 +128,7 @@ class Param:
             if not( isinstance(self.param_method["N_HMC"],int) and isinstance(self.param_method["M_HMC"],int)
                     and isinstance(self.param_method["L_HMC"],int) ):
                 raise TypeError("N_HMC, M_HMC and L_HMC must be integers")
-            if (self.param_method["N_HMC"]<0 or self.param_method["M_HMC"]<0  or self.param_method["L_HMC"]<0):
+            if (self.param_method["N_HMC"]<0 or self.param_method["M_HMC"]<0 or self.param_method["L_HMC"]<0):
                 raise Exception(" N_HMC, M_HMC and L_HMC must be non-negative")
             if self.param_method["N_HMC"]<self.param_method["M_HMC"]:
                 raise Exception("M_HMC must be smaller than N_HMC")
@@ -160,21 +180,3 @@ class Param:
             outfile.write("\n")
 
             outfile.write("}")
-
-"""dictionary for input dimension given the dataset used"""
-n_input = {
-"laplace1D_cos": 1,
-"laplace2D_cos": 2
-}
-
-"""dictionary for output dimension given the dataset used"""
-n_output = {
-"laplace1D_cos": (1,1),
-"laplace2D_cos": (1,1)
-}
-
-"""dictionary for pde given the dataset used"""
-pde = {
-"laplace1D_cos": "laplace",
-"laplace2D_cos": "laplace"
-}
