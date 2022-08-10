@@ -1,10 +1,9 @@
-import numpy as np
 import tensorflow as tf
-
 from abc import ABC, abstractmethod
 from Operators import *
 
 class PhysicsNN():
+    
     def __init__(self, par, dataset, model):
         self.par = par
         self.model = model
@@ -27,7 +26,7 @@ class PhysicsNN():
         return loss, logloss
 
     @tf.function # decorator to speed up the computation
-    def loss_residual(self, inputs):
+    def loss_residual(self):
         """
         Compute the loss and logloss of the pde
         AGGIUNGI DIMENSIONI
@@ -37,11 +36,11 @@ class PhysicsNN():
         mse_res = tf.reduce_mean(tf.keras.losses.MSE(pde_res, tf.zeros_like(pde_res)))
 
         # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
-        n_r = inputs.shape[0] # number of inputs
+        n_r = pde_res.shape[0] # number of samples
         log_var = self.par.sigmas["pde_prior_noise"] # log(1/betaR)
 
         log_res = self.normal_loglikelihood(mse_res, n_r, log_var)
-        log_res *= self.param_res
+        log_res *= self.par.param_res
 
         return self.convert(mse_res), self.convert(log_res)
 
@@ -58,7 +57,7 @@ class PhysicsNN():
         log_var = self.par.sigmas["data_prior_noise"] # log(1/betaD)
 
         log_data = self.normal_loglikelihood(mse_data, n_d, log_var)
-        log_data*=self.param_data
+        log_data*=self.par.param_data
 
         return self.convert(mse_data), self.convert(log_data)
 
@@ -112,7 +111,7 @@ class laplace(pde_constraint):
         """
         - Laplacian(u) = f -> f + Laplacian(u) = 0
         u shape: (n_sample x n_out_sol)
-        f shape: (n_sample x n_out_par)    
+        f shape: (n_sample x n_out_par)
         """
         x = self.input_pts
         with tf.GradientTape(persistent=True) as tape:

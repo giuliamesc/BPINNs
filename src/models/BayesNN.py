@@ -143,7 +143,7 @@ class BayesNN:
 
     # compute the loss and logloss of Physics Constrain (PDE constraint)
     @tf.function # decorator to speed up the computation
-    def pde_logloss(self,inputs):
+    def pde_logloss(self, inputs):
         pass
 
     def save_networks(self, path):

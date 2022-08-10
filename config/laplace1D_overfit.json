@@ -1,5 +1,6 @@
 {
 	"architecture":{
+		"activation":"swish", 
 		"n_layers":1,
 		"n_neurons":5
 	},

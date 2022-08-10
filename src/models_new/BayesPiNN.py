@@ -1,7 +1,7 @@
 import BayesNN
 import PhysicsNN
 
-class BayesPinn(BayesNN, PhysicsNN):
+class BayesPiNN(BayesNN, PhysicsNN):
     """
     
     """

@@ -27,7 +27,7 @@ class Operators:
         input  shape: (n_sample x dim_output)
         output shape: (n_sample x dim_output x dim_input)
         """
-        return tf.stack([tape.gradient(v[:,i], x) for i in range(d)], axis = -2)
+        return tf.stack([tape.gradient(v[:,i], x) for i in range(d)], axis=-2)
     
 
     @staticmethod
@@ -36,7 +36,7 @@ class Operators:
         input  shape: (n_sample x 1)
         output shape: (n_sample x 1)
         """
-        return tf.squeeze(Operators.gradient_scalar(tape, s, x), axis =-1)
+        return tf.squeeze(Operators.gradient_scalar(tape, s, x), axis=-1)
 
     @staticmethod
     def derivate_vector(tape, s, x, d):
@@ -44,7 +44,7 @@ class Operators:
         input  shape: (n_sample x dim_output)
         output shape: (n_sample x dim_output)
         """
-        return tf.squeeze(Operators.gradient_vector(tape, s, x, d), axis =-1)
+        return tf.squeeze(Operators.gradient_vector(tape, s, x, d), axis=-1)
 
 
     @staticmethod
@@ -55,7 +55,7 @@ class Operators:
         output shape: (n_sample x 1)
         """
         if len(v.shape) == 3: v = tf.squeeze(v, axis = -2)
-        return tf.expand_dims(tf.linalg.trace(Operators.gradient_vector(tape, v, x, d)), axis = -1)
+        return tf.expand_dims(tf.linalg.trace(Operators.gradient_vector(tape, v, x, d)), axis=-1)
 
     @staticmethod
     def divergence_tensor(tape, A, x, d):
@@ -64,7 +64,7 @@ class Operators:
         output shape: (n_sample x dim_output)
         """
         divergences = [Operators.divergence_vector(tape, A[:,i,:], x, d) for i in range(d)]
-        return tf.squeeze(tf.stack(divergences, axis = -1), axis = -2)
+        return tf.squeeze(tf.stack(divergences, axis = -1), axis=-2)
 
 
     @staticmethod
