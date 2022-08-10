@@ -28,7 +28,7 @@ from data_and_setup.dataset_creation import dataset_class
 from data_and_setup.dataloader import dataloader
 
 # Model
-from models.BayesNN import MCMC_BayesNN
+from models.BayesNN import HMC_BayesNN
 # from models.BayesNN import SVGD_BayesNN # WORK IN PROGRESS
 from models.auto_diff import laplace
 
@@ -97,7 +97,7 @@ if(par.method == "SVGD"):
         #                        pinn_loss, par.utils["random_seed"])
 else:
     if(par.pde == "laplace"):
-        bayes_nn = MCMC_BayesNN(par.sigmas, par.n_input, par.architecture,
+        bayes_nn = HMC_BayesNN(par.sigmas, par.n_input, par.architecture,
                                 par.n_out_sol, par.n_out_par, par.param,
                                 pinn_loss, par.utils["random_seed"], par.param_method["M_HMC"])
 

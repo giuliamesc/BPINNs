@@ -10,13 +10,13 @@ from models.prior_trainable import trainable_param
 
 class BayesNN:
     """
-    Bayesian-PINN: Parent class, inheritance in SVGD_BayesNN and MCMC_BayesNN
+    Bayesian-PINN: Parent class, inheritance in SVGD_BayesNN and HMC_BayesNN
     """
     def __init__(self, num_neural_networks, sigmas,
                 n_input, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed):
         """!
         Constructor
-        @param num_neural_networks number of neural networks for SVGD, 1 for MCMC
+        @param num_neural_networks number of neural networks for SVGD, 1 for HMC
         @param sigmas parameters for sigmas
         @param n_input dim of input (1D, 2D or 3D)
         @param architecture nn_architecture parameters
@@ -154,9 +154,9 @@ class BayesNN:
         """Load networks"""
         pass
 
-class MCMC_BayesNN(BayesNN):
+class HMC_BayesNN(BayesNN):
     """
-    Define Bayesian-PINN for MCMC methods (from BayesNN)
+    Define Bayesian-PINN for HMC methods (from BayesNN)
     """
     def __init__(self, sigmas, n_input, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed, M):
         """!

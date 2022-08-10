@@ -12,12 +12,12 @@ def list_update(left, right, mult):
 ### Hamiltonian Monte Carlo
 class HMC:
     """
-    Hamiltonian Monte Carlo (MCMC)
+    Hamiltonian Monte Carlo (HMC)
     """
 
     def __init__(self, bayes_nn, train_loader, datasets_class, hmc_param, random_seed, debug_flag):
         """!
-        @param bayes_nn an object of type MCMC_BayesNN that collects the neural network and all the methods to compute the posterior
+        @param bayes_nn an object of type HMC_BayesNN that collects the neural network and all the methods to compute the posterior
         @param train_loader the data loader in minibatch for the collocation points
         @param datasets_class
         @param parameters parameter for the HMC method (in json file, "HMC" section)
