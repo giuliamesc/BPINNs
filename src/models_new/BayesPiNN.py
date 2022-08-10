@@ -1,9 +1,12 @@
-import BayesNN
+import SimpleNN
 import PhysicsNN
 
-class BayesPiNN(BayesNN, PhysicsNN):
+class BayesPiNN(SimpleNN, PhysicsNN):
     """
-    
+    **** INHERITANCE ****
+    - SimpleNN: nn_params
+    - SimpleNN: forward()
+    - PhysicsNN:
     """
 
     def __init__(self):

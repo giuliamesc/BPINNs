@@ -14,7 +14,7 @@ class BayesNN:
     """
     def __init__(self, num_neural_networks, sigmas,
                 n_input, architecture, n_out_sol, n_out_par, parameters, pde_constr, random_seed):
-        """!
+        """
         Constructor
         @param num_neural_networks number of neural networks for SVGD, 1 for HMC
         @param sigmas parameters for sigmas
@@ -43,7 +43,7 @@ class BayesNN:
                               architecture["n_neurons"], self.n_out_sol + self.n_out_par))
         self.architecture_nn = self.nnets[0].get_dimensions()
 
-
+        """UNUSED???"""
         # w_i ~ StudentT(w_i | mu=0, lambda=shape/rate, nu=2*shape)
         # (even if we use a classical initializer for NN in FCN.py (zero bias, glorot initialization for W))
         self.w_prior_shape = 1.     # prior_shape of w
@@ -259,9 +259,8 @@ class HMC_BayesNN(BayesNN):
 
 
     def mean_and_std(self, inputs):
-        """!
+        """
         Compute mean and std deviation at data_test = inputs
-        @param inputs inputs data
         """
 
         samples_u, samples_f = self.predict(inputs)

@@ -4,35 +4,47 @@ from Operators import *
 
 class PhysicsNN():
     
+    """
+    ***** Key Features *****
+    - Evaluate PDEs residuals (using pde constraint)
+    - Compute losses and loglosses
+        - residual loss (pdes)
+        - data loss (fitting)
+        - prior loss WIP
+    
+    **** Other Features ****
+    - Likelihood evaluation
+    - Tensor casting in float32
+    """
+
     def __init__(self, par, dataset, model):
         self.par = par
         self.model = model
         self.col_data = dataset.coll_data
         self.fit_data = dataset.exact_data_noise
-        self.equation = self.build_equation(self.par.pde)
+        self.equation = self.__build_equation(self.par.pde)
 
-    def build_equation(self, name_equation):
+    def __build_equation(self, name_equation):
         if name_equation == "laplace": 
-            return laplace(self.col_data[0], self.model.forward, self.par)
+            return laplace(self.par, self.model.forward)
         else: assert("This equation is not implemented")
 
     def loss_total(self):
-        loss = dict()
-        logloss = dict()
-        loss["res"],   logloss["res"]   = self.loss_res(self.col_data[0])
-        loss["data"],  logloss["data"]  = self.loss_data(self.fit_data[1], self.fit_data[2])
-        loss["prior"], logloss["prior"] = self.loss_prior()
+        loss, logloss = dict(), dict()
+        loss["res"],   logloss["res"]   = self.__loss_residual(self.col_data[0])
+        loss["data"],  logloss["data"]  = self.__loss_data(self.fit_data[1], self.fit_data[2])
+        loss["prior"], logloss["prior"] = self.__loss_prior()
         loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values())
         return loss, logloss
 
     @tf.function # decorator to speed up the computation
-    def loss_residual(self):
+    def __loss_residual(self, inputs):
         """
         Compute the loss and logloss of the pde
         AGGIUNGI DIMENSIONI
         """
         # compute loss using pde_constraint
-        pde_res = self.equation.compute_pde_residual()
+        pde_res = self.equation.compute_pde_residual(inputs)
         mse_res = tf.reduce_mean(tf.keras.losses.MSE(pde_res, tf.zeros_like(pde_res)))
 
         # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
@@ -45,7 +57,7 @@ class PhysicsNN():
         return self.convert(mse_res), self.convert(log_res)
 
     @tf.function # decorator to speed up the computation
-    def loss_data(self, outputs, targets):
+    def __loss_data(self, outputs, targets):
         """
         Compute the loss and logloss of the data 
         AGGIUNGI DIMENSIONI
@@ -62,7 +74,7 @@ class PhysicsNN():
         return self.convert(mse_data), self.convert(log_data)
 
     @tf.function # decorator to speed up the computation
-    def loss_prior(self):
+    def __loss_prior(self):
         """
         Compute the logloss of the prior 
         AGGIUNGI DIMENSIONI
@@ -81,39 +93,41 @@ class PhysicsNN():
     def normal_loglikelihood(mse, n, log_var):
         return (- 0.5 * n * mse * tf.math.exp(log_var) + 0.5 * n * log_var)
 
+
 class pde_constraint(ABC):
     """
-    Class for the pde_constraint
+    Parent abstract class for pde constraint
     """
-    def __init__(self, inputs_pts, forward_pass, par):
+    def __init__(self, par, forward_pass):
         """ Constructor
         n_input   -> dimension input (1,2 or 3)
         n_out_sol -> dimension of solution
         n_out_par -> dimension of parametric field
         """
         self.forward   = forward_pass
-        self.input_pts = inputs_pts
         self.n_input   = par.n_input
         self.n_out_sol = par.n_out_sol
         self.n_out_par = par.n_out_par
 
     @abstractmethod
-    def compute_pde_residual(self):
+    def compute_pde_residual(self, inputs_pts):
         """compute the pde losses, need to be overridden in child classes"""
         return 0.
     
 
 class laplace(pde_constraint):
-    def __init__(self, inputs_pts, forward_pass, par):
-        super().__init__(inputs_pts, forward_pass, par)
+    """
+    Laplace pde constraint implementation
+    """
+    def __init__(self, par, forward_pass):
+        super().__init__(par, forward_pass)
         
-    def compute_pde_residual(self):
+    def compute_pde_residual(self, x):
         """
         - Laplacian(u) = f -> f + Laplacian(u) = 0
         u shape: (n_sample x n_out_sol)
         f shape: (n_sample x n_out_par)
         """
-        x = self.input_pts
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(x)
             u, f = self.forward_pass(x)

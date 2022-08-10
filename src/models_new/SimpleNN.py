@@ -1,13 +1,27 @@
 import numpy as np
-import os 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import tensorflow as tf
-import tensorflow_probability as tfp
 
-class BayesNN():
+class SimpleNN():
+
     """
-    - Contain the layers and weights
-    - Can do forward and predict
+    ***** Key Features *****
+    - Build initial network
+    - Contain layers and weights (theta)
+    - Do forward pass on given theta
+
+    **** Other Features **** WIP
+    - Save and Load single theta?
+    - Architecture Recap ?
+    
+    Neural networks parameters
+        - nn_params = (weights, biases)
+        - weights is a list of numpy arrays 
+            - 1 layer               : shape (n_input, n_neurons)
+            - (n_layers - 1) layers : shape (n_neurons, n_neurons) 
+            - 1 layer               : shape (n_neurons, n_out_sol+n_out_par)
+        - biases is a list of numpy arrays 
+            - n_layers layers       : shape (n_neurons,) 
+            - 1 layer               : shape (n_out_sol+n_out_par,)
     """
     
     def __init__(self, par):
@@ -27,19 +41,18 @@ class BayesNN():
 
     def __build_NN(self):
         """
-        Initializes a fully connected Neural Network with Glorot Uniform initialization of weights and biases initialized to zero.
-        - model is an initialized instance of neural network
+        Initializes a fully connected Neural Network with 
+        - Glorot Uniform initialization of weights
+        - Zero initialization for biases
         """
-        model = tf.keras.Sequential()
 
         # Input Layer
+        model = tf.keras.Sequential()
         model.add(tf.keras.Input(shape=(self.n_inputs,)))
-        
         # Hidden Layers
         for _ in range(self.n_layers):
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
                       kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-
         # Output Layer
         model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
                   kernel_initializer='glorot_uniform', bias_initializer='zeros'))
@@ -48,48 +61,42 @@ class BayesNN():
         
     @property
     def nn_params(self):
-        """
-        Returns the params of the nn: 
-        - nn_params = (weights, biases)
-        - weights is a list of numpy arrays 
-            - 1 layer               : shape (n_input, n_neurons)
-            - (n_layers - 1) layers : shape (n_neurons, n_neurons) 
-            - 1 layer               : shape (n_neurons, n_out_sol+n_out_par)
-        - biases is a list of numpy arrays 
-            - n_layers layers       : shape (n_neurons,) 
-            - 1 layer               : shape (n_out_sol+n_out_par,)
-        """
+        """ Getter for nn_params property """
         weights = [layer.get_weights()[0] for layer in self.model.layers]
         biases  = [layer.get_weights()[1] for layer in self.model.layers]
         return (weights, biases)
 
     @nn_params.setter
-    def nn_params(self, new_params):
-        """
-        Sets the params of the nn: 
-        - new_params = (weights, biases)
-        - weights is a list of numpy arrays 
-            - 1 layer               : shape (n_input, n_neurons)
-            - (n_layers - 1) layers : shape (n_neurons, n_neurons) 
-            - 1 layer               : shape (n_neurons, n_out_sol+n_out_par)
-        - biases is a list of numpy arrays 
-            - n_layers layers       : shape (n_neurons,) 
-            - 1 layer               : shape (n_out_sol+n_out_par,)
-        """
-        weights, biases = new_params
+    def nn_params(self, theta):
+        """ Setter for nn_params property """
+        weights, biases = theta
         for layer, weight, bias in zip(self.model.layers, weights, biases):
             layer.set_weights((weight,bias))
 
-    def sample(self):
-        pass
+    def forward(self, x, split = False):
+        """ 
+        Simple prediction on Solution and Parametric field 
+        ADD DIMENSION FOR X
+        """
 
-    def forward(self, x):
-        return self.model(x)
+        # compute the output of NN at the inputs data
+        output = self.model(x)
+        if not split: return output
 
-    def predict(self, x):
-        return self.forward(x)
+        # select solution output
+        out_sol = output[:,:self.n_out_sol]
+        # select parametric field output
+        out_par = output[:,self.n_out_sol:]
+        
+        return out_sol, out_par
 
-# ONLY FOR DEBUG
+
+"""
+****************
+DEBUG STUFF ONLY
+****************
+"""
+
 class TempPar:
     def __init__(self):
         
@@ -124,8 +131,8 @@ if __name__ == "__main__":
     
     par = TempPar()
     n_sample = 4
-    bayes_nn = BayesNN(par)
+    simple_nn = SimpleNN(par)
 
-    x = tf.random.uniform(shape=[n_sample, bayes_nn.n_inputs])
-    bayes_nn.nn_params = create_weights(par)
-    print(bayes_nn.nn_params)
+    x = tf.random.uniform(shape=[n_sample, simple_nn.n_inputs])
+    simple_nn.nn_params = create_weights(par)
+    print(simple_nn.nn_params)
