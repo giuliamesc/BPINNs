@@ -1,5 +1,5 @@
 import tensorflow as tf
-from equations import Laplace
+#from src.equations import Laplace
 
 class LossNN():
     
@@ -16,15 +16,16 @@ class LossNN():
     - Tensor casting in float32
     """
 
-    def __init__(self, par, model):
+    def __init__(self, par, model, equation):
         self.par = par
         self.model = model
-        self.equation = self.__build_equation(self.par.pde)
+        self.equation = equation
+        #self.equation = self.__build_equation(self.par.pde)
 
-    def __build_equation(self, name_equation):
-        if name_equation == "laplace": 
-            return Laplace(self.par, self.model.forward)
-        else: assert("This equation is not implemented")
+    #def __build_equation(self, name_equation):
+    #    if name_equation == "laplace": 
+    #        return Laplace(self.par, self.model.forward)
+    #    else: assert("This equation is not implemented")
 
     def loss_total(self, dataset):
         loss, logloss = dict(), dict()
@@ -90,4 +91,3 @@ class LossNN():
     @staticmethod
     def normal_loglikelihood(mse, n, log_var):
         return (- 0.5 * n * mse * tf.math.exp(log_var) + 0.5 * n * log_var)
-

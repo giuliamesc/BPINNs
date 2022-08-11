@@ -28,11 +28,12 @@ from data_and_setup.dataset_creation import dataset_class
 from data_and_setup.dataloader import dataloader
 
 # Model
+""" IMPORTA EQUAZIONI """
 from networks.BayesPiNN import BayesPiNN
 """ IMPORTA ALGORITMO BACKPROP """
 
 # Postprocessing
-from postprocessing.compute_error import compute_error
+# from postprocessing.compute_error import compute_error
 from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
 
 # %% Creating Parameters
@@ -75,29 +76,33 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Building the PDE constraint...")
 # Build the pde constraint class that implements the computation of pde residual for each collocation point
-
+""" INIZIALIZZA IL PROBLEMA """
 
 print("Initializing the Bayesian PINN...")
 # Initialize the correct Bayesian NN
+""" INIZIALIZZA LA RETE """
 bayes_nn = BayesPiNN(par, )
 
 print("Building", par.method ,"algorithm...")
-
 # Build the method class
-
+""" INIZIALIZZA L'ALGORITMO """
+# eg: alg = HMC(bayes_nn, dataset)
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
 
 print('Start training...')
 t0 = time.time()
-
+""" TRAINING """
+# eg: alg.train(train par)
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 print(" DONE ".center(gui_len,'*'))
 
 print("Computing errors...")
+# eg: out = bayes_nn.predict()
+# eg: err = bayes_nn.comperr(out)
 functions_confidence, functions_nn_samples = None, None
 
 print(" DONE ".center(gui_len,'*'))
