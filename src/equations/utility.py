@@ -5,13 +5,12 @@ class Pde_constraint(ABC):
     """
     Parent abstract class for pde constraint
     """
-    def __init__(self, par, forward_pass):
+    def __init__(self, par):
         """ Constructor
         n_input   -> dimension input (1,2 or 3)
         n_out_sol -> dimension of solution
         n_out_par -> dimension of parametric field
         """
-        self.forward   = forward_pass
         self.n_input   = par.n_input
         self.n_out_sol = par.n_out_sol
         self.n_out_par = par.n_out_par
@@ -21,6 +20,13 @@ class Pde_constraint(ABC):
         """compute the pde losses, need to be overridden in child classes"""
         return 0.
 
+    @abstractmethod
+    def pre_process(self, dataset):
+        return None
+
+    @abstractmethod
+    def post_process(self, outputs):
+        return None
 
 class Operators:
     

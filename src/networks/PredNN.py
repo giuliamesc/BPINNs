@@ -7,3 +7,6 @@ class PredNN(CoreNN):
 
     def post_process(self):
         pass
+
+    def predict(self):
+        pass
