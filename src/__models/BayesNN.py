@@ -4,8 +4,8 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 # tfd = tfp.distributions ## CONTROLLARE
 
-from models.FCN import Net
-from models.prior_trainable import trainable_param
+from __models.FCN import Net
+from __models.prior_trainable import trainable_param
 
 
 class BayesNN:

@@ -1,12 +1,12 @@
 import numpy as np
 import tensorflow as tf
 
-class SimpleNN():
+class CoreNN():
 
     """
     ***** Key Features *****
     - Build initial network
-    - Contain layers and weights (theta)
+    - Contain layers and weights and biases (theta)
     - Do forward pass on given theta
 
     **** Other Features **** WIP
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     
     par = TempPar()
     n_sample = 4
-    simple_nn = SimpleNN(par)
+    simple_nn = CoreNN(par)
 
     x = tf.random.uniform(shape=[n_sample, simple_nn.n_inputs])
     simple_nn.nn_params = create_weights(par)

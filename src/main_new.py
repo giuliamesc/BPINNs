@@ -23,22 +23,16 @@ from data_and_setup.args import Parser #command-line arg parser
 from data_and_setup.param import Param #parameter class
 from data_and_setup.create_directories import create_directories
 
-# Dataset Ceìreation
+# Dataset Creation
 from data_and_setup.dataset_creation import dataset_class
 from data_and_setup.dataloader import dataloader
 
 # Model
-from models.BayesNN import HMC_BayesNN
-# from models.BayesNN import SVGD_BayesNN # WORK IN PROGRESS
-from models.auto_diff import laplace
-
-# Training
-# from models.SVGD import SVGD
-from models.HMC import HMC
+from networks.BayesPiNN import BayesPiNN
+""" IMPORTA ALGORITMO BACKPROP """
 
 # Postprocessing
 from postprocessing.compute_error import compute_error
-from postprocessing.plotter_old import plot_log_betas
 from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
 
 # %% Creating Parameters
@@ -81,38 +75,15 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Building the PDE constraint...")
 # Build the pde constraint class that implements the computation of pde residual for each collocation point
-if(par.pde == "laplace"):
-    pinn_loss = laplace(par)
-else:
-    raise Exception("No other pde implemented")
+
 
 print("Initializing the Bayesian PINN...")
 # Initialize the correct Bayesian NN
-if(par.method == "SVGD"):
-    pass
-    # if(par.pde == "laplace"):
-        #bayes_nn = SVGD_BayesNN(par.param_method["n_samples"], par.sigmas,
-        #                        par.n_input, par.architecture,
-        #                        par.n_out_sol, par.n_out_par, par.param,
-        #                        pinn_loss, par.utils["random_seed"])
-else:
-    if(par.pde == "laplace"):
-        bayes_nn = HMC_BayesNN(par.sigmas, par.n_input, par.architecture,
-                                par.n_out_sol, par.n_out_par, par.param,
-                                pinn_loss, par.utils["random_seed"], par.param_method["M_HMC"])
+bayes_nn = BayesPiNN(par, )
 
 print("Building", par.method ,"algorithm...")
 
 # Build the method class
-if(par.method == "SVGD"):
-    # Initialize SVGD
-    raise Exception("Work in Progress")
-elif(par.method == "HMC"):
-    # Initialize HMC
-    alg = HMC(bayes_nn, batch_loader, datasets_class,
-                par.param_method, par.utils["random_seed"], par.utils["debug_flag"])
-else:
-    raise Exception("Method not found")
 
 print(" DONE ".center(gui_len,'*'))
 
@@ -120,36 +91,17 @@ print(" DONE ".center(gui_len,'*'))
 
 print('Start training...')
 t0 = time.time()
-loss_total, loss_data, loss_pde, rec_log_betaD, rec_log_betaR = alg.train_all()
+
 training_time = time.time() - t0
 print('End training')
 print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
 print(" DONE ".center(gui_len,'*'))
 
 print("Computing errors...")
-# create the class to compute results and error
-c_e = compute_error(bayes_nn, datasets_class, path_result)
-# compute errors and return outputs
-functions_confidence, functions_nn_samples, errors = c_e.error()
+functions_confidence, functions_nn_samples = None, None
+
 print(" DONE ".center(gui_len,'*'))
 
-# %% Saving
-
-print("Saving networks weights...")
-bayes_nn.save_networks(path_weights)
-
-print("Save losses...")
-np.savetxt(os.path.join(path_result,"Loss.csv" ), loss_total)
-np.savetxt(os.path.join(path_result,"Collocation.csv"), loss_pde)
-np.savetxt(os.path.join(path_result,"Fitting.csv"), loss_data)
-
-if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("Save log betass...")
-    rec_log_betaD = np.array(rec_log_betaD)
-    rec_log_betaR = np.array(rec_log_betaR)
-    np.save(os.path.join(path_result,"log_betaD.npy"),rec_log_betaD)
-    np.save(os.path.join(path_result,"log_betaR.npy"),rec_log_betaR)
-print(" DONE ".center(gui_len,'*'))
 
 # %% Plotting
 
@@ -160,10 +112,6 @@ plot_losses(path_plot, losses)
 print("Plotting the results...")
 plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
 plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
-
-if (par.sigmas["data_prior_noise_trainable"] or par.sigmas["pde_prior_noise_trainable"]):
-    print("Plotting log betas")
-    plot_log_betas(rec_log_betaD, rec_log_betaR, path_plot)
 
 print(" END ".center(gui_len,'*'))
 show_plot()
