@@ -1,6 +1,6 @@
 from utility import *
 
-class Laplace(Pde_constraint):
+class Laplace(Equation):
     """
     Laplace pde constraint implementation
     """

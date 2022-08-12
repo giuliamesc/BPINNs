@@ -1,7 +1,9 @@
 import numpy as np
 import tensorflow as tf
 
-class SVGD():
+from Algorithm import Algorithm
+
+class SVGD(Algorithm):
     """
     Class for SVGD training
     """

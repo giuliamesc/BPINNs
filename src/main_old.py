@@ -37,9 +37,9 @@ from __models.auto_diff import laplace
 from __models.HMC import HMC
 
 # Postprocessing
-from postprocessing.compute_error import compute_error
-from postprocessing.plotter_old import plot_log_betas
-from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
+from __postprocessing.compute_error import compute_error
+from __postprocessing.plotter_old import plot_log_betas
+from __postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
 
 # %% Creating Parameters
 

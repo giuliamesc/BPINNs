@@ -1,7 +1,9 @@
 import numpy as np
 import tensorflow as tf
 
-class VI():
+from Algorithm import Algorithm
+
+class VI(Algorithm):
     """
     Class for VI training
     """

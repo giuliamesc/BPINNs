@@ -21,3 +21,6 @@ class PredNN(CoreNN):
 
     def mean_and_std(self):
         pass
+
+    def draw_samples(self):
+        pass

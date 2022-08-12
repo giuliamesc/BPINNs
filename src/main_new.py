@@ -2,9 +2,6 @@
 
 import json
 import os
-import time
-import datetime
-import numpy as np
 import logging
 
 # Move into src if necessary
@@ -22,19 +19,18 @@ gui_len = max(50,int(os.get_terminal_size().columns/3))
 from data_and_setup.args import Parser #command-line arg parser
 from data_and_setup.param import Param #parameter class
 from data_and_setup.create_directories import create_directories
-
 # Dataset Creation
 from data_and_setup.dataset_creation import dataset_class
 from data_and_setup.dataloader import dataloader
-
 # Model
-""" IMPORTA EQUAZIONI """
-from networks.BayesNN import BayesPiNN
-""" IMPORTA ALGORITMO BACKPROP """
-
+from networks.BayesNN import BayesNN
+# Algorithms
+from algorithms.HMC import HMC
 # Postprocessing
-# from postprocessing.compute_error import compute_error
-from postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
+from post_processing import Storage
+from post_processing import Plotter
+
+#from __postprocessing.plotter import load_losses, plot_losses, plot_confidence, plot_nn_samples, show_plot
 
 # %% Creating Parameters
 
@@ -59,8 +55,9 @@ print("Solve the inverse problem of " + str(par.n_input) + "D " + par.pde)
 print("Dataset used:", par.experiment["dataset"])
 
 print(" DONE ".center(gui_len,'*'))
+
+# %% Datasets Creation
 print("Dataset creation...")
-# Datasets Creation
 datasets_class = dataset_class(par)
 
 print("\tNumber of fitting data:", datasets_class.num_fitting)
@@ -74,49 +71,66 @@ print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
-print("Building the PDE constraint...")
-# Build the pde constraint class that implements the computation of pde residual for each collocation point
-""" INIZIALIZZA IL PROBLEMA """
-
 print("Initializing the Bayesian PINN...")
 # Initialize the correct Bayesian NN
-""" INIZIALIZZA LA RETE """
-bayes_nn = BayesPiNN(par, )
+bayes_nn = BayesNN(par)
+
+print("Chosing", par.method ,"algorithm...")
+chosen_algorithm = HMC(bayes_nn)
+""" Switch tra gli algoritmi """
 
 print("Building", par.method ,"algorithm...")
-# Build the method class
-""" INIZIALIZZA L'ALGORITMO """
-# eg: alg = HMC(bayes_nn, dataset)
+# Initialize the algorithm chosen
+train_algorithm = chosen_algorithm
+# Insert the dataset used for training
+train_algorithm.data_train = datasets_class # Decidi se separare qua in batch
+
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
 
 print('Start training...')
-t0 = time.time()
-""" TRAINING """
-# eg: alg.train(train par)
-training_time = time.time() - t0
+# Create list of theta samples
+train_algorithm.train(par)
+
 print('End training')
-print('Finished in', str(datetime.timedelta(seconds=int(training_time))))
+train_algorithm.compute_time()
 print(" DONE ".center(gui_len,'*'))
+
+# %% Model Evaluation
+
+print("Computing solutions...")
+functions_confidence = bayes_nn.mean_and_std()
+functions_nn_samples = bayes_nn.draw_samples()
 
 print("Computing errors...")
-# eg: out = bayes_nn.predict()
-# eg: err = bayes_nn.comperr(out)
-functions_confidence, functions_nn_samples = None, None
+errors = bayes_nn.compute_errors()
+""" STAMPA ERRORI """
 
 print(" DONE ".center(gui_len,'*'))
 
+# %% Saving
+
+save_storage = Storage(path_result, path_plot, path_weights)
+save_storage.save_training(bayes_nn.theta, train_algorithm.loss)
+save_storage.save_results(functions_confidence, functions_nn_samples)
+save_storage.save_errors(errors)
 
 # %% Plotting
 
+print("Loading data")
+plotter = Plotter()
+load_storage = Storage(path_result, path_plot, path_weights)
+
 print("Plotting the losses...")
-losses = load_losses(path_result)
-plot_losses(path_plot, losses)
+losses = load_storage.load_losses()
+plotter.plot_losses(path_plot, losses)
 
 print("Plotting the results...")
-plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
-plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
+functions_confidence = load_storage.load_confidence()
+functions_nn_samples = load_storage.load_nn_samples()
+plotter.plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
+plotter.plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
 
 print(" END ".center(gui_len,'*'))
-show_plot()
+plotter.show_plot()

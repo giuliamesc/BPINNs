@@ -1,0 +1,16 @@
+### IMPLEMENTAZIONI GROSSE
+- Implementare la Rete
+    - Fare PredNN
+    - Finire BayesNN
+    - Testare
+- Implemetare gli Algoritmi
+    - HMC
+    - VI
+    - SVGD
+- Postprocessing
+    - Refactorare plotter in OOP
+    - Creare Storage
+        - Usare property?
+- Main
+    - Switch vari
+    - Utility per il main non meglio identificati

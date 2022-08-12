@@ -23,8 +23,6 @@ class BayesNN(PredNN, LossNN):
         super(BayesNN,self).__init__(par=par, comp_res=comp_res,
                                      pre_proc=pre_proc, post_proc=post_proc)
         
-        # will be initialized by training algorithms
-        self.data_train = None
 
     def __initialize_equation(par):
         equation = par.experiment["dataset"]

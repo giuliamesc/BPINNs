@@ -1,7 +1,7 @@
 import tensorflow as tf
 from abc import ABC, abstractmethod
 
-class Pde_constraint(ABC):
+class Equation(ABC):
     """
     Parent abstract class for pde constraint
     """
