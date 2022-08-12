@@ -29,7 +29,7 @@ from data_and_setup.dataloader import dataloader
 
 # Model
 """ IMPORTA EQUAZIONI """
-from networks.BayesPiNN import BayesPiNN
+from networks.BayesNN import BayesPiNN
 """ IMPORTA ALGORITMO BACKPROP """
 
 # Postprocessing

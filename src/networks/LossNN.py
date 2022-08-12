@@ -16,16 +16,10 @@ class LossNN():
     - Tensor casting in float32
     """
 
-    def __init__(self, par, model, equation):
-        self.par = par
-        self.model = model
-        self.equation = equation
-        #self.equation = self.__build_equation(self.par.pde)
+    def __init__(self, comp_res, **kw):
 
-    #def __build_equation(self, name_equation):
-    #    if name_equation == "laplace": 
-    #        return Laplace(self.par, self.model.forward)
-    #    else: assert("This equation is not implemented")
+        super(LossNN, self).__init__(**kw)
+        self.compute_residual = comp_res
 
     def loss_total(self, dataset):
         loss, logloss = dict(), dict()
@@ -42,7 +36,7 @@ class LossNN():
         AGGIUNGI DIMENSIONI
         """
         # compute loss using pde_constraint
-        pde_res = self.equation.compute_pde_residual(inputs)
+        pde_res = self.compute_residual(inputs, self.forward)
         mse_res = tf.reduce_mean(tf.keras.losses.MSE(pde_res, tf.zeros_like(pde_res)))
 
         # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
@@ -61,14 +55,14 @@ class LossNN():
         AGGIUNGI DIMENSIONI
         """
         # Normal(output | target, 1 / betaD * I)
-        outputs = self.model.forward(inputs)
+        outputs, _ = self.forward(inputs, split = True)
         mse_data = tf.reduce_mean(tf.keras.losses.MSE(outputs, targets))
 
         n_d = outputs.shape[0]
         log_var = self.par.sigmas["data_prior_noise"] # log(1/betaD)
 
         log_data = self.normal_loglikelihood(mse_data, n_d, log_var)
-        log_data*=self.par.param_data
+        log_data*= self.par.param_data
 
         return self.convert(mse_data), self.convert(log_data)
 

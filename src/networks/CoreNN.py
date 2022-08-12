@@ -25,7 +25,7 @@ class CoreNN():
     """
     
     def __init__(self, par):
-        
+
         # Domain dimensions
         self.n_inputs  = par.n_inputs
         self.n_out_sol = par.n_out_sol
@@ -36,6 +36,8 @@ class CoreNN():
         self.n_neurons  = par.architecture["n_neurons"]
         self.activation = par.architecture["activation"]
 
+        # Save parameters for child classes
+        self.par = par
         # Build the Neural network architecture
         self.model = self.__build_NN()
 
