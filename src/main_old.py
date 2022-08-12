@@ -21,7 +21,8 @@ gui_len = max(50,int(os.get_terminal_size().columns/3))
 # Setup
 from data_and_setup.args import Parser #command-line arg parser
 from data_and_setup.param import Param #parameter class
-from data_and_setup.create_directories import create_directories
+
+from utility.create_directories import create_directories
 
 # Dataset Creation
 from data_and_setup.dataset_creation import dataset_class

@@ -1,4 +1,6 @@
-from utility import *
+import tensorflow as tf
+import Equation
+import Operators
 
 class Laplace(Equation):
     """
