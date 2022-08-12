@@ -149,34 +149,3 @@ class Param:
         print("pde_type: ", self.pde, " \n ")
 
 
-    def save_parameter(self, path=""):
-        """Save parameters"""
-        with open(os.path.join(path,'param.json'), 'w') as outfile:
-            outfile.write("{ \n")
-
-            outfile.write(" \"architecture\": ")
-            json.dump(self.architecture, outfile)
-            outfile.write(", \n")
-
-            outfile.write(" \"experiment\": ")
-            json.dump(self.experiment, outfile)
-            outfile.write(", \n")
-
-            outfile.write(" \"param\": ")
-            json.dump(self.param, outfile)
-            outfile.write(", \n")
-
-            outfile.write(" \"sigmas\": ")
-            json.dump(self.sigmas, outfile)
-            outfile.write(", \n")
-
-            s = " \""+self.method+"\": "
-            outfile.write(s)
-            json.dump(self.param_method, outfile)
-            outfile.write(", \n")
-
-            outfile.write(" \"utils\": ")
-            json.dump(self.utils, outfile)
-            outfile.write("\n")
-
-            outfile.write("}")

@@ -27,7 +27,7 @@ class CoreNN():
     def __init__(self, par):
 
         # Domain dimensions
-        self.n_inputs  = par.n_inputs
+        self.n_inputs  = par.n_input
         self.n_out_sol = par.n_out_sol
         self.n_out_par = par.n_out_par
 

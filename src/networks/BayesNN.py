@@ -1,7 +1,7 @@
-import PredNN
-import LossNN
+from networks.PredNN import PredNN
+from networks.LossNN import LossNN
 
-from equations import Laplace
+from networks.equations.Laplace import Laplace
 
 class BayesNN(PredNN, LossNN):
     """
@@ -14,6 +14,7 @@ class BayesNN(PredNN, LossNN):
 
     def __init__(self,par):
         
+        self.trained = False
         equation = self.__initialize_equation(par)
         
         comp_res  = equation.compute_residual
@@ -21,10 +22,9 @@ class BayesNN(PredNN, LossNN):
         post_proc = equation.post_process
         
         super(BayesNN,self).__init__(par=par, comp_res=comp_res,
-                                     pre_proc=pre_proc, post_proc=post_proc)
+                                     pre=pre_proc, post=post_proc)
         
-
-    def __initialize_equation(par):
+    def __initialize_equation(self, par):
         equation = par.experiment["dataset"]
         if   equation == "laplace1D_cos": return Laplace(par)
         elif equation == "laplace2D_cos": return Laplace(par)

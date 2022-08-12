@@ -1,7 +1,7 @@
+from networks.CoreNN import CoreNN
 import tensorflow as tf
-#from src.equations import Laplace
 
-class LossNN():
+class LossNN(CoreNN):
     
     """
     ***** Key Features *****

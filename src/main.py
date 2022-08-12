@@ -1,22 +1,11 @@
-# %% Import Standard Packages
-
-import json
-import os
-import logging
-
-# Utilities
+# %% Utilities
+from utility.setup import set_directory, set_warning, set_gui_len, load_json
 from utility.create_directories import create_directories
 
-""" Fai diventare utility """
-# Move into src if necessary
-if os.getcwd()[-3:] != "src":
-    new_dir = os.path.join(os.getcwd(),"src")
-    os.chdir(new_dir)
-    print(f"Working Directory moved to: {new_dir}")
-
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-logging.basicConfig(level=logging.ERROR)
-gui_len = max(50,int(os.get_terminal_size().columns/3))
+# Setup utilities
+set_directory()
+set_warning()
+gui_len = set_gui_len()
 
 # %% Import Local Classes
 
@@ -31,25 +20,17 @@ from networks.BayesNN import BayesNN
 # Algorithms
 from algorithms.HMC import HMC
 # Postprocessing
-from post_processing import Storage
-from post_processing import Plotter
+from post_processing.Storage import Storage
+from post_processing.Plotter import Plotter
 
 # %% Creating Parameters
 
 # Load a param object from command-line
 args = Parser().parse_args()
-
-# Load the json file with all the parameters
-with open(os.path.join("../config",args.config+".json")) as hpFile:
-    hp = json.load(hpFile)
-
+# Load params from config file
+hp = load_json(args.config)
 # Combine a param object with hp (param from json file) and args (command-line param)
 par = Param(hp, args)
-
-# Build the directories
-path_result, path_plot, path_weights = create_directories(par)
-# Save parameters
-par.save_parameter(path_result)
 
 print(" START ".center(gui_len,'*'))
 print("Bayesian PINN with", par.method)
@@ -77,14 +58,14 @@ print("Initializing the Bayesian PINN...")
 bayes_nn = BayesNN(par)
 
 print("Chosing", par.method ,"algorithm...")
-chosen_algorithm = HMC(bayes_nn)
+chosen_algorithm = HMC
 """ Switch tra gli algoritmi """
 
 print("Building", par.method ,"algorithm...")
 # Initialize the algorithm chosen
-train_algorithm = chosen_algorithm
+train_algorithm = chosen_algorithm(bayes_nn, datasets_class)
 # Insert the dataset used for training
-train_algorithm.data_train = datasets_class # Decidi se separare qua in batch
+#train_algorithm.data_train = datasets_class # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
@@ -105,34 +86,42 @@ functions_nn_samples = bayes_nn.draw_samples()
 
 print("Computing errors...")
 errors = bayes_nn.compute_errors()
-""" STAMPA ERRORI """
+
+print("Showing errors...")
+bayes_nn.show_errors(errors)
 
 print(" DONE ".center(gui_len,'*'))
 
+
 # %% Saving
 
-print("Saving data...")
+print("Building saving directories...")
+path_result, path_plot, path_weights = create_directories(par)
 save_storage = Storage(path_result, path_plot, path_weights)
-save_storage.save_training(bayes_nn.theta, train_algorithm.loss)
+
+print("Saving data...")
+save_storage.save_parameter(par)
+save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
 save_storage.save_results(functions_confidence, functions_nn_samples)
 save_storage.save_errors(errors)
+
 print(" DONE ".center(gui_len,'*'))
 
 # %% Plotting
 
 print("Loading data...")
-plotter = Plotter()
+plotter = Plotter(path_plot, par)
 load_storage = Storage(path_result, path_plot, path_weights)
 
 print("Plotting the losses...")
 losses = load_storage.load_losses()
-plotter.plot_losses(path_plot, losses)
+plotter.plot_losses(losses)
 
 print("Plotting the results...")
 functions_confidence = load_storage.load_confidence()
 functions_nn_samples = load_storage.load_nn_samples()
-plotter.plot_confidence(path_plot, datasets_class, functions_confidence, par.n_out_sol, par.n_out_par)
-plotter.plot_nn_samples(path_plot, datasets_class, functions_nn_samples, par.n_out_sol, par.n_out_par, par.method)
+plotter.plot_confidence(datasets_class, functions_confidence)
+plotter.plot_nn_samples(datasets_class, functions_nn_samples)
 
 print(" END ".center(gui_len,'*'))
 

@@ -8,8 +8,8 @@ class Algorithm(ABC):
     def __init__(self, bayes_nn, dataset):
         
         self.t0 = time.time() 
-        self.data_train = dataset
         self.model = bayes_nn
+        self.data_train = dataset
         self.loss = list()
 
     def compute_time(self):
@@ -29,12 +29,12 @@ class Algorithm(ABC):
         processed_data = self.model.pre_process(dataset)
         self.data = processed_data
 
-
     def train(self, par):
-        n_epochs = par
+        #n_epochs = par.param_method["N_HMC"]
+        n_epochs = 100
         for _ in range(n_epochs):
             new_theta = self.sample()
-            self.bayes_nn.theta.append(new_theta)
+            self.model.thetas.append(new_theta)
 
     @abstractmethod
     def sample(self):

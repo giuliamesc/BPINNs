@@ -1,6 +1,6 @@
 import tensorflow as tf
-import Equation
-import Operators
+from networks.equations.Equation  import Equation
+from networks.equations.Operators import Operators
 
 class Laplace(Equation):
     """

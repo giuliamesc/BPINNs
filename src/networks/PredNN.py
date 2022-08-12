@@ -1,4 +1,4 @@
-import CoreNN
+from networks.CoreNN import CoreNN
 
 class PredNN(CoreNN):
     
@@ -13,14 +13,34 @@ class PredNN(CoreNN):
         # Empty list where samples of network parameters will be stored
         self.thetas = list() 
 
-    def predict(self):
-        pass
+    def __compute_sample(self, theta, inputs):
+
+        self.nn_params = theta
+        sample = self.model.forward(inputs, split=True)
+
+        return self.post_process(sample)
+    
+    def __compute_all_samples(self, inputs):
+
+        inputs = self.pre_process(inputs)
+        out_sol = list()
+        out_par = list()
+        
+        for theta in self.thetas:
+            outputs = self.__compute_sample(theta, inputs)
+            out_sol.append(outputs[0])
+            out_par.append(outputs[1])
+
+        return out_sol, out_par
 
     def compute_errors(self):
-        pass
+        return None
 
     def mean_and_std(self):
-        pass
+        return None
 
     def draw_samples(self):
+        return None
+
+    def show_errors(self, errors):
         pass
