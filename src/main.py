@@ -95,30 +95,30 @@ print(" DONE ".center(gui_len,'*'))
 print("Building saving directories...")
 path_result, path_plot, path_weights = create_directories(par)
 print(create_directories(par))
-"""
-save_storage = Storage(path_result, path_plot, path_weights)
+
+save_storage = Storage(path_result, path_weights)
 
 print("Saving data...")
-save_storage.save_parameter(par)
-save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
+#save_storage.save_parameter(par)
+#save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
 save_storage.save_results(functions_confidence, functions_nn_samples)
-save_storage.save_errors(errors)
+#save_storage.save_errors(errors)
 
 print(" DONE ".center(gui_len,'*'))
-"""
+
 # %% Plotting
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-#load_storage = Storage(path_result, path_weights)
+load_storage = Storage(path_result, path_weights)
 
 print("Plotting the losses...")
 #losses = load_storage.load_losses()
 #plotter.plot_losses(losses)
 
 print("Plotting the results...")
-#functions_confidence = load_storage.load_confidence()
-#functions_nn_samples = load_storage.load_nn_samples()
+functions_confidence = load_storage.load_confidence()
+functions_nn_samples = load_storage.load_nn_samples()
 plotter.plot_confidence(dataset, functions_confidence)
 plotter.plot_nn_samples(dataset, functions_nn_samples)
 

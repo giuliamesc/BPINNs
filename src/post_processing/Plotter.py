@@ -8,19 +8,20 @@ class Plotter():
         
         self.path_plot = path_plot
 
-    def __save_plot(self, path, title):
-        path = os.path.join(path, title)
-        plt.savefig(path, bbox_inches = 'tight')
-
-    def plot_losses(self, losses):
-        pass
-
     def __order_inputs(self, inputs):
 
         idx = np.argsort(inputs)
         inputs = inputs[idx]
 
         return inputs, idx
+
+    def __check_none(self, func):
+        if func is None:
+            raise Exception("Function given to the plotter is None!")
+
+    def __save_plot(self, path, title):
+        path = os.path.join(path, title)
+        plt.savefig(path, bbox_inches = 'tight')
 
     def __plot_confidence_1D(self, x, func, title, label = ("",""), fit = None):
     
@@ -42,6 +43,7 @@ class Plotter():
 
     def plot_confidence(self, dataset, functions):
         
+        self.__check_none(functions)
         inputs, u_true, f_true = dataset.dom_data
         u_points, u_values, _  = dataset.exact_data_noise
 
@@ -75,6 +77,7 @@ class Plotter():
 
     def plot_nn_samples(self, dataset, functions):
 
+        self.__check_none(functions)
         inputs, u_true, f_true = dataset.dom_data
         u_points, u_values, _  = dataset.exact_data_noise
 
@@ -87,7 +90,10 @@ class Plotter():
         self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
         self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
+    def plot_losses(self, losses):
+        pass
+
     def show_plot(self):
-        
+
         plt.show(block = True)
         
