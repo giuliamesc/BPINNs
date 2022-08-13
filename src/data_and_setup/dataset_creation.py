@@ -32,9 +32,9 @@ class Dataset:
         self.__num_collocation = par.experiment["num_collocation"] # num of collocation data
         self.noise_lv = par.experiment["noise_lv"]
         
-        self.n_input = par.n_input
-        self.n_out_par = par.n_out_par
-        self.n_out_sol = par.n_out_sol
+        self.n_input   = par.phys_dim.n_input
+        self.n_out_par = par.phys_dim.n_out_par
+        self.n_out_sol = par.phys_dim.n_out_sol
 
         self.__flag_dataset_build = False
         self.__flag_dataset_noise = False

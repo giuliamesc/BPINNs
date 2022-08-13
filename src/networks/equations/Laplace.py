@@ -18,7 +18,7 @@ class Laplace(Equation):
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(x)
             u, f = forward_pass(x, split = True)
-            lap = Operators.laplacian_vector(tape, u, x, self.n_out_sol)
+            lap = Operators.laplacian_vector(tape, u, x, self.comp_dim.n_out_sol)
         return lap + f
 
     def pre_process(self, dataset):

@@ -27,9 +27,9 @@ class CoreNN():
     def __init__(self, par):
 
         # Domain dimensions
-        self.n_inputs  = par.n_input
-        self.n_out_sol = par.n_out_sol
-        self.n_out_par = par.n_out_par
+        self.n_inputs  = par.comp_dim.n_input
+        self.n_out_sol = par.comp_dim.n_out_sol
+        self.n_out_par = par.comp_dim.n_out_par
 
         # Architecture parameters
         self.n_layers   = par.architecture["n_layers"]
@@ -94,50 +94,3 @@ class CoreNN():
         out_par = output[:,self.n_out_sol:]
         
         return out_sol, out_par
-
-
-"""
-****************
-DEBUG STUFF ONLY
-****************
-"""
-
-class TempPar:
-    def __init__(self):
-        
-        self.n_inputs  = 1
-        self.n_out_sol = 1
-        self.n_out_par = 1
-
-        self.architecture = {
-            "activation": "swish",
-            "n_layers" : 3,
-            "n_neurons": 5
-        }
-
-def create_weights(par):
-
-    n_neurons = par.architecture["n_neurons"]
-    n_layers  = par.architecture["n_layers"]
-
-    weights = [np.random.randn(par.n_inputs, n_neurons)]
-    biases = [np.random.randn(n_neurons)]
-
-    for _ in range(n_layers-1):
-        weights.append(np.random.randn(n_neurons, n_neurons))
-        biases.append(np.random.randn(n_neurons))
-
-    weights.append(np.random.randn(n_neurons, par.n_out_sol+par.n_out_par))
-    biases.append(np.random.randn(par.n_out_sol+par.n_out_par))
-
-    return (weights, biases)
-
-if __name__ == "__main__":
-    
-    par = TempPar()
-    n_sample = 4
-    simple_nn = CoreNN(par)
-
-    x = tf.random.uniform(shape=[n_sample, simple_nn.n_inputs])
-    simple_nn.nn_params = create_weights(par)
-    print(simple_nn.nn_params)

@@ -1,30 +1,28 @@
 from argparse import ArgumentParser
 
-"""
-Class to handle all the command-line arguments:
-the first [--method] is mandatory (can be SVGD or HMC) and specify the BayesianNN method to use;
-the second [--config] is a json file (in the subfolder "config") where we can find all the parameters (default is "defaul.json")
-
-You can also overspecified all the parameters in the json file here, directly from command-line.
-"""
 class Parser(ArgumentParser):
     def __init__(self):
-        """Initializer"""
-        super(Parser, self).__init__(description='Bayesian PINN for Inverse Eikonal') ## DA SISTEMARE
+        super(Parser, self).__init__(description='Bayesian PINN for PDEs')
 
-        self.add_argument('--method', type=str, default="HMC", help="""Methods to use for BPINN. Available:
-        															- HMC  (Hamiltonian Monte Carlo)
-        															- SVGD (Stein Variational Gradient Descent)""")
+        # Algorithm (choose training algorithm)
+        self.add_argument('--method', type=str, default="HMC", 
+                        help="""Methods to use for BPINN. Available:
+        		                - HMC  (Hamiltonian Monte Carlo)
+        			            - SVGD (Stein Variational Gradient Descent)
+                                - VI (variational inference) 
+                            """)
 
-        self.add_argument('--config', type=str, default="default", help="""name of json file where we can find all the parameters. 
-        																	You have to provide the parameters for at least the method you've selected.
-        																	You can also overwrite some parameters directly from terminal
-        																	""")
-
+        # Configuration (set other parameters)
+        self.add_argument('--config', type=str, default="default", 
+                        help="""name of json file where we can find all the parameters. 
+    							You have to provide the parameters for at least the method you've selected.
+        						You can also overwrite some parameters directly from terminal
+                            """)
 
         # Architecture
-        self.add_argument('--n_layers' , type=int, help='Need >=1, number of hidden layers in the NN')
-        self.add_argument('--n_neurons', type=int, help='Need >=1, number of neurons in each hidden layer in the NN')
+        self.add_argument('--activation', type=int, help='Activation function for hidden layers')
+        self.add_argument('--n_layers'  , type=int, help='Need >=1, number of hidden layers in the NN')
+        self.add_argument('--n_neurons' , type=int, help='Need >=1, number of neurons in each hidden layer in the NN')
 
         # Experiment
         self.add_argument('--dataset', type=str, help="""Choose the experiment :
@@ -47,6 +45,11 @@ class Parser(ArgumentParser):
         self.add_argument('--data_prior_noise_trainable', type=bool, help='Train on (sigma_D)^2 as a hyperparameter')
         self.add_argument('--pde_prior_noise_trainable' , type=bool, help='Train on (sigma_R)^2 as a hyperparameter')
 
+        # Utils
+        self.add_argument('--random_seed', type=int,  help="random seed for numpy and tf random generator")
+        self.add_argument('--debug_flag' , type=bool, help='prints loss value, h, h0, h1 and general debug utilities at each iteration')
+        self.add_argument('--save_flag'  , type=bool, help='flag for save results in a new folder')
+
 		# HMC
         self.add_argument('--N_HMC', type=int, help="N: number of samples in HMC")
         self.add_argument('--M_HMC', type=int, help="M: number of samples to use in HMC (after burnin). Need <= N")
@@ -55,14 +58,10 @@ class Parser(ArgumentParser):
         self.add_argument('--dt_noise_HMC', type=float, help="dt_noise: step size in HMC for log betas")
 
         # SVGD
-        self.add_argument('--n_samples', type=int,   help='(5-30) number of model instances in SVGD')   # number of NNs used
+        self.add_argument('--n_samples', type=int,   help='(5-30) number of model instances in SVGD')
         self.add_argument('--epochs'   , type=int,   help='number of epochs to train')
         self.add_argument('--lr'       , type=float, help='learning rate for NN parameters')
         self.add_argument('--lr_noise' , type=float, help='learnign rate for log beta, if trainable')
         self.add_argument('--param_repulsivity', type=float, help='parameter for repulsivity in SVGD')
 
-        # Utils
-        self.add_argument('--random_seed', type=int,  help="random seed for numpy and tf random generator")
-        self.add_argument('--debug_flag' , type=bool, help='prints loss value, h, h0, h1 and general debug utilities at each iteration')
-        self.add_argument('--save_flag'  , type=bool, help='flag for save results in a new folder')
         

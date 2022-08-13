@@ -7,14 +7,14 @@ class Equation(ABC):
     def __init__(self, par):
         """ 
         Constructor
-        
-        n_input   -> dimension input (1,2 or 3)
-        n_out_sol -> dimension of solution
-        n_out_par -> dimension of parametric field
+        phys_dim dictionary with IO dimension from physical domain
+        comp_dim dictionary with IO dimension for NN layers
+            n_input   -> dimension input (1,2 or 3)
+            n_out_sol -> dimension of solution
+            n_out_par -> dimension of parametric field
         """
-        self.n_input   = par.n_input
-        self.n_out_sol = par.n_out_sol
-        self.n_out_par = par.n_out_par
+        self.phys_dim = par.phys_dim
+        self.comp_dim = par.comp_dim
 
     @abstractmethod
     def compute_residual(self, x, forward_pass):

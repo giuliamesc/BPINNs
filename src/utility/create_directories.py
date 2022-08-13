@@ -13,7 +13,7 @@ def create_directories(par):
     @param par an object of param class (parameters)
     """
     save_flag = par.utils["save_flag"]
-    n_input = par.n_input
+    n_input  = par.phys_dim.n_input
     pde_type = par.pde
     method_name = par.method
 

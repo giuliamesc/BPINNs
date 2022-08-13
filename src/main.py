@@ -32,7 +32,7 @@ par = Param(hp, args)
 
 print(" START ".center(gui_len,'*'))
 print("Bayesian PINN with", par.method)
-print("Solve the inverse problem of " + str(par.n_input) + "D " + par.pde)
+print("Solve the inverse problem of " + str(par.phys_dim.n_input) + "D " + par.pde)
 print("Dataset used:", par.experiment["dataset"])
 
 print(" DONE ".center(gui_len,'*'))
