@@ -5,6 +5,7 @@
 **/prova.txt
 TODO_LIST.txt
 TODO_LIST_2.txt
+**/clean_cache.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
