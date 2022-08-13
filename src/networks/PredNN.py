@@ -67,6 +67,8 @@ class PredNN(CoreNN):
 
     def draw_samples(self, inputs):
         out_sol, out_par = self.__predict(inputs)
+        out_sol = [value.numpy() for value in out_sol]
+        out_par = [value.numpy() for value in out_par]
         functions_nn_samples = {"sol_samples": out_sol, "par_samples": out_par}
         return functions_nn_samples
 

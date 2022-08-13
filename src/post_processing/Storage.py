@@ -2,9 +2,8 @@ import json
 import os
 
 class Storage():
-    def __init__(self, path_result, path_plot, path_weights):
+    def __init__(self, path_result, path_weights):
         self.path_result = path_result
-        self.path_plot = path_plot
         self.path_weights = path_weights
         pass
 
