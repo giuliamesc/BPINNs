@@ -62,9 +62,9 @@ chosen_algorithm = Test_Alg
 
 print("Building", par.method ,"algorithm...")
 # Initialize the algorithm chosen
-train_algorithm = chosen_algorithm(bayes_nn, dataset)
+train_algorithm = chosen_algorithm(bayes_nn)
 # Insert the dataset used for training
-#train_algorithm.data_train = datasets_class # Decidi se separare qua in batch
+train_algorithm.data_train = dataset # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training

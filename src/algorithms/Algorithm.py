@@ -5,11 +5,10 @@ class Algorithm(ABC):
     """
     Class for HMC training
     """
-    def __init__(self, bayes_nn, dataset):
+    def __init__(self, bayes_nn):
         
         self.t0 = time.time() 
         self.model = bayes_nn
-        self.data_train = dataset
         self.loss = list()
 
     def compute_time(self):

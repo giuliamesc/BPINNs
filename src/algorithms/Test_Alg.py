@@ -8,8 +8,8 @@ class Test_Alg(Algorithm):
     """
     Class for HMC training
     """
-    def __init__(self, bayes_nn, dataset):
-        super(Test_Alg, self).__init__(bayes_nn, dataset)
+    def __init__(self, bayes_nn):
+        super(Test_Alg, self).__init__(bayes_nn)
 
     def sample_theta(self):
         par = self.model.par
