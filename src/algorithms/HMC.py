@@ -10,5 +10,5 @@ class HMC(Algorithm):
     def __init__(self, bayes_nn, dataset):
         super().__init__(bayes_nn, dataset)
 
-    def sample(self):
+    def sample_theta(self):
         print("Sampling")

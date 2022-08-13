@@ -23,8 +23,8 @@ class LossNN(CoreNN):
 
     def loss_total(self, dataset):
         loss, logloss = dict(), dict()
-        loss["res"],   logloss["res"]   = self.__loss_residual(dataset.col_data[0])
-        loss["data"],  logloss["data"]  = self.__loss_data(dataset.fit_data[0], dataset.fit_data[1])
+        loss["res"],   logloss["res"]   = self.__loss_residual(dataset.coll_data[0])
+        loss["data"],  logloss["data"]  = self.__loss_data(dataset.exact_data_noise[0], dataset.exact_data_noise[1])
         loss["prior"], logloss["prior"] = self.__loss_prior()
         loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values())
         return loss, logloss

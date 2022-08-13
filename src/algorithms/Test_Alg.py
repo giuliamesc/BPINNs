@@ -11,7 +11,7 @@ class Test_Alg(Algorithm):
     def __init__(self, bayes_nn, dataset):
         super(Test_Alg, self).__init__(bayes_nn, dataset)
 
-    def sample(self):
+    def sample_theta(self):
         par = self.model.par
-        theta_1 = CoreNN(par).nn_params
-        #print(theta_1)
+        theta = CoreNN(par).nn_params
+        return theta

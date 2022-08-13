@@ -2,7 +2,7 @@
 	"architecture":{
 		"activation":"swish", 
 		"n_layers":2,
-		"n_neurons":50
+		"n_neurons":10
 	},
 
 	"experiment":{

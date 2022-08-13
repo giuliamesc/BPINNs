@@ -30,7 +30,7 @@ def load_losses(path_result):
             losses[loss_filename[:-4]] = np.array(loss_list, dtype='float32')
     return losses
 
-def plot_confidence(path_plot, datasets_class, functions, n_out_sol, n_out_par):
+def plot_confidence(path_plot, datasets_class, functions):
 
     inputs, u_true, f_true = datasets_class.dom_data
     u_points, u_values, _  = datasets_class.exact_data_noise
@@ -65,7 +65,7 @@ def plot_1D(x, func, title, label = ("",""), fit = None):
     plt.title(title)
 
 
-def plot_nn_samples(path_plot, datasets_class, functions_all, n_out_sol, n_out_par, method):
+def plot_nn_samples(path_plot, datasets_class, functions_all, method):
     inputs, u_true, f_true = datasets_class.dom_data
     u_points, u_values, _  = datasets_class.exact_data_noise
 
@@ -73,7 +73,7 @@ def plot_nn_samples(path_plot, datasets_class, functions_all, n_out_sol, n_out_p
     u_fit = (u_points, u_values)
     f = (f_true, functions_all['f_NN'])
 
-    plot_1Dall(inputs[:,0], u, method, label = ('x','u'),  fit = u_fit)
+    plot_1Dall(inputs[:,0], u, method, label = ('x','u'), fit = u_fit)
     save_plot(path_plot, 'u_nn_samples.png')
     plot_1Dall(inputs[:,0], f, method, label = ('x','f'), fit = None)
     save_plot(path_plot, 'f_nn_samples.png')

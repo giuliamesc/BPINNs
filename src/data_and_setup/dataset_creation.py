@@ -4,7 +4,7 @@ import numpy as np
 
 # %% Start Main Class
 
-class dataset_class:
+class Dataset:
     """
     Class for building the datasets (Domain, collocation and exact(with noise) ):
     Input:

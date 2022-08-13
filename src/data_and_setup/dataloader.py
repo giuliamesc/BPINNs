@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-class dataloader:
+class Dataloader:
 	"""
 	Class to handle the dataloader for mini-batch training (for collocation points)
 	It can be used also for mini-batch training with exact data if needed

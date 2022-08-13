@@ -13,7 +13,7 @@ class CoreNN():
     - Save and Load single theta?
     - Architecture Recap ?
     
-    Neural networks parameters
+    Neural networks parameters (theta)
         - nn_params = (weights, biases)
         - weights is a list of numpy arrays 
             - 1 layer               : shape (n_input, n_neurons)
@@ -75,12 +75,15 @@ class CoreNN():
         for layer, weight, bias in zip(self.model.layers, weights, biases):
             layer.set_weights((weight,bias))
 
-    def forward(self, x, split = False):
+    def forward(self, inputs, split = False):
         """ 
         Simple prediction on Solution and Parametric field 
-        ADD DIMENSION FOR X
+        inputs : np array  (n_samples, n_input)
+        [split = False] output : tf tensor (n_samples, n_out_sol + n_out_par)
+        [split = True] out_sol : tf tensor (n_samples, n_out_sol)
+        [split = True] out_par : tf tensor (n_samples, n_out_par)
         """
-
+        x = tf.convert_to_tensor(inputs)
         # compute the output of NN at the inputs data
         output = self.model(x)
         if not split: return output

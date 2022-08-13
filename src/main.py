@@ -12,11 +12,11 @@ gui_len = set_gui_len()
 # Setup
 from data_and_setup import Parser, Param
 # Dataset Creation
-from data_and_setup import dataset_class, dataloader
+from data_and_setup import Dataset, Dataloader
 # Model
 from networks import BayesNN
 # Algorithms
-from algorithms import HMC
+from algorithms import HMC, Test_Alg
 # Postprocessing
 from post_processing import Storage, Plotter
 
@@ -39,13 +39,13 @@ print(" DONE ".center(gui_len,'*'))
 
 # %% Datasets Creation
 print("Dataset creation...")
-datasets_class = dataset_class(par)
-print("\tNumber of fitting data:", datasets_class.num_fitting)
-print("\tNumber of collocation data:", datasets_class.num_collocation)
+dataset = Dataset(par)
+print("\tNumber of fitting data:", dataset.num_fitting)
+print("\tNumber of collocation data:", dataset.num_collocation)
 
 print("Building dataloader...")
 # Build the dataloader for minibatch training (of just collocation points)
-batch_loader = dataloader(datasets_class, par.experiment["batch_size"], par.utils['random_seed'])
+batch_loader = Dataloader(dataset, par.experiment["batch_size"], par.utils['random_seed'])
 batch_loader = batch_loader.dataload_collocation()
 print(" DONE ".center(gui_len,'*'))
 
@@ -56,12 +56,13 @@ print("Initializing the Bayesian PINN...")
 bayes_nn = BayesNN(par)
 
 print("Chosing", par.method ,"algorithm...")
-chosen_algorithm = HMC
+#chosen_algorithm = HMC
+chosen_algorithm = Test_Alg
 """ Switch tra gli algoritmi """
 
 print("Building", par.method ,"algorithm...")
 # Initialize the algorithm chosen
-train_algorithm = chosen_algorithm(bayes_nn, datasets_class)
+train_algorithm = chosen_algorithm(bayes_nn, dataset)
 # Insert the dataset used for training
 #train_algorithm.data_train = datasets_class # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
@@ -79,18 +80,16 @@ print(" DONE ".center(gui_len,'*'))
 # %% Model Evaluation
 
 print("Computing solutions...")
-functions_confidence = bayes_nn.mean_and_std()
-functions_nn_samples = bayes_nn.draw_samples()
+functions_confidence = bayes_nn.mean_and_std(dataset.dom_data[0])
+functions_nn_samples = bayes_nn.draw_samples(dataset.dom_data[0])
 
 print("Computing errors...")
-errors = bayes_nn.compute_errors()
-
+errors = bayes_nn.test_errors(functions_confidence, dataset)
 print("Showing errors...")
 bayes_nn.show_errors(errors)
-
 print(" DONE ".center(gui_len,'*'))
 
-
+"""
 # %% Saving
 
 print("Building saving directories...")
@@ -118,9 +117,11 @@ plotter.plot_losses(losses)
 print("Plotting the results...")
 functions_confidence = load_storage.load_confidence()
 functions_nn_samples = load_storage.load_nn_samples()
-plotter.plot_confidence(datasets_class, functions_confidence)
-plotter.plot_nn_samples(datasets_class, functions_nn_samples)
+plotter.plot_confidence(dataset, functions_confidence)
+plotter.plot_nn_samples(dataset, functions_nn_samples)
 
 print(" END ".center(gui_len,'*'))
 
 plotter.show_plot()
+
+"""

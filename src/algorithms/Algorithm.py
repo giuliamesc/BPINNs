@@ -31,11 +31,11 @@ class Algorithm(ABC):
 
     def train(self, par):
         #n_epochs = par.param_method["N_HMC"]
-        n_epochs = 100
+        n_epochs = 3
         for _ in range(n_epochs):
-            new_theta = self.sample()
+            new_theta = self.sample_theta()
             self.model.thetas.append(new_theta)
 
     @abstractmethod
-    def sample(self):
+    def sample_theta(self):
         return None
