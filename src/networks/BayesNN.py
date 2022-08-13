@@ -1,7 +1,7 @@
-from networks.PredNN import PredNN
-from networks.LossNN import LossNN
+from .PredNN import PredNN
+from .LossNN import LossNN
 
-from networks.equations.Laplace import Laplace
+from .equations import Laplace
 
 class BayesNN(PredNN, LossNN):
     """

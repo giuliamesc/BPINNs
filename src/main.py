@@ -1,6 +1,6 @@
 # %% Utilities
-from utility.setup import set_directory, set_warning, set_gui_len, load_json
-from utility.create_directories import create_directories
+from utility import set_directory, set_warning, set_gui_len
+from utility import load_json, create_directories
 
 # Setup utilities
 set_directory()
@@ -10,18 +10,16 @@ gui_len = set_gui_len()
 # %% Import Local Classes
 
 # Setup
-from data_and_setup.args import Parser #command-line arg parser
-from data_and_setup.param import Param #parameter class
+from data_and_setup import Parser, Param
 # Dataset Creation
-from data_and_setup.dataset_creation import dataset_class
-from data_and_setup.dataloader import dataloader
+from data_and_setup import dataset_class, dataloader
 # Model
-from networks.BayesNN import BayesNN
+from networks import BayesNN
 # Algorithms
-from algorithms.HMC import HMC
+from algorithms import HMC
 # Postprocessing
-from post_processing.Storage import Storage
-from post_processing.Plotter import Plotter
+from post_processing import Storage, Plotter
+
 
 # %% Creating Parameters
 

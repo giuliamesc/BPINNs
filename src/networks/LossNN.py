@@ -1,4 +1,4 @@
-from networks.CoreNN import CoreNN
+from .CoreNN import CoreNN
 import tensorflow as tf
 
 class LossNN(CoreNN):

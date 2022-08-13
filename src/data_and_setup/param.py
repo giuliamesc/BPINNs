@@ -1,7 +1,3 @@
-import json
-import os
-
-
 # Sistema in modo che non siano salvate nel main!
 """dictionary for input dimension given the dataset used"""
 n_input = {
