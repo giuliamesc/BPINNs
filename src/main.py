@@ -16,10 +16,9 @@ from data_and_setup import Dataset, Dataloader
 # Model
 from networks import BayesNN
 # Algorithms
-from algorithms import HMC, Test_Alg
+from algorithms import Test_Alg, HMC
 # Postprocessing
 from post_processing import Storage, Plotter
-
 
 # %% Creating Parameters
 
@@ -74,7 +73,9 @@ print('Start training...')
 train_algorithm.train(par)
 
 print('End training')
+# Compute duration of training
 train_algorithm.compute_time()
+
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Evaluation
@@ -89,19 +90,17 @@ print("Showing errors...")
 bayes_nn.show_errors(errors)
 print(" DONE ".center(gui_len,'*'))
 
-
 # %% Saving
 
 print("Building saving directories...")
-path_result, path_plot, path_weights = create_directories(par)
-print(create_directories(par))
-
-save_storage = Storage(path_result, path_weights)
+path_plot, path_values, path_weights = create_directories(par)
+save_storage = Storage(path_values, path_weights)
 
 print("Saving data...")
 #save_storage.save_parameter(par)
 #save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
-save_storage.save_results(functions_confidence, functions_nn_samples)
+save_storage.confidence = functions_confidence
+save_storage.nn_samples = functions_nn_samples
 #save_storage.save_errors(errors)
 
 print(" DONE ".center(gui_len,'*'))
@@ -110,15 +109,15 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_result, path_weights)
+load_storage = Storage(path_values, path_weights)
 
 print("Plotting the losses...")
 #losses = load_storage.load_losses()
 #plotter.plot_losses(losses)
 
 print("Plotting the results...")
-functions_confidence = load_storage.load_confidence()
-functions_nn_samples = load_storage.load_nn_samples()
+functions_confidence = load_storage.confidence
+functions_nn_samples = load_storage.nn_samples
 plotter.plot_confidence(dataset, functions_confidence)
 plotter.plot_nn_samples(dataset, functions_nn_samples)
 

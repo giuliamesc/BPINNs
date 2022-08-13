@@ -20,7 +20,7 @@ def create_directories(par):
     case_name = str(n_input)+"D-"+pde_type
     path_case = os.path.join("../results",case_name)
 
-    if(save_flag):
+    if save_flag:
         ## if save_flag = True create new directories using datetime.now()
         now = datetime.now()
         path_test = method_name + "_" + f"{now.strftime('%Y.%m.%d-%H.%M.%S')}"
@@ -30,6 +30,8 @@ def create_directories(par):
         path_result = create_single_dir(path_case,"trash")
 
     path_plot    = create_single_dir(path_result, "plot")
+    path_values  = create_single_dir(path_result, "values")
     path_weights = create_single_dir(path_result, "weights")
+    create_single_dir(path_values, "samples")
 
-    return path_result, path_plot, path_weights
+    return path_plot, path_values, path_weights
