@@ -4,22 +4,24 @@ import os
 
 class Storage():
 
-    def __init__(self, path_values, path_weights):
+    def __init__(self, path_values, path_weights, path_log):
 
-        self.path_values = path_values
+        self.path_values  = path_values
         self.path_weights = path_weights
-        self.path_sample = os.path.join(self.path_values, "samples")
+        self.path_log     = path_log
+        self.path_sample  = os.path.join(self.path_values, "samples")
         self.idx_len = 3
 
     def __write_line(self, outfile, msg, value):
-
+        # USata solo per save params
         outfile.write(f" \"{msg}\": ")
         json.dump(value, outfile)
         outfile.write(", \n")
 
     def save_parameter(self, par):
+        # CAMBIARE (GIULIA)
         """Save parameters"""
-        with open(self.path_weights, 'w') as outfile:
+        with open(self.path_log, 'w') as outfile:
             outfile.write("{ \n")
             self.__write_line(outfile, "architecture", par.architecture)
             self.__write_line(outfile, "experiment", par.experiment)
@@ -74,6 +76,7 @@ class Storage():
         pass
 
     def save_errors(self, errors):
+        # CAMBIARE (GIULIA), NELLA CARTELLA PATH_LOG
         pass
 
     def load_losses(self):

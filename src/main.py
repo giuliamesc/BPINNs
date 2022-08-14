@@ -62,6 +62,7 @@ print("Building", par.method ,"algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn)
 # Insert the dataset used for training
 train_algorithm.data_train = dataset # Decidi se separare qua in batch
+
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
@@ -91,15 +92,15 @@ print(" DONE ".center(gui_len,'*'))
 # %% Saving
 
 print("Building saving directories...")
-path_plot, path_values, path_weights = create_directories(par)
-save_storage = Storage(path_values, path_weights)
+path_plot, path_values, path_weights, path_log = create_directories(par)
+save_storage = Storage(path_values, path_weights, path_log)
 
 print("Saving data...")
-#save_storage.save_parameter(par)
+#save_storage.save_parameter(par) (in txt)
 #save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
-#save_storage.save_errors(errors)
+#save_storage.save_errors(errors) (in txt)
 
 print(" DONE ".center(gui_len,'*'))
 
@@ -107,7 +108,7 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_values, path_weights)
+load_storage = Storage(path_values, path_weights, None)
 
 print("Plotting the losses...")
 #losses = load_storage.load_losses()
