@@ -10,15 +10,15 @@ gui_len = set_gui_len()
 # %% Import Local Classes
 
 # Setup
-from data_and_setup import Parser, Param
+from setup import Parser, Param
 # Dataset Creation
-from data_and_setup import Dataset, Dataloader
+from setup import Dataset, Dataloader
 # Model
 from networks import BayesNN
 # Algorithms
 from algorithms import Test_Alg, HMC
 # Postprocessing
-from post_processing import Storage, Plotter
+from postprocessing import Storage, Plotter
 
 # %% Creating Parameters
 

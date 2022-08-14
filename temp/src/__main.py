@@ -19,14 +19,14 @@ gui_len = max(50,int(os.get_terminal_size().columns/3))
 # %% Import Local Classes
 
 # Setup
-from data_and_setup.args import Parser #command-line arg parser
-from data_and_setup.param import Param #parameter class
+from setup.args import Parser #command-line arg parser
+from setup.param import Param #parameter class
 
-from utility.create_directories import create_directories
+from utility.directories import create_directories
 
 # Dataset Creation
-from data_and_setup.dataset_creation import dataset_class
-from data_and_setup.dataloader import dataloader
+from setup.data_creation import dataset_class
+from setup.data_loader import dataloader
 
 # Model
 from __models.BayesNN import HMC_BayesNN
