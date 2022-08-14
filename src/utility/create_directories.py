@@ -1,10 +1,19 @@
 import os
 from datetime import datetime
 
-def create_single_dir(base_path, last_path):
+def create_keeper(path):
+    file_name = os.path.join(path,".gitkeep")
+    open(file_name, 'x')
+
+def create_single_dir(base_path, last_path, keep = False):
+    
     try: os.makedirs(os.path.join(base_path, last_path))
     except: pass
-    return os.path.join(base_path, last_path)
+
+    folder_path = os.path.join(base_path, last_path)
+    if keep: os.path.join(base_path, last_path)
+    
+    return folder_path
 
 def create_directories(par):
     """!
@@ -19,6 +28,8 @@ def create_directories(par):
 
     case_name = str(n_input)+"D-"+pde_type
     path_case = os.path.join("../results",case_name)
+    os.makedirs(path_case)
+    create_keeper(path_case)
 
     if save_flag:
         ## if save_flag = True create new directories using datetime.now()
