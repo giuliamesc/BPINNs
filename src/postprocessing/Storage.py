@@ -1,15 +1,16 @@
 import numpy as np
+import shutil
 import json
 import os
 
 class Storage():
 
-    def __init__(self, path_values, path_weights, path_log):
+    def __init__(self, path_values, path_thetas, path_log):
 
-        self.path_values  = path_values
-        self.path_weights = path_weights
-        self.path_log     = path_log
-        self.path_sample  = os.path.join(self.path_values, "samples")
+        self.path_values = path_values
+        self.path_thetas = path_thetas
+        self.path_log    = path_log
+        self.path_sample = os.path.join(self.path_values, "samples")
         self.idx_len = 3
 
     def __write_line(self, outfile, msg, value):
@@ -31,6 +32,10 @@ class Storage():
             self.__write_line(outfile, "utils", par.utils)
             outfile.write("}")
 
+    def save_errors(self, errors):
+        # CAMBIARE (GIULIA), NELLA CARTELLA PATH_LOG
+        pass
+
     @property
     def confidence(self):
         functions_confidence = {
@@ -47,40 +52,62 @@ class Storage():
         np.save(os.path.join(self.path_values, "par_NN.npy" ), values["par_NN" ])
         np.save(os.path.join(self.path_values, "par_std.npy"), values["par_std"])
 
-    def __load_list(self, path, name):
+    def __load_list(self, path, name, num_len):
         outputs = list()
         for file_value in os.listdir(path):
-            if not file_value[:-(1+self.idx_len+4)] == name: continue
+            if not file_value[:-(1+num_len+4)] == name: continue
             outputs.append(np.load(os.path.join(self.path_sample, file_value))) 
         return outputs
 
-    def __save_list(self, path, name, values):
+    def __save_list(self, path, name, values, num_len):
         file_path = os.path.join(path,name)+"_"
         for idx, value in enumerate(values):
-            file_name = file_path + str(idx).zfill(self.idx_len) + ".npy"
+            file_name = file_path + str(idx+1).zfill(num_len) + ".npy"
             np.save(file_name, value)
 
     @property
     def nn_samples(self):
         functions_nn_samples = {
-            "sol_samples": self.__load_list(self.path_sample, "sol"), 
-            "par_samples": self.__load_list(self.path_sample, "par")}
+            "sol_samples": self.__load_list(self.path_sample, "sol", self.idx_len), 
+            "par_samples": self.__load_list(self.path_sample, "par", self.idx_len)}
         return functions_nn_samples
 
     @nn_samples.setter
     def nn_samples(self, values):
-        self.__save_list(self.path_sample, "sol", values["sol_samples"])
-        self.__save_list(self.path_sample, "par", values["par_samples"])
+        self.__save_list(self.path_sample, "sol", values["sol_samples"], self.idx_len)
+        self.__save_list(self.path_sample, "par", values["par_samples"], self.idx_len)
 
-    def save_training(self, theta, loss):
+    def __set_thetas_folder(self, num):
+
+        shutil.rmtree(self.path_thetas)
+        os.mkdir(self.path_thetas)
+        file_path = os.path.join(self.path_thetas,"theta")+"_"
+        
+        for idx in range(num):
+            folder_name = file_path + str(idx+1).zfill(self.idx_len)
+            os.mkdir(folder_name)
+
+    @property
+    def thetas(self):
+        thetas = list()
+        for folder in os.listdir(self.path_thetas):
+            folder_path = os.path.join(self.path_thetas, folder)
+            weights = self.__load_list(folder_path, "w", 2)
+            biases  = self.__load_list(folder_path, "b", 2)
+            thetas.append((weights,biases))
+        return thetas
+
+    @thetas.setter
+    def thetas(self, values):
+        self.__set_thetas_folder(len(values))
+        for value, folder in zip(values, os.listdir(self.path_thetas)):
+            folder_path = os.path.join(self.path_thetas, folder)
+            self.__save_list(folder_path, "w", value[0], 2)
+            self.__save_list(folder_path, "b", value[1], 2)
+
+    @property
+    def losses(self):
         pass
-
-    def save_errors(self, errors):
-        # CAMBIARE (GIULIA), NELLA CARTELLA PATH_LOG
-        pass
-
-    def load_losses(self):
-        pass
-
-    def load_errors(self):
+    @losses.setter
+    def losses(self, values):
         pass

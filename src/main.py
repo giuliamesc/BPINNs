@@ -92,15 +92,22 @@ print(" DONE ".center(gui_len,'*'))
 # %% Saving
 
 print("Building saving directories...")
-path_plot, path_values, path_weights, path_log = create_directories(par)
-save_storage = Storage(path_values, path_weights, path_log)
+path_plot, path_values, path_thetas, path_log = create_directories(par)
+save_storage = Storage(path_values, path_thetas, path_log)
 
 print("Saving data...")
+
+# Saving Details and Results
 #save_storage.save_parameter(par) (in txt)
-#save_storage.save_training(bayes_nn.thetas, train_algorithm.loss)
+#save_storage.save_errors(errors) (in txt)
+
+# Saving Training
+save_storage.loss       = train_algorithm.loss
+save_storage.thetas     = bayes_nn.thetas
+
+# Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
-#save_storage.save_errors(errors) (in txt)
 
 print(" DONE ".center(gui_len,'*'))
 
@@ -108,10 +115,10 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_values, path_weights, None)
+load_storage = Storage(path_values, path_thetas, None)
 
 print("Plotting the losses...")
-#losses = load_storage.load_losses()
+#losses = load_storage.losses
 #plotter.plot_losses(losses)
 
 print("Plotting the results...")

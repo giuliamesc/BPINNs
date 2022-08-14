@@ -40,10 +40,10 @@ def create_directories(par):
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
         path_result = create_single_dir(path_case,"trash")
 
-    path_plot    = create_single_dir(path_result, "plot")
-    path_values  = create_single_dir(path_result, "values")
-    path_weights = create_single_dir(path_result, "weights")
-    path_log     = create_single_dir(path_result, "log")
+    path_plot   = create_single_dir(path_result, "plot")
+    path_values = create_single_dir(path_result, "values")
+    path_thetas = create_single_dir(path_result, "thetas")
+    path_log    = create_single_dir(path_result, "log")
     create_single_dir(path_values, "samples")
 
-    return path_plot, path_values, path_weights, path_log
+    return path_plot, path_values, path_thetas, path_log
