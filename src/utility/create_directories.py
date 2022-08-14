@@ -27,7 +27,7 @@ def create_directories(par):
     method_name = par.method
 
     case_name = str(n_input)+"D-"+pde_type
-    path_case = os.path.join("../results",case_name)
+    path_case = os.path.join("../outs",case_name)
     os.makedirs(path_case)
     create_keeper(path_case)
 
