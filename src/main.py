@@ -10,14 +10,10 @@ gui_len = set_gui_len()
 
 # %% Import Local Classes
 
-# Setup
-from setup import Parser, Param
-# Dataset Creation
-from setup import Dataset, Dataloader
-# Model
-from networks import BayesNN
-# Postprocessing
-from postprocessing import Storage, Plotter
+from setup import Parser, Param             # Setup
+from setup import Dataset, Dataloader       # Dataset Creation
+from networks import BayesNN                # Models
+from postprocessing import Storage, Plotter # Postprocessing
 
 # %% Creating Parameters
 
@@ -25,14 +21,13 @@ from postprocessing import Storage, Plotter
 args = Parser().parse_args()
 # Load params from config file
 hp = load_json(args.config)
-# Combine a param object with hp (param from json file) and args (command-line param)
+# Create a param object with hp (param from json file) and args (command-line param)
 par = Param(hp, args)
 
 print(" START ".center(gui_len,'*'))
 print("Bayesian PINN with", par.method)
 print("Solve the inverse problem of " + str(par.phys_dim.n_input) + "D " + par.pde)
 print("Dataset used:", par.experiment["dataset"])
-
 print(" DONE ".center(gui_len,'*'))
 
 # %% Datasets Creation
@@ -55,7 +50,7 @@ bayes_nn = BayesNN(par)
 
 print("Chosing", par.method ,"algorithm...")
 # Chose the algorithm from config/args
-chosen_algorithm = switch_algorithm(par, test = True)
+chosen_algorithm = switch_algorithm(par.method, test = True)
 
 print("Building", par.method ,"algorithm...")
 # Initialize the algorithm chosen
@@ -102,8 +97,8 @@ print("Saving data...")
 #save_storage.save_errors(errors) (in txt)
 
 # Saving Training
-save_storage.loss       = train_algorithm.loss
-save_storage.thetas     = bayes_nn.thetas
+save_storage.losses = bayes_nn.losses
+save_storage.thetas = bayes_nn.thetas
 
 # Saving Predictions
 save_storage.confidence = functions_confidence
@@ -115,11 +110,11 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_values, path_thetas, None)
+load_storage = Storage(path_values, path_thetas, path_log)
 
 print("Plotting the losses...")
-#losses = load_storage.losses
-#plotter.plot_losses(losses)
+losses = load_storage.losses
+plotter.plot_losses(losses)
 
 print("Plotting the results...")
 functions_confidence = load_storage.confidence

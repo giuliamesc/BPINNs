@@ -14,7 +14,7 @@ class Storage():
         self.idx_len = 3
 
     def __write_line(self, outfile, msg, value):
-        # USata solo per save params
+        # Usata solo per save params
         outfile.write(f" \"{msg}\": ")
         json.dump(value, outfile)
         outfile.write(", \n")
@@ -105,9 +105,45 @@ class Storage():
             self.__save_list(folder_path, "w", value[0], 2)
             self.__save_list(folder_path, "b", value[1], 2)
 
+    def __load_dict(self, path, name, keys):
+
+        file_path = os.path.join(path, name)
+        values_npy = np.load(file_path)
+
+        value_dict = dict()
+        for idx, key in enumerate(keys):
+            value_dict[key] = list(values_npy[idx,:])
+
+        return value_dict
+
+    def __save_dict(self, path, name, keys, values):
+        
+        shape_np  = (len(keys),len(values[keys[0]]))
+        values_np = np.zeros(shape_np, dtype=np.float32)
+
+        for idx, key in enumerate(keys):
+            values_np[idx,:] = values[key]
+
+        file_path = os.path.join(path, name)
+        print(file_path)
+        np.save(file_path, values_np)
+
     @property
     def losses(self):
-        pass
+        keys = ("Total", "res", "data", "prior")
+        loss    = self.__load_dict(self.path_log, "loss.npy"   , keys)
+        logloss = self.__load_dict(self.path_log, "logloss.npy", keys)
+        return (loss, logloss)
+
     @losses.setter
     def losses(self, values):
-        pass
+        keys = ("Total", "res", "data", "prior")
+        self.__save_dict(self.path_log, "loss.npy"   , keys, values[0])
+        self.__save_dict(self.path_log, "logloss.npy", keys, values[1])
+
+
+"""
+values = (loss, logloss)
+loss, logloss = {tot, res, data, prior}
+tot, res, data, prior = [...]
+"""

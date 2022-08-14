@@ -18,13 +18,23 @@ To exit from the virtual environment, use `deactivate`
 ### Mac and Linux
 1. Go into the directory of your project with `cd project_folder_path`
 2. Create an empty *virtual environment* with `virtualenv .\my_env_name`
-3. Enter into the virtual environment with `source my_env_name\bin\activate`
+3. Enter into the virtual environment with `source my_env_name\bin\activate`:file_folder:
 4. Check that the environment is empty with `pip freeze`; normally, it should print nothing
-5. Install the required packages from the `.txt` file `requirements.txt` with `pip install -r requirements.txt`
+5. Install the required packages from the `.txt` file `requirements.txt` with `pip install -r requirements.txt`:file_folder:
 6. Run again `pip freeze` and check that the environment is no longer empty
 7. Add the environment folder to your `.gitignore` (in order to avoid pushing the packages on git!)
 
 To exit from the virtual environment, use `deactivate`
+
+## :file_folder: Repository Structure
+
+###
+###
+###
+###
+### 
+
+## :computer: Source Code 
 
 ## :books: References
 

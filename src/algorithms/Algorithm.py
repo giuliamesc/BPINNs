@@ -9,7 +9,6 @@ class Algorithm(ABC):
         
         self.t0 = time.time() 
         self.model = bayes_nn
-        self.loss = list()
 
     def compute_time(self):
         
