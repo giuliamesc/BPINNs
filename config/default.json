@@ -7,6 +7,7 @@
 
 	"experiment":{
 		"dataset":"laplace1D_cos",
+		"method" :"Test_Alg",
 		"num_collocation":100,
 		"num_fitting":10,
 		"noise_lv":0.05,

@@ -10,7 +10,7 @@ class Param:
         self.utils  = hp["utils"]  # utils param
 
         self.method = args.method ## method used: SVGD, HMC, VI, ...
-        self.param_method = hp[args.method] # specific param for the selected method
+        self.param_method = hp[self.method] # specific param for the selected method
 
         # if we have some additional parameters from the command-line
         self.__command_line_update(vars(args))

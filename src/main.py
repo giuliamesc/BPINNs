@@ -1,6 +1,7 @@
 # %% Utilities
 from utility import set_directory, set_warning, set_gui_len
 from utility import load_json, create_directories
+from utility import switch_algorithm
 
 # Setup utilities
 set_directory()
@@ -15,8 +16,6 @@ from setup import Parser, Param
 from setup import Dataset, Dataloader
 # Model
 from networks import BayesNN
-# Algorithms
-from algorithms import Test_Alg, HMC
 # Postprocessing
 from postprocessing import Storage, Plotter
 
@@ -55,9 +54,8 @@ print("Initializing the Bayesian PINN...")
 bayes_nn = BayesNN(par)
 
 print("Chosing", par.method ,"algorithm...")
-#chosen_algorithm = HMC
-chosen_algorithm = Test_Alg
-""" Switch tra gli algoritmi """
+# Chose the algorithm from config/args
+chosen_algorithm = switch_algorithm(par, test = True)
 
 print("Building", par.method ,"algorithm...")
 # Initialize the algorithm chosen
