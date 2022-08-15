@@ -14,7 +14,6 @@ class Storage():
         self.idx_len = 3
 
     def __write_line(self, outfile, msg, value):
-        # Usata solo per save params
         outfile.write(f" \"{msg}\": ")
         json.dump(value, outfile)
         outfile.write(", \n")
@@ -38,7 +37,6 @@ class Storage():
         outfile.write("\n\n")
 
     def save_parameter(self, par):
-        # CAMBIARE (GIULIA)
         """Save parameters"""
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
             self.__write_par_line(outfile, "Architecture", par.architecture)
