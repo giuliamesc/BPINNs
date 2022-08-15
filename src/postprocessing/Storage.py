@@ -21,9 +21,10 @@ class Storage():
 
     def __write_txt_line(self, outfile, my_str, vec):
         comps = ["x", "y", "z"][:len(vec)]
-        aux_str = my_str .ljust(20)
+        aux_str = my_str + " by component:" + "\n"
+        aux_str = aux_str.ljust(20)
         for idx, comp in enumerate(comps):
-            aux_str = aux_str + " component " + comp + ":"
+            aux_str = aux_str + comp + ":"
             outfile.write(f"{aux_str} {vec[idx]:1.4f} \t")
         outfile.write("\n")
 
@@ -31,7 +32,7 @@ class Storage():
         outfile.write(field + "\n")
         max_len = max(len(key) for key in value.keys()) + 3
         for key, val in value.items():
-            aux_str = key + " :"
+            aux_str = key + ":"
             aux_str = aux_str.ljust(max_len)
             outfile.write(f"{aux_str} {val} \n")
         outfile.write("\n\n")
