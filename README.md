@@ -44,6 +44,7 @@ To exit from the virtual environment, use `deactivate`
 
 ## :books: References
 - *B-PINNs: Bayesian Physics-Informed Neural Networks for Forward and Inverse PDE Problems with Noisy Data*, Liu Yang, Xuhui Meng, George Em Karniadakis, Mar 2020.
+- *Bayesian Physics-Informed Neural Networks for Inverse Uncertainty Quantification problems in Cardiac Electrophysiology*, Master Thesis at Politecnico di Milano by Daniele Ceccarelli.
 
 
 ## :speech_balloon: Authors 
