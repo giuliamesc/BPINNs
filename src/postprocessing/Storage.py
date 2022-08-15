@@ -21,32 +21,44 @@ class Storage():
 
     def __write_txt_line(self, outfile, my_str, vec):
         comps = ["x", "y", "z"][:len(vec)]
+        aux_str = my_str .ljust(20)
         for idx, comp in enumerate(comps):
-            aux_str = my_str + " on component " + comp + ":"
-            outfile.write(f"{aux_str.ljust(55)} {vec[idx]:1.4f} \n")
+            aux_str = aux_str + " component " + comp + ":"
+            outfile.write(f"{aux_str} {vec[idx]:1.4f} \t")
+        outfile.write("\n")
+
+    def __write_par_line(self, outfile, field, value):
+        outfile.write(field + "\n")
+        max_len = max(len(key) for key in value.keys()) + 3
+        for key, val in value.items():
+            aux_str = key + " :"
+            aux_str = aux_str.ljust(max_len)
+            outfile.write(f"{aux_str} {val} \n")
+        outfile.write("\n\n")
 
     def save_parameter(self, par):
         # CAMBIARE (GIULIA)
         """Save parameters"""
-        with open(self.path_log, 'w') as outfile:
-            outfile.write("{ \n")
-            self.__write_line(outfile, "architecture", par.architecture)
-            self.__write_line(outfile, "experiment", par.experiment)
-            self.__write_line(outfile, "param", par.param)
-            self.__write_line(outfile, "sigmas", par.sigmas)
-            self.__write_line(outfile, str(par.method), par.param_method)
-            self.__write_line(outfile, "utils", par.utils)
-            outfile.write("}")
+        with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
+            self.__write_par_line(outfile, "Architecture", par.architecture)
+            self.__write_par_line(outfile, "Experiment", par.experiment)
+            self.__write_par_line(outfile, "Parameters", par.param)
+            self.__write_par_line(outfile, "Sigmas", par.sigmas)
+            self.__write_par_line(outfile, str(par.method), par.param_method)
+            self.__write_par_line(outfile, "Utils", par.utils)
 
     def save_errors(self, errors):
         """Save errors"""
         with open(os.path.join(self.path_log, "errors.txt"), 'w') as outfile:
-            self.__write_txt_line(outfile, "Relative error on solution", errors["error_sol"])
-            self.__write_txt_line(outfile, "Relative error on parametetric field", errors["error_par"])
-            self.__write_txt_line(outfile, "Mean UQ on solution", errors["uq_sol_mean"])
-            self.__write_txt_line(outfile, "Mean UQ on parametric field", errors["uq_par_mean"])
-            self.__write_txt_line(outfile, "Max UQ on solution", errors["uq_sol_max"])
-            self.__write_txt_line(outfile, "Max UQ on parametric field", errors["uq_par_max"])
+            outfile.write("RELATIVE ERRORS\n")
+            self.__write_txt_line(outfile, "Solution", errors["error_sol"])
+            self.__write_txt_line(outfile, "Parametetric field", errors["error_par"])
+            outfile.write("\nUNCERTAINITY QUANTIFICATION (MEAN)\n")
+            self.__write_txt_line(outfile, "Solution", errors["uq_sol_mean"])
+            self.__write_txt_line(outfile, "Parametric field", errors["uq_par_mean"])
+            outfile.write("\nUNCERTAINITY QUANTIFICATION (MAX)\n")
+            self.__write_txt_line(outfile, "Solution", errors["uq_sol_max"])
+            self.__write_txt_line(outfile, "Parametric field", errors["uq_par_max"])
 
     @property
     def confidence(self):

@@ -93,7 +93,7 @@ save_storage = Storage(path_values, path_thetas, path_log)
 print("Saving data...")
 
 # Saving Details and Results
-#save_storage.save_parameter(par) (in txt)
+save_storage.save_parameter(par)
 save_storage.save_errors(errors)
 
 # Saving Training
