@@ -30,7 +30,7 @@ To exit from the virtual environment, use `deactivate`
 
 - :file_folder: `config` contains `.json` files which encode the options and parameter choices for the test cases proposed.
 - :file_folder: `data` contains, in separate subfolders, the dataset for each test case. In each subfolder you can find `.npy` files storing inputs (`x.npy`), solution (`u.npy`) and parametric field (`f.npy`). The subfolder `trash` contains the dataset generated for the last run that has not been saved.
-- :file_folder: `results` contains, in separate subfolders, the results for each test case. In each subfolder, you can find the folders `plot` with the plots and `weights`, with loss history and summary of the experiment options and errors in `.txt` files.
+- :file_folder: `outs` contains, in separate subfolders, the results for each test case. In each subfolder, you can find the folders `plot` with the plots, `thetas` with network parameters, `log` with loss history and summary of the experiment options and errors in `.txt` files and `values` with the solution computed by the network.
 - :file_folder: `src` contains the source code, described in detail in the section below.
 
 ## :computer: Source Code 
