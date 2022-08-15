@@ -19,6 +19,12 @@ class Storage():
         json.dump(value, outfile)
         outfile.write(", \n")
 
+    def __write_txt_line(self, outfile, my_str, vec):
+        comps = ["x", "y", "z"][:len(vec)]
+        for idx, comp in enumerate(comps):
+            aux_str = my_str + " on component " + comp + ":"
+            outfile.write(f"{aux_str.ljust(55)} {vec[idx]:1.4f} \n")
+
     def save_parameter(self, par):
         # CAMBIARE (GIULIA)
         """Save parameters"""
@@ -33,8 +39,14 @@ class Storage():
             outfile.write("}")
 
     def save_errors(self, errors):
-        # CAMBIARE (GIULIA), NELLA CARTELLA PATH_LOG
-        pass
+        """Save errors"""
+        with open(os.path.join(self.path_log, "errors.txt"), 'w') as outfile:
+            self.__write_txt_line(outfile, "Relative error on solution", errors["error_sol"])
+            self.__write_txt_line(outfile, "Relative error on parametetric field", errors["error_par"])
+            self.__write_txt_line(outfile, "Mean UQ on solution", errors["uq_sol_mean"])
+            self.__write_txt_line(outfile, "Mean UQ on parametric field", errors["uq_par_mean"])
+            self.__write_txt_line(outfile, "Max UQ on solution", errors["uq_sol_max"])
+            self.__write_txt_line(outfile, "Max UQ on parametric field", errors["uq_par_max"])
 
     @property
     def confidence(self):
@@ -125,7 +137,7 @@ class Storage():
             values_np[idx,:] = values[key]
 
         file_path = os.path.join(path, name)
-        print(file_path)
+        # print(file_path) Lo volevi stampare davvero?
         np.save(file_path, values_np)
 
     @property
