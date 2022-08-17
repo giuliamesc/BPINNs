@@ -1,51 +1,55 @@
 {
 	"architecture":{
-		"activation":"swish", 
-		"n_layers":2,
-		"n_neurons":10
+		"activation": "swish", 
+		"n_layers"  : 2,
+		"n_neurons" : 10
 	},
 
 	"experiment":{
-		"dataset":"laplace1D_cos",
-		"method" :"Test_Alg",
-		"num_collocation":100,
-		"num_fitting":10,
-		"noise_lv":0.05,
-		"batch_size":4
+		"dataset": "laplace1D_cos",
+		"method" : "Test_Alg",
+		"num_collocation": 100,
+		"num_fitting"    : 10,
+		"noise_lv"   : 0.05,
+		"batch_size" : 4
 	},
 
 	"param":{
-		"param_res":   0.1,
-		"param_data":  10.0,
+		"param_res"  : 0.1,
+		"param_data" : 10.0,
 		"param_prior": 1.0
 	},
 
 	"sigmas":{
 		"data_prior_noise": 1e-4,
-		"pde_prior_noise":  1e-6,
+		"pde_prior_noise" : 1e-6,
 		"data_prior_noise_trainable":"False",
 		"pde_prior_noise_trainable": "False"
 	},
 
+	"utils":{
+    	"random_seed": 42,
+        "debug_flag" : "False",
+		"save_flag"  : "False"
+	},
+
 	"HMC":{
-		"N_HMC": 10,
-		"M_HMC": 7,
-		"L_HMC": 20,
-		"dt_HMC":4e-5,
-		"dt_noise_HMC":3e-4
+		"epochs" : 10,
+		"burn-in": 7,
+		"HMC_L"    : 20,
+		"HMC_dt"   : 4e-5,
+		"HMC_noise": 3e-4
 	},
 
 	"SVGD":{
-		"n_samples":30,
-		"epochs":2000,
-		"lr":1e-3,
-		"lr_noise":1e-5,
-		"param_repulsivity":1.0
+		"epochs"   : 2000,
+		"n_samples": 30,
+		"SVGD_lr"    : 1e-3,
+		"SVGD_noise" : 1e-5,
+		"repulsivity": 1.0
 	},
 
-	"utils":{
-    	"random_seed": 42,
-        "debug_flag": "False",
-		"save_flag":  "True"
+	"VI":{
+		"epochs": 2000
 	}
 }

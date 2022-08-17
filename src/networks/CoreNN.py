@@ -1,17 +1,12 @@
-import numpy as np
 import tensorflow as tf
 
 class CoreNN():
 
     """
-    ***** Key Features *****
-    - Build initial network
-    - Contain layers and weights and biases (theta)
-    - Do forward pass on given theta
-
-    **** Other Features **** WIP
-    - Save and Load single theta?
-    - Architecture Recap ?
+    - Builds initial network
+    - Contains layers and weights and biases (theta)
+    - Does forward pass on given theta
+    - Can re-sample theta given a seed
     
     Neural networks parameters (theta)
         - nn_params = (weights, biases)
@@ -23,7 +18,7 @@ class CoreNN():
             - n_layers layers       : shape (n_neurons,) 
             - 1 layer               : shape (n_out_sol+n_out_par,)
     """
-    
+
     def __init__(self, par):
 
         # Domain dimensions
@@ -36,30 +31,8 @@ class CoreNN():
         self.n_neurons  = par.architecture["n_neurons"]
         self.activation = par.architecture["activation"]
 
-        # Save parameters for child classes
-        self.par = par
         # Build the Neural network architecture
-        self.model = self.__build_NN()
-
-    def __build_NN(self):
-        """
-        Initializes a fully connected Neural Network with 
-        - Glorot Uniform initialization of weights
-        - Zero initialization for biases
-        """
-
-        # Input Layer
-        model = tf.keras.Sequential()
-        model.add(tf.keras.Input(shape=(self.n_inputs,)))
-        # Hidden Layers
-        for _ in range(self.n_layers):
-            model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
-                      kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-        # Output Layer
-        model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
-                  kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-
-        return model
+        self.model = self.__build_NN(par.utils["random_seed"])
         
     @property
     def nn_params(self):
@@ -75,6 +48,32 @@ class CoreNN():
         for layer, weight, bias in zip(self.model.layers, weights, biases):
             layer.set_weights((weight,bias))
 
+    def __build_NN(self, seed):
+        """
+        Initializes a fully connected Neural Network with 
+        - Glorot Uniform initialization of weights
+        - Zero initialization for biases
+        """
+        # Set random seed for inizialization
+        tf.random.set_seed(seed)
+        # Input Layer
+        model = tf.keras.Sequential()
+        model.add(tf.keras.Input(shape=(self.n_inputs,)))
+        # Hidden Layers
+        for _ in range(self.n_layers):
+            model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
+                      kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+        # Output Layer
+        model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
+                  kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+
+        return model
+
+    def initialize_NN(self, seed):
+        """ Initialization of the Neural Network with given random seed"""
+        self.model = self.__build_NN(seed)
+        
+
     def forward(self, inputs, split = False):
         """ 
         Simple prediction on Solution and Parametric field 
@@ -84,13 +83,13 @@ class CoreNN():
         [split = True] out_par : tf tensor (n_samples, n_out_par)
         """
         x = tf.convert_to_tensor(inputs)
-        # compute the output of NN at the inputs data
-        output = self.model(x)
-        if not split: return output
-
-        # select solution output
-        out_sol = output[:,:self.n_out_sol]
-        # select parametric field output
-        out_par = output[:,self.n_out_sol:]
+        output = self.model(x) # compute the output of NN at the inputs data
         
+        if not split: return output
+        out_sol = output[:,:self.n_out_sol] # select solution output
+        out_par = output[:,self.n_out_sol:] # select parametric field output
         return out_sol, out_par
+
+    def show_theta(self):
+        """ For debug purposes; it prints all the network parameters (weigths and biases) """
+        pass

@@ -27,11 +27,13 @@ class Algorithm(ABC):
         processed_data = self.model.pre_process(dataset)
         self.data = processed_data
 
+
+
     def train(self, par):
-        #n_epochs = par.param_method["N_HMC"]
+        #n_epochs = par.param_method["epochs"]
         n_epochs = 3
-        for _ in range(n_epochs):
-            new_theta = self.sample_theta()
+        for i in range(n_epochs):
+            new_theta = self.sample_theta(i)
             self.model.thetas.append(new_theta)
 
     @abstractmethod

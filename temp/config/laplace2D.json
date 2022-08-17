@@ -26,8 +26,15 @@
 		"pde_prior_noise_trainable": "False"
 	},
 
+	
+	"utils":{
+    	"random_seed": 42,
+        "debug_flag": "False",
+		"save_flag":  "False"
+	},
+
 	"HMC":{
-		"N_HMC": 100,
+		"epochs": 100,
 		"M_HMC": 70,
 		"L_HMC": 200,
 		"dt_HMC":4e-5,
@@ -35,16 +42,10 @@
 	},
 
 	"SVGD":{
-		"n_samples":30,
 		"epochs":2000,
+		"n_samples":30,
 		"lr":1e-3,
 		"lr_noise":1e-5,
 		"param_repulsivity":1.0
-	},
-
-	"utils":{
-    	"random_seed": 42,
-        "debug_flag": "False",
-		"save_flag":  "False"
 	}
 }
