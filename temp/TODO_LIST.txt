@@ -16,32 +16,18 @@
 ############################################################
 
 ## COSE DA FARE GROSSE
-- Rifare FCN e simili con tf
-- Implementare BayesNN and co
-- Implementare Variational Inference
-- Implementare SVGD
 - Warning per diagnostica tuning
-- Fare Documentazioni
 
 ## COSE DA FARE MEDIE
-- Dataloader - migliorare implementazione
-- Dataloader - gestire mescolamento
-- Loss di Test
 - Migliorare Debug Flag
 
 ## COSE DA FARE VELOCI
-- ninput, outpu sotto un solo dict
 - Cambiare da prop a numero l'import dati
 
 ## IDEE DI IMPLEMENTAZIONE
-- Sistemare private e pubbliche
-- Utilizzare ABC
-- Utilizzare property
-- Staticità classi
 - Usare Logging
 
 ## IDEE E CONSIDERAZIONI VARIE
-- Decoratori per Error management
-- Provare MCMC semplice
+- Decoratori per Error management ??
 
 
