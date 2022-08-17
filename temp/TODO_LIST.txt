@@ -1,0 +1,47 @@
+### IMPLEMENTAZIONI GROSSE
+- Implementare la Rete
+    - Finire PredNN
+        - Inizilizza con dei thetas 
+    - Finire BayesNN    
+    - Testare LossNN
+- Implemetare gli Algoritmi 
+    - HMC    
+    - VI    
+    - SVGD
+- Postprocessing    
+    - Refactorare plotter in OOP
+        - Losses  
+- COMMENTARE
+
+############################################################
+
+## COSE DA FARE GROSSE
+- Rifare FCN e simili con tf
+- Implementare BayesNN and co
+- Implementare Variational Inference
+- Implementare SVGD
+- Warning per diagnostica tuning
+- Fare Documentazioni
+
+## COSE DA FARE MEDIE
+- Dataloader - migliorare implementazione
+- Dataloader - gestire mescolamento
+- Loss di Test
+- Migliorare Debug Flag
+
+## COSE DA FARE VELOCI
+- ninput, outpu sotto un solo dict
+- Cambiare da prop a numero l'import dati
+
+## IDEE DI IMPLEMENTAZIONE
+- Sistemare private e pubbliche
+- Utilizzare ABC
+- Utilizzare property
+- Staticità classi
+- Usare Logging
+
+## IDEE E CONSIDERAZIONI VARIE
+- Decoratori per Error management
+- Provare MCMC semplice
+
+
