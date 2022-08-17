@@ -46,6 +46,6 @@
 	"utils":{
     	"random_seed": 42,
         "debug_flag": "False",
-		"save_flag":  "False"
+		"save_flag":  "True"
 	}
 }

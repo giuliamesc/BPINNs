@@ -17,59 +17,44 @@ from postprocessing import Storage, Plotter # Postprocessing
 
 # %% Creating Parameters
 
-# Load a param object from command-line
-args = Parser().parse_args()
-# Load params from config file
-hp = load_json(args.config)
-# Create a param object with hp (param from json file) and args (command-line param)
-par = Param(hp, args)
-
 print(" START ".center(gui_len,'*'))
-print("Bayesian PINN with", par.method)
-print("Solve the inverse problem of " + str(par.phys_dim.n_input) + "D " + par.pde)
-print("Dataset used:", par.experiment["dataset"])
+args   = Parser().parse_args()   # Load a param object from command-line
+config = load_json(args.config)  # Load params from config file
+params = Param(config, args)     # Combines args and config
+
+print("Bayesian PINN with", params.method)
+print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
+print("Dataset used:", params.experiment["dataset"])
 print(" DONE ".center(gui_len,'*'))
 
 # %% Datasets Creation
 print("Dataset creation...")
-dataset = Dataset(par)
+dataset = Dataset(params)
 print("\tNumber of fitting data:", dataset.num_fitting)
 print("\tNumber of collocation data:", dataset.num_collocation)
 
-print("Building dataloader...")
-# Build the dataloader for minibatch training (of just collocation points)
-batch_loader = Dataloader(dataset, par.experiment["batch_size"], par.utils['random_seed'])
-batch_loader = batch_loader.dataload_collocation()
+print("Building dataloader...") 
+batch_loader = Dataloader(dataset, params.experiment["batch_size"], params.utils['random_seed'])
+batch_loader = batch_loader.dataload_collocation() # Build the dataloader for minibatch training
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
 print("Initializing the Bayesian PINN...")
-# Initialize the correct Bayesian NN
-bayes_nn = BayesNN(par)
-
-print("Chosing", par.method ,"algorithm...")
-# Chose the algorithm from config/args
-chosen_algorithm = switch_algorithm(par.method, test = True)
-
-print("Building", par.method ,"algorithm...")
-# Initialize the algorithm chosen
-train_algorithm = chosen_algorithm(bayes_nn)
-# Insert the dataset used for training
-train_algorithm.data_train = dataset # Decidi se separare qua in batch
-
+bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
+print("Chosing", params.method ,"algorithm...")
+chosen_algorithm = switch_algorithm(params.method, test = True) # Chose the algorithm from config/args
+print("Building", params.method ,"algorithm...")
+train_algorithm = chosen_algorithm(bayes_nn) # Initialize the algorithm chosen
+train_algorithm.data_train = dataset         # Insert the dataset used for training # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
 
 print('Start training...')
-# Create list of theta samples
-train_algorithm.train(par)
-
+train_algorithm.train(params) # Create list of theta samples
 print('End training')
-# Compute duration of training
-train_algorithm.compute_time()
-
+train_algorithm.compute_time() # Compute duration of training
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Evaluation
@@ -77,7 +62,6 @@ print(" DONE ".center(gui_len,'*'))
 print("Computing solutions...")
 functions_confidence = bayes_nn.mean_and_std(dataset.dom_data[0])
 functions_nn_samples = bayes_nn.draw_samples(dataset.dom_data[0])
-
 print("Computing errors...")
 errors = bayes_nn.test_errors(functions_confidence, dataset)
 print("Showing errors...")
@@ -87,23 +71,19 @@ print(" DONE ".center(gui_len,'*'))
 # %% Saving
 
 print("Building saving directories...")
-path_plot, path_values, path_thetas, path_log = create_directories(par)
+path_plot, path_values, path_thetas, path_log = create_directories(params)
 save_storage = Storage(path_values, path_thetas, path_log)
 
 print("Saving data...")
-
 # Saving Details and Results
-save_storage.save_parameter(par)
+save_storage.save_parameter(params)
 save_storage.save_errors(errors)
-
 # Saving Training
 save_storage.losses = bayes_nn.losses
 save_storage.thetas = bayes_nn.thetas
-
 # Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
-
 print(" DONE ".center(gui_len,'*'))
 
 # %% Plotting
@@ -111,17 +91,14 @@ print(" DONE ".center(gui_len,'*'))
 print("Loading data...")
 plotter = Plotter(path_plot)
 load_storage = Storage(path_values, path_thetas, path_log)
-
 print("Plotting the losses...")
 losses = load_storage.losses
 plotter.plot_losses(losses)
-
 print("Plotting the results...")
 functions_confidence = load_storage.confidence
 functions_nn_samples = load_storage.nn_samples
 plotter.plot_confidence(dataset, functions_confidence)
 plotter.plot_nn_samples(dataset, functions_nn_samples)
-
 print(" END ".center(gui_len,'*'))
 
 plotter.show_plot()

@@ -13,11 +13,6 @@ class Storage():
         self.path_sample = os.path.join(self.path_values, "samples")
         self.idx_len = 3
 
-    def __write_line(self, outfile, msg, value):
-        outfile.write(f" \"{msg}\": ")
-        json.dump(value, outfile)
-        outfile.write(", \n")
-
     def __write_txt_line(self, outfile, my_str, vec):
         comps = ["x", "y", "z"][:len(vec)]
         aux_str = my_str + " by component:" + "\n"
@@ -28,13 +23,13 @@ class Storage():
         outfile.write("\n")
 
     def __write_par_line(self, outfile, field, value):
-        outfile.write(field + "\n")
+        outfile.write(field)
         max_len = max(len(key) for key in value.keys()) + 3
         for key, val in value.items():
-            aux_str = key + ":"
+            aux_str = "\t" + key + ":"
             aux_str = aux_str.ljust(max_len)
             outfile.write(f"{aux_str} {val} \n")
-        outfile.write("\n\n")
+        outfile.write("\n")
 
     def save_parameter(self, par):
         """Save parameters"""
