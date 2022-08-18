@@ -15,6 +15,7 @@ class Laplace(Equation):
         u shape: (n_sample x n_out_sol)
         f shape: (n_sample x n_out_par)
         """
+        x = tf.convert_to_tensor(x)
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(x)
             u, f = forward_pass(x, split = True)

@@ -4,9 +4,10 @@ from .equations import Laplace
 
 class BayesNN(PredNN, LossNN):
 
-    def __init__(self,par):
+    def __init__(self, par):
         
         self.trained = False
+        self.seed    = par.utils["random_seed"] 
         self.losses  = self.__initialize_losses()
 
         equation  = self.__initialize_equation(par)
@@ -17,7 +18,6 @@ class BayesNN(PredNN, LossNN):
         super(BayesNN,self).__init__(par=par, comp_res=comp_res,
                                      pre=pre_proc, post=post_proc)
 
-        
     def __initialize_losses(self):
         
         keys = ("Total", "res", "data", "prior")
@@ -28,10 +28,17 @@ class BayesNN(PredNN, LossNN):
             logloss_dict[key] = list()
 
         return (loss_dict, logloss_dict)
-    
+
     def __initialize_equation(self, par):
 
         equation = par.experiment["dataset"]
         if   equation == "laplace1D_cos": return Laplace(par)
         elif equation == "laplace2D_cos": return Laplace(par)
         else: raise("Equation not implemeted!")
+
+    def loss_step(self, new_losses):
+        
+        keys = ("Total", "res", "data", "prior")
+        for key in keys: 
+            self.losses[0][key].append(new_losses[0][key])
+            self.losses[1][key].append(new_losses[1][key])

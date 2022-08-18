@@ -12,6 +12,7 @@
     - Refactorare plotter in OOP
         - Losses  
 - COMMENTARE
+- Rimettere il noise in loss data!
 
 ############################################################
 

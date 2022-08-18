@@ -36,7 +36,7 @@ class Storage():
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
             self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
             self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
-            self.__write_par_line(outfile, "PARAMETERS\n", par.param)
+            self.__write_par_line(outfile, "PARAMETERS\n", par.coeff)
             self.__write_par_line(outfile, "SIGMAS\n", par.sigmas)
             self.__write_par_line(outfile, str(par.method)+"\n", par.param_method)
             self.__write_par_line(outfile, "UTILS\n", par.utils)

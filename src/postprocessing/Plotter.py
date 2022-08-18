@@ -90,10 +90,24 @@ class Plotter():
         self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
         self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
+    def __plot_train(self, losses, title):
+
+        plt.figure()       
+        #plt.plot(losses['Total'], 'k--', lw=2.5, alpha=1.0, label = 'Total')
+        for key, value in losses.items():
+            if key == "Total": continue
+            if key == "prior": continue
+            plt.plot(value, lw=1.0, alpha=0.7, label = key)
+
+        plt.xlabel('Epochs')
+        plt.ylabel(title[:-4])
+        plt.legend(prop={'size': 9})
+        self.__save_plot(self.path_plot, title)
+
     def plot_losses(self, losses):
-        pass
+        self.__plot_train(losses[0], "Loss.png")
+        self.__plot_train(losses[1], "LogLoss.png")
 
     def show_plot(self):
-
         plt.show(block = True)
         

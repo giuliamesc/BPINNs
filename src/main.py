@@ -33,10 +33,10 @@ dataset = Dataset(params)
 print("\tNumber of fitting data:", dataset.num_fitting)
 print("\tNumber of collocation data:", dataset.num_collocation)
 
-print("Building dataloader...") 
-batch_loader = Dataloader(dataset, params.experiment["batch_size"], params.utils['random_seed'])
-batch_loader = batch_loader.dataload_collocation() # Build the dataloader for minibatch training
-print(" DONE ".center(gui_len,'*'))
+#print("Building dataloader...") 
+#batch_loader = Dataloader(dataset, params.experiment["batch_size"], params.utils['random_seed'])
+#batch_loader = batch_loader.dataload_collocation() # Build the dataloader for minibatch training
+#print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
@@ -94,11 +94,19 @@ load_storage = Storage(path_values, path_thetas, path_log)
 print("Plotting the losses...")
 losses = load_storage.losses
 plotter.plot_losses(losses)
-print("Plotting the results...")
-functions_confidence = load_storage.confidence
-functions_nn_samples = load_storage.nn_samples
-plotter.plot_confidence(dataset, functions_confidence)
-plotter.plot_nn_samples(dataset, functions_nn_samples)
+#print("Plotting the results...")
+#functions_confidence = load_storage.confidence
+#functions_nn_samples = load_storage.nn_samples
+#plotter.plot_confidence(dataset, functions_confidence)
+#plotter.plot_nn_samples(dataset, functions_nn_samples)
 print(" END ".center(gui_len,'*'))
+
+print("Losses")
+print(losses[0]["res"])
+print(losses[0]["data"])
+
+print("Weights")
+for i in range(5):
+    print(bayes_nn.thetas[i][0][0])
 
 #plotter.show_plot()

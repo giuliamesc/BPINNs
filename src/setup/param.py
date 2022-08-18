@@ -5,7 +5,7 @@ class Param:
         self.architecture = hp["architecture"] # NN architecture param
         self.experiment   = hp["experiment"]   # experiment param
         
-        self.param  = hp["param"]  # general param
+        self.coeff  = hp["coeff"]  # coefficient param
         self.sigmas = hp["sigmas"] # sigmas param
         self.utils  = hp["utils"]  # utils param
 
@@ -37,7 +37,7 @@ class Param:
     def __command_line_update(self, args_dict):
         """Update the parameter given by json file using args (overspecification by command-line)"""
         self.__change_string_to_bool() # convert all the string "True" or "False" to boolean
-        self.json_dict = [self.architecture, self.experiment, self.param, self.sigmas, self.utils]
+        self.json_dict = [self.architecture, self.experiment, self.coeff, self.sigmas, self.utils]
         for key in args_dict:
             if args_dict[key] is None: continue
             for jdict in self.json_dict:

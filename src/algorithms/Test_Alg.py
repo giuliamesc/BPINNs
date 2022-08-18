@@ -12,7 +12,6 @@ class Test_Alg(Algorithm):
         super().__init__(bayes_nn, param_method)
 
     def sample_theta(self, num):
-        self.model.initialize_NN(num)
+        self.model.initialize_NN(num+self.model.seed)
         theta = self.model.nn_params
-        print(theta[0][0])
         return theta

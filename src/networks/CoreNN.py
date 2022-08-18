@@ -82,6 +82,7 @@ class CoreNN():
         [split = True] out_sol : tf tensor (n_samples, n_out_sol)
         [split = True] out_par : tf tensor (n_samples, n_out_par)
         """
+
         x = tf.convert_to_tensor(inputs)
         output = self.model(x) # compute the output of NN at the inputs data
         
