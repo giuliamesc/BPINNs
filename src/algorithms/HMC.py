@@ -7,8 +7,8 @@ class HMC(Algorithm):
     """
     Class for HMC training
     """
-    def __init__(self, bayes_nn):
-        super().__init__(bayes_nn)
+    def __init__(self, bayes_nn, param_method):
+        super().__init__(bayes_nn, param_method)
 
     def sample_theta(self):
         print("Sampling")

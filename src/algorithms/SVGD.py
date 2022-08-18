@@ -7,5 +7,5 @@ class SVGD(Algorithm):
     """
     Class for SVGD training
     """
-    def __init__(self, bayes_nn, dataset):
-        super().__init__(bayes_nn, dataset)
+    def __init__(self, bayes_nn, param_method):
+        super().__init__(bayes_nn, param_method)

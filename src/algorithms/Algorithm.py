@@ -5,10 +5,11 @@ class Algorithm(ABC):
     """
     Class for HMC training
     """
-    def __init__(self, bayes_nn):
+    def __init__(self, bayes_nn, param_method):
         
         self.t0 = time.time() 
         self.model = bayes_nn
+        self.param = param_method
 
     def compute_time(self):
         
@@ -27,12 +28,8 @@ class Algorithm(ABC):
         processed_data = self.model.pre_process(dataset)
         self.data = processed_data
 
-
-
-    def train(self, par):
-        #n_epochs = par.param_method["epochs"]
-        n_epochs = 3
-        for i in range(n_epochs):
+    def train(self):
+        for i in range(self.param["epochs"]):
             new_theta = self.sample_theta(i)
             self.model.thetas.append(new_theta)
 

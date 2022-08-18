@@ -45,14 +45,14 @@ bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
 print("Chosing", params.method ,"algorithm...")
 chosen_algorithm = switch_algorithm(params.method, test = True) # Chose the algorithm from config/args
 print("Building", params.method ,"algorithm...")
-train_algorithm = chosen_algorithm(bayes_nn) # Initialize the algorithm chosen
-train_algorithm.data_train = dataset         # Insert the dataset used for training # Decidi se separare qua in batch
+train_algorithm = chosen_algorithm(bayes_nn, params.param_method) # Initialize the algorithm chosen
+train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
 
 print('Start training...')
-train_algorithm.train(params) # Create list of theta samples
+train_algorithm.train() # Create list of theta samples
 print('End training')
 train_algorithm.compute_time() # Compute duration of training
 print(" DONE ".center(gui_len,'*'))

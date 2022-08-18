@@ -2,7 +2,7 @@
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 10
+		"n_neurons" : 5
 	},
 
 	"experiment":{
@@ -34,7 +34,7 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
+		"epochs" : 5,
 		"burn-in": 7,
 		"HMC_L"    : 20,
 		"HMC_dt"   : 4e-5,

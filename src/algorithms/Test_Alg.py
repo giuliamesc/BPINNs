@@ -6,10 +6,10 @@ from networks.CoreNN import CoreNN
 
 class Test_Alg(Algorithm):
     """
-    Class for HMC training
+    Class for Test training
     """
-    def __init__(self, bayes_nn):
-        super(Test_Alg, self).__init__(bayes_nn)
+    def __init__(self, bayes_nn, param_method):
+        super().__init__(bayes_nn, param_method)
 
     def sample_theta(self, num):
         self.model.initialize_NN(num)
