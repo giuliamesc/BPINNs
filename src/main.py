@@ -79,8 +79,8 @@ print("Saving data...")
 save_storage.save_parameter(params)
 save_storage.save_errors(errors)
 # Saving Training
-save_storage.losses = bayes_nn.losses
-save_storage.thetas = bayes_nn.thetas
+save_storage.history = bayes_nn.history
+save_storage.thetas  = bayes_nn.thetas
 # Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
@@ -92,21 +92,13 @@ print("Loading data...")
 plotter = Plotter(path_plot)
 load_storage = Storage(path_values, path_thetas, path_log)
 print("Plotting the losses...")
-losses = load_storage.losses
-plotter.plot_losses(losses)
-#print("Plotting the results...")
-#functions_confidence = load_storage.confidence
-#functions_nn_samples = load_storage.nn_samples
-#plotter.plot_confidence(dataset, functions_confidence)
-#plotter.plot_nn_samples(dataset, functions_nn_samples)
+history = load_storage.history
+plotter.plot_losses(history)
+print("Plotting the results...")
+functions_confidence = load_storage.confidence
+functions_nn_samples = load_storage.nn_samples
+plotter.plot_confidence(dataset, functions_confidence)
+plotter.plot_nn_samples(dataset, functions_nn_samples)
 print(" END ".center(gui_len,'*'))
 
-print("Losses")
-print(losses[0]["res"])
-print(losses[0]["data"])
-
-print("Weights")
-for i in range(5):
-    print(bayes_nn.thetas[i][0][0])
-
-#plotter.show_plot()
+plotter.show_plot()

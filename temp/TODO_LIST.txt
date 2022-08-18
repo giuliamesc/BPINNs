@@ -1,18 +1,12 @@
 ### IMPLEMENTAZIONI GROSSE
-- Implementare la Rete
-    - Finire PredNN
-        - Inizilizza con dei thetas 
-    - Finire BayesNN    
-    - Testare LossNN
 - Implemetare gli Algoritmi 
     - HMC    
     - VI    
     - SVGD
-- Postprocessing    
-    - Refactorare plotter in OOP
-        - Losses  
 - COMMENTARE
-- Rimettere il noise in loss data!
+    - Algoritmi
+- Varie
+    - Rimettere il noise in loss data!
 
 ############################################################
 

@@ -1,30 +1,35 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import numpy as np
 import os
 
 class Plotter():
+    """ 
+    Class for plotting utilities:
+    Methods:
+        - plot_losses: plots MSE and log-likelihood History
+        - plot_nn_samples: plots all samples of solution and parametric field
+        - plot_confidence: plots mean and std of solution and parametric field
+        - show_plot: enables plot visualization
+    """
     
     def __init__(self, path_plot):
         
         self.path_plot = path_plot
 
     def __order_inputs(self, inputs):
-
+        """ Sorting the input points by label """
         idx = np.argsort(inputs)
         inputs = inputs[idx]
-
         return inputs, idx
 
-    def __check_none(self, func):
-        if func is None:
-            raise Exception("Function given to the plotter is None!")
-
     def __save_plot(self, path, title):
+        """ Auxiliary function used in all plot functions for saving """
         path = os.path.join(path, title)
         plt.savefig(path, bbox_inches = 'tight')
 
     def __plot_confidence_1D(self, x, func, title, label = ("",""), fit = None):
-    
+        """ Plots mean and standard deviation of func (1D case); used in plot_confidence """
         x, idx = self.__order_inputs(x)
         func = [f[idx] for f in func]
 
@@ -41,23 +46,8 @@ class Plotter():
         plt.legend(prop={'size': 9})
         plt.title(title)
 
-    def plot_confidence(self, dataset, functions):
-        
-        self.__check_none(functions)
-        inputs, u_true, f_true = dataset.dom_data
-        u_points, u_values, _  = dataset.exact_data_noise
-
-        u = (u_true, functions['sol_NN'], functions['sol_std'])
-        u_fit = (u_points, u_values)
-        f = (f_true, functions['par_NN'], functions['par_std'])
-
-        self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
-        self.__save_plot(self.path_plot, 'u_confidence.png')
-        self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
-        self.__save_plot(self.path_plot, 'f_confidence.png')
-
     def __plot_nn_samples_1D(self, x, func, label = ("",""), fit = None):
-
+        """ Plots all the samples of func; used in plot_nn_samples """
         x, idx = self.__order_inputs(x)
 
         plt.figure()
@@ -75,9 +65,37 @@ class Plotter():
         plt.legend(prop={'size': 9})
         plt.title('Samples from ' + label[1] + ' reconstructed distribution')
 
-    def plot_nn_samples(self, dataset, functions):
+    def __plot_train(self, losses, name, title):
+        """ Plots all the loss history; used in plot_losses """
+        plt.figure()
+        if name[:-4] == "LogLoss":
+            plt.plot(losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
+        for key, value in losses.items():
+            if key == "Total": continue
+            plt.plot(value, lw=1.0, alpha=0.7, label = key)
 
-        self.__check_none(functions)
+        plt.xlabel('Epochs')
+        plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+        plt.ylabel(title)
+        plt.legend(prop={'size': 9})
+        self.__save_plot(self.path_plot, title)
+
+    def plot_confidence(self, dataset, functions):
+        """ Plots mean and standard deviation of solution and parametric field samples """
+        inputs, u_true, f_true = dataset.dom_data
+        u_points, u_values, _  = dataset.exact_data_noise
+
+        u = (u_true, functions['sol_NN'], functions['sol_std'])
+        u_fit = (u_points, u_values)
+        f = (f_true, functions['par_NN'], functions['par_std'])
+
+        self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
+        self.__save_plot(self.path_plot, 'u_confidence.png')
+        self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
+        self.__save_plot(self.path_plot, 'f_confidence.png')
+
+    def plot_nn_samples(self, dataset, functions):
+        """ Plots all the samples of solution and parametric field """
         inputs, u_true, f_true = dataset.dom_data
         u_points, u_values, _  = dataset.exact_data_noise
 
@@ -90,24 +108,12 @@ class Plotter():
         self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
         self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
-    def __plot_train(self, losses, title):
-
-        plt.figure()       
-        #plt.plot(losses['Total'], 'k--', lw=2.5, alpha=1.0, label = 'Total')
-        for key, value in losses.items():
-            if key == "Total": continue
-            if key == "prior": continue
-            plt.plot(value, lw=1.0, alpha=0.7, label = key)
-
-        plt.xlabel('Epochs')
-        plt.ylabel(title[:-4])
-        plt.legend(prop={'size': 9})
-        self.__save_plot(self.path_plot, title)
-
     def plot_losses(self, losses):
-        self.__plot_train(losses[0], "Loss.png")
-        self.__plot_train(losses[1], "LogLoss.png")
+        """ Generates the plots of MSE and log-likelihood """
+        self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
+        self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likielihood)")
 
     def show_plot(self):
+        """ Shows the plots """
         plt.show(block = True)
         
