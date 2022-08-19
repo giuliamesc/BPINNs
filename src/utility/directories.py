@@ -2,11 +2,12 @@ import os
 from datetime import datetime
 
 def create_keeper(path):
+    """ Creation of the .gitkeep file """
     file_name = os.path.join(path,".gitkeep")
     open(file_name, 'w')
 
 def create_single_dir(base_path, last_path, keep = False):
-    
+    """ Creation of a single directory """
     folder_path = base_path if last_path is None else os.path.join(base_path, last_path)
     
     try: os.makedirs(folder_path)

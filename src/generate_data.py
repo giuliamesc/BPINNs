@@ -6,6 +6,20 @@ import os
 
 # %% Class Setup
 class AnalyticalData:
+    """
+    - Generates the dataset from an analytical solution and stores points and functions in .npy files
+
+    Attributes:
+        - test_case: Test case used
+        - do_plots: Boolean to generate plots
+        - test_only: Boolean to consider the current run as test
+        - save_plot: Boolean to save plots
+        - solution: Solution and parametric field
+        - domain_data: Spatial coordinates
+        - dimension: Dimension of the input space
+        - save_folder: Path to store data
+    
+    """
     def __init__(self, test_case, do_plots = False, test_only = False, save_plot = False):
         self.test_case = test_case
         self.do_plots  = do_plots
@@ -20,6 +34,7 @@ class AnalyticalData:
         self.__creating_loop()
 
     def __creating_loop(self):
+        """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
         print(f"Generating dataset: {self.test_case}".center(os.get_terminal_size().columns,'*'))
         self.__build_directory()
         self.__create_domain()
@@ -30,10 +45,12 @@ class AnalyticalData:
 
 # %% Build Solution
     def __create_solutions(self):
+        """ Creates solution and parametric field files """
         for key,_ in self.solution.items():
             self.__create_sol(key)
 
     def __create_sol(self, name):
+        """ Generates name vector and saves it """
         func = self.solution[name]
         grid_list = np.split(self.grid, self.dimension, axis = 0)
         grid = [x.squeeze() for x in grid_list]
@@ -42,6 +59,7 @@ class AnalyticalData:
 
 # %% Build Domain
     def __create_domain(self):
+        """ Creates the spatial domain with the random points generation technique chosen """
         if self.domain_data["mesh_type"] == "uniform":
             self.__create_uniform_domain()
         elif self.domain_data["mesh_type"] == "sobol":
@@ -50,6 +68,7 @@ class AnalyticalData:
             raise Exception("This mesh type doesn't exists")
 
     def __create_uniform_domain(self):
+        """ Used in __create_domain; generation of a uniform spatial mesh """
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
@@ -66,6 +85,7 @@ class AnalyticalData:
             self.__save_data(names[i], self.grid[i])
 
     def __create_sobol_domain(self):
+        """ Used in __create_domain; generation of a spatial mesh using Sobol points"""
         l_bounds = [i[0] for i in self.domain_data["domain"]]
         u_bounds = [i[1] for i in self.domain_data["domain"]]
         sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
@@ -81,11 +101,13 @@ class AnalyticalData:
 
 # %% Loading and Saving
     def __save_data(self, name, data):
+        """ Saves the data generated """
         filename = os.path.join(self.save_path,name)
         np.save(filename,data)
         print(f'\tSaved {name}')
 
     def __build_directory(self):
+        """ Builds a directory for the case study (if it is a test, the trash folder) """
         if self.test_only:
             trash_path = os.path.join(self.save_folder,"trash")
             if not(os.path.isdir(trash_path)):
@@ -99,10 +121,12 @@ class AnalyticalData:
             print('Folder already present')
 
     def __load(self,name):
+        """ Loader of .npy files """
         return np.load(os.path.join(self.save_path, f'{name}.npy'))
 
 # %% Postprocess
     def __plot(self, var_name):
+        """ Used in __plotter; plots var_name profile (distinguishing 1D, 2D, 3D case) """
         var = self.__load(var_name)
         plt.figure()
         if self.dimension == 1:
@@ -120,6 +144,7 @@ class AnalyticalData:
             plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
 
     def __plotter(self):
+        """ Plotter """
         if self.dimension == 2:
             plt.figure()
             plt.scatter(self.__load("x"),self.__load("y"), s=1)
