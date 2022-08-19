@@ -4,64 +4,64 @@ class Parser(ArgumentParser):
     def __init__(self):
         super(Parser, self).__init__(description='Bayesian PINN for PDEs')
 
-        # Algorithm (choose training algorithm)
-        self.add_argument('--method', type=str, default="HMC", 
-                        help="""Methods to use for BPINN. Available:
-        		                - HMC  (Hamiltonian Monte Carlo)
-        			            - SVGD (Stein Variational Gradient Descent)
-                                - VI (variational inference) 
-                            """)
-
-        # Configuration (set other parameters)
+        # Configuration (choose configuration file to set other parameters)
         self.add_argument('--config', type=str, default="default", 
-                        help="""name of json file where we can find all the parameters. 
+                        help="""Name of json file where we can find all the parameters. 
     							You have to provide the parameters for at least the method you've selected.
         						You can also overwrite some parameters directly from terminal
                             """)
-
-        # Architecture
-        self.add_argument('--activation', type=int, help='Activation function for hidden layers')
-        self.add_argument('--n_layers'  , type=int, help='Need >=1, number of hidden layers in the NN')
-        self.add_argument('--n_neurons' , type=int, help='Need >=1, number of neurons in each hidden layer in the NN')
+        # Dataset (choose the data for the problem)
+        self.add_argument('--dataset', type=str, 
+                        help="""Choose the experiment :
+                                - laplace1D_cos (1D, Laplace)
+                                - laplace2D_cos (2D, Laplace)
+                            """)
+        # Algorithm (choose training algorithm)
+        self.add_argument('--method', type=str, 
+                        help="""Methods to use for BPINN. Available:
+        		                - HMC  (Hamiltonian Monte Carlo)
+        			            - SVGD (Stein Variational Gradient Descent)
+                                - VI   (variational inference) 
+                            """)
 
         # Experiment
-        self.add_argument('--dataset', type=str, help="""Choose the experiment :
-                                                        - laplace1D_cos (1D, Laplace)
-                                                        - laplace2D_cos (2D, Laplace)
-                                                        """)
-        self.add_argument('--num_collocation', type=int,   help="Need to be integer. Number of Domain Data to use as collocation data")
-        self.add_argument('--num_fitting',     type=int,   help="Need to be integer. Number of Domain Data to use as sparse Exact data")
+        self.add_argument('--num_collocation', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation data")
+        self.add_argument('--num_fitting',     type=int,   help="Needs to be integer. Number of Domain Data to use as sparse exact data")
         self.add_argument('--noise_lv',        type=float, help="Artificial noise in exact dataset")
         self.add_argument('--batch_size',      type=int,   help="Batch size for training collocation. Select 0 if you don't want a batch")
 
-        # Param
-        self.add_argument('--param_res'  , type=float, help="weight for pde log loss")
-        self.add_argument('--param_data' , type=float, help="weight for data log loss")
-        self.add_argument('--param_prior', type=float, help="weight for prior log loss")
+        # Architecture
+        self.add_argument('--activation', type=str, help='Activation function for hidden layers')
+        self.add_argument('--n_layers'  , type=int, help='Number of hidden layers in the NN')
+        self.add_argument('--n_neurons' , type=int, help='Number of neurons in each hidden layer in the NN')
 
-        # Sigmas
-        self.add_argument('--data_prior_noise', type=float, help='noise in data prior (sigma_D)^2')
-        self.add_argument('--pde_prior_noise' , type=float, help='noise in pde prior (sigma_R)^2')
-        self.add_argument('--data_prior_noise_trainable', type=bool, help='Train on (sigma_D)^2 as a hyperparameter')
-        self.add_argument('--pde_prior_noise_trainable' , type=bool, help='Train on (sigma_R)^2 as a hyperparameter')
+        # Coefficients
+        self.add_argument('--res'  , type=float, help='Weight for   pde log loss')
+        self.add_argument('--data' , type=float, help='Weight for  data log loss')
+        self.add_argument('--prior', type=float, help='Weight for prior log loss')
+
+        # Sigmas (prior noise)
+        self.add_argument('--data_pn', type=float, help='Noise in data prior (sigma_D)^2')
+        self.add_argument( '--pde_pn', type=float, help='Noise in  pde prior (sigma_R)^2')
+        self.add_argument('--data_pn_flag', type=bool, help='Train on (sigma_D)^2 as a hyperparameter')
+        self.add_argument( '--pde_pn_flag', type=bool, help='Train on (sigma_R)^2 as a hyperparameter')
 
         # Utils
-        self.add_argument('--random_seed', type=int,  help="random seed for numpy and tf random generator")
-        self.add_argument('--debug_flag' , type=bool, help='prints loss value, h, h0, h1 and general debug utilities at each iteration')
-        self.add_argument('--save_flag'  , type=bool, help='flag for save results in a new folder')
+        self.add_argument('--random_seed', type=int,  help='Random seed for np and tf random generator')
+        self.add_argument('--debug_flag' , type=bool, help='Prints general debug utilities at each iteration')
+        self.add_argument('--save_flag'  , type=bool, help='Flag to save results in a new folder')
 
-		# HMC
-        self.add_argument('--N_HMC', type=int, help="N: number of samples in HMC")
-        self.add_argument('--M_HMC', type=int, help="M: number of samples to use in HMC (after burnin). Need <= N")
-        self.add_argument('--L_HMC', type=int, help="L: number of leapfrog step in HMC")
-        self.add_argument('--dt_HMC', type=float, help="dt: step size in HMC")
-        self.add_argument('--dt_noise_HMC', type=float, help="dt_noise: step size in HMC for log betas")
+        # %% Algoritm Parameters
+        self.add_argument('--epochs', type=int, help='Number of epochs to train')
+
+        # HMC
+        self.add_argument('--burn-in', type=int,   help="Number of samples to use in HMC (after burn-in). Needs to be <= epochs")
+        self.add_argument('--HMC_L'  , type=int,   help="L: number of leapfrog step in HMC")
+        self.add_argument('--HMC_dt' , type=float, help="dt: step size in HMC")
+        self.add_argument('--HMC_ns' , type=float, help="ns: step size in HMC for log betas")
 
         # SVGD
-        self.add_argument('--n_samples', type=int,   help='(5-30) number of model instances in SVGD')
-        self.add_argument('--epochs'   , type=int,   help='number of epochs to train')
-        self.add_argument('--lr'       , type=float, help='learning rate for NN parameters')
-        self.add_argument('--lr_noise' , type=float, help='learnign rate for log beta, if trainable')
-        self.add_argument('--param_repulsivity', type=float, help='parameter for repulsivity in SVGD')
 
-        
+        # VI
+
+

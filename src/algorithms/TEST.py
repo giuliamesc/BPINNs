@@ -2,9 +2,8 @@ import numpy as np
 import tensorflow as tf
 
 from algorithms.Algorithm import Algorithm
-from networks.CoreNN import CoreNN
 
-class Test_Alg(Algorithm):
+class TEST(Algorithm):
     """
     Class for Test training
     """

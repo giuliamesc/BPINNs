@@ -1,17 +1,20 @@
 {
-	"architecture":{
-		"activation": "swish", 
-		"n_layers"  : 2,
-		"n_neurons" : 5
+	"general":{
+		"dataset": "laplace1D_cos",
+		"method" : "TEST"
 	},
 
 	"experiment":{
-		"dataset": "laplace1D_cos",
-		"method" : "Test_Alg",
 		"num_collocation": 100,
 		"num_fitting"    : 10,
 		"noise_lv"   : 0.05,
 		"batch_size" : 4
+	},
+
+	"architecture":{
+		"activation": "swish", 
+		"n_layers"  : 2,
+		"n_neurons" : 5
 	},
 
 	"coeff":{
@@ -21,35 +24,35 @@
 	},
 
 	"sigmas":{
-		"data_prior_noise": 1e-4,
-		"pde_prior_noise" : 1e-6,
-		"data_prior_noise_trainable":"False",
-		"pde_prior_noise_trainable": "False"
+		"data_pn" : 1e-4,
+		"pde_pn"  : 1e-6,
+		"data_pn_flag": "False",
+		"pde_pn_flag" : "False"
 	},
 
 	"utils":{
-    	"random_seed": 22,
-        "debug_flag" : "False",
+		"random_seed": 22,
+		"debug_flag" : "False",
 		"save_flag"  : "False"
 	},
 
 	"HMC":{
 		"epochs" : 5,
 		"burn-in": 7,
-		"HMC_L"    : 20,
-		"HMC_dt"   : 4e-5,
-		"HMC_noise": 3e-4
+		"HMC_L"  : 20,
+		"HMC_dt" : 4e-5,
+		"HMC_ns" : 3e-4
 	},
 
 	"SVGD":{
-		"epochs"   : 2000,
-		"n_samples": 30,
-		"SVGD_lr"    : 1e-3,
-		"SVGD_noise" : 1e-5,
-		"repulsivity": 1.0
+		"epochs" : 2000
 	},
 
 	"VI":{
-		"epochs": 2000
+		"epochs" : 2000
+	},
+
+	"TEST":{
+		"epochs" : 5
 	}
 }

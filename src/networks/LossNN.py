@@ -38,7 +38,7 @@ class LossNN(CoreNN):
 
         # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
         n_r = pde_res.shape[0] # number of samples
-        log_var = self.sigmas["pde_prior_noise"] # log(1/betaR)
+        log_var = self.sigmas["pde_pn"] # log(1/betaR)
 
         log_res = self.__normal_loglikelihood(mse_res, n_r, log_var)
         log_res *= self.coeff["res"]
@@ -57,7 +57,7 @@ class LossNN(CoreNN):
         mse_data = self.__mse(outputs-targets)
 
         n_d = outputs.shape[0]
-        log_var = self.sigmas["data_prior_noise"] # log(1/betaD)
+        log_var = self.sigmas["data_pn"] # log(1/betaD)
 
         log_data = self.__normal_loglikelihood(mse_data, n_d, log_var)
         log_data*= self.coeff["data"]

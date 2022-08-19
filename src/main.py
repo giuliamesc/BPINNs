@@ -24,7 +24,7 @@ params = Param(config, args)     # Combines args and config
 
 print("Bayesian PINN with", params.method)
 print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
-print("Dataset used:", params.experiment["dataset"])
+print("Dataset used:", params.dataset)
 print(" DONE ".center(gui_len,'*'))
 
 # %% Datasets Creation
@@ -43,7 +43,7 @@ print("\tNumber of collocation data:", dataset.num_collocation)
 print("Initializing the Bayesian PINN...")
 bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
 print("Chosing", params.method ,"algorithm...")
-chosen_algorithm = switch_algorithm(params.method, test = True) # Chose the algorithm from config/args
+chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
 print("Building", params.method ,"algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch

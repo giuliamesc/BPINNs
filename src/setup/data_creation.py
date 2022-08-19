@@ -26,7 +26,7 @@ class Dataset:
     def __init__(self, par):
         """The constructor"""
         self.pde_type = par.pde
-        self.name_example = par.experiment["dataset"] # name of dataset to use
+        self.name_example = par.dataset # name of dataset to use
 
         self.__num_fitting = par.experiment["num_fitting"] # num of exact data
         self.__num_collocation = par.experiment["num_collocation"] # num of collocation data
