@@ -148,12 +148,14 @@ class Storage():
     def save_parameter(self, par):
         """Save parameters"""
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
-            self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
+            general = dict(method = par.method, dataset = par.dataset)
+            self.__write_par_line(outfile, "GENERAL\n", general)
             self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
+            self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
             self.__write_par_line(outfile, "PARAMETERS\n", par.coeff)
             self.__write_par_line(outfile, "SIGMAS\n", par.sigmas)
-            self.__write_par_line(outfile, str(par.method)+"\n", par.param_method)
             self.__write_par_line(outfile, "UTILS\n", par.utils)
+            self.__write_par_line(outfile, str(par.method).upper() +"\n", par.param_method)
 
     def save_errors(self, errors):
         """Save errors"""
