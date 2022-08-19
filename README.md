@@ -1,7 +1,7 @@
 # Bayesian Physics-Informed Neural Networks
 
 ## :pushpin: Requirements
-- `python` version 3.9.* (download from [here](https://www.python.org/downloads/))
+- `python` version 3.10.* (download from [here](https://www.python.org/downloads/))
 - `virtualenv` version 20.14.* (download from [here](https://virtualenv.pypa.io/en/latest/installation.html#via-pip))
 
 ## :gear: Installation 
