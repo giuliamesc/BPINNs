@@ -113,7 +113,13 @@ class Plotter():
         self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
         self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likielihood)")
 
+    def __wait_input(self, key):
+        """ Start a loop that will run until the user enters key """
+        key_input = ''
+        while key_input != key:
+            key_input = input()
+
     def show_plot(self):
         """ Shows the plots """
-        plt.show(block = True)
-        
+        plt.show(block = False)
+        self.__wait_input('q')
