@@ -89,7 +89,7 @@ class LossNN(CoreNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        """ It's a consistent estimator?? """
+        """ It's a consistent estimator?? (with n_d, n_r) """
         return -1*(- 0.5 * n * mse * tf.math.exp(log_var) + 0.5 * n * log_var)
 
     def loss_total(self, dataset):

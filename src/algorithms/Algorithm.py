@@ -40,8 +40,6 @@ class Algorithm(ABC):
             losses = self.model.loss_total(self.data)
             self.model.loss_step(losses)
 
-
-
     @abstractmethod
     def sample_theta(self):
         return None

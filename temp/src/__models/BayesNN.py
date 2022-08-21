@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import tensorflow as tf
-import tensorflow_probability as tfp
 # tfd = tfp.distributions ## CONTROLLARE
 
 from __models.FCN import Net
