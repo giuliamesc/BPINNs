@@ -14,7 +14,7 @@
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 5
+		"n_neurons" : 3
 	},
 
 	"coeff":{

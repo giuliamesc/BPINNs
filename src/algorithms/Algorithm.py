@@ -32,13 +32,15 @@ class Algorithm(ABC):
     def train(self):
         
         for i in range(self.epochs):
-            
-            new_theta = self.sample_theta(i)
+
+            print(f'Epoch {i+1}')
+
+            grad, loss, logloss = self.model.grad_loss(self.data)
+            self.model.loss_step((loss,logloss))
+
+            new_theta = self.sample_theta(i, grad)
             self.model.nn_params = new_theta
             self.model.thetas.append(new_theta)
-            
-            losses = self.model.loss_total(self.data)
-            self.model.loss_step(losses)
 
     @abstractmethod
     def sample_theta(self):

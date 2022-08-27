@@ -91,6 +91,14 @@ class CoreNN():
         out_par = output[:,self.n_out_sol:] # select parametric field output
         return out_sol, out_par
 
+    def grad_nn_theta(self, inputs):
+        """ return [sample x output x theta] COMMENARE """
+        with tf.GradientTape() as tape:
+            tape.watch(self.model.trainable_variables)
+            x = tf.convert_to_tensor(inputs)
+            output = self.model(x)
+        return tape.jacobian(output, self.model.trainable_variables)
+
     def show_theta(self):
         """ For debug purposes; it prints all the network parameters (weigths and biases) """
         pass

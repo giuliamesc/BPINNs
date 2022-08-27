@@ -10,6 +10,6 @@ class HMC(Algorithm):
     def __init__(self, bayes_nn, param_method):
         super().__init__(bayes_nn, param_method)
 
-    def sample_theta(self, num):
+    def sample_theta(self, grad, *kw):
         raise Exception("Work in Progress")
         return None

@@ -43,7 +43,8 @@ class LossNN(CoreNN):
         log_res = self.__normal_loglikelihood(mse_res, n_r, log_var)
         log_res *= self.coeff["res"]
 
-        return self.__convert(mse_res), self.__convert(log_res)
+        #return self.__convert(mse_res), self.__convert(log_res)
+        return 0.0, 0.0
 
     def __loss_data(self, inputs, targets):
         """
@@ -98,6 +99,13 @@ class LossNN(CoreNN):
         loss["res"],   logloss["res"]   = self.__loss_residual(dataset.coll_data[0])
         loss["data"],  logloss["data"]  = self.__loss_data(dataset.exact_data[0], dataset.exact_data[1])
         loss["prior"], logloss["prior"] = self.__loss_prior()
-        loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values())
+        loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values()) # TF SUM?
         return loss, logloss
+
+    def grad_loss(self, dataset):
+        with tf.GradientTape() as tape:
+            tape.watch(self.model.trainable_variables)
+            loss, logloss = self.loss_total(dataset)
+        grad = tape.gradient(logloss["Total"], self.model.trainable_variables)
+        return grad, loss, logloss
 

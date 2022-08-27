@@ -74,6 +74,7 @@ class Plotter():
             if key == "Total": continue
             plt.plot(value, lw=1.0, alpha=0.7, label = key)
 
+        plt.title(f"History of {title}")
         plt.xlabel('Epochs')
         plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
         plt.ylabel(title)
@@ -111,7 +112,7 @@ class Plotter():
     def plot_losses(self, losses):
         """ Generates the plots of MSE and log-likelihood """
         self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
-        self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likielihood)")
+        self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likelihood)")
 
     def __wait_input(self, key):
         """ Start a loop that will run until the user enters key """
