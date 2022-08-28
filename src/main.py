@@ -21,6 +21,7 @@ print(" START ".center(gui_len,'*'))
 args   = Parser().parse_args()   # Load a param object from command-line
 config = load_json(args.config)  # Load params from config file
 params = Param(config, args)     # Combines args and config
+debug_flag = params.utils["debug_flag"] 
 
 print("Bayesian PINN with", params.method)
 print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
@@ -45,7 +46,7 @@ bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
 print("Chosing", params.method ,"algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
 print("Building", params.method ,"algorithm...")
-train_algorithm = chosen_algorithm(bayes_nn, params.param_method) # Initialize the algorithm chosen
+train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
 
@@ -53,8 +54,6 @@ print(" DONE ".center(gui_len,'*'))
 
 print('Start training...')
 train_algorithm.train() # Create list of theta samples
-print('End training')
-train_algorithm.compute_time() # Compute duration of training
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Evaluation

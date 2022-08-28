@@ -32,13 +32,13 @@
 
 	"utils":{
 		"random_seed": 22,
-		"debug_flag" : "False",
+		"debug_flag" : "True",
 		"save_flag"  : "False"
 	},
 
 	"HMC":{
-		"epochs" : 50,
-		"burn-in": 7,
+		"epochs" : 5,
+		"burn_in": 0,
 		"HMC_L"  : 50,
 		"HMC_dt" : 1e-2,
 		"HMC_ns" : 3e-4

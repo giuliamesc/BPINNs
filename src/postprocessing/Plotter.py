@@ -118,9 +118,9 @@ class Plotter():
         """ Start a loop that will run until the user enters key """
         key_input = ''
         while key_input != key:
-            key_input = input()
+            key_input = input("Input Q to quit: ").upper()
 
     def show_plot(self):
         """ Shows the plots """
         plt.show(block = False)
-        self.__wait_input('q')
+        self.__wait_input('Q')
