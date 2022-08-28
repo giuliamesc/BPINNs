@@ -30,17 +30,27 @@ class Algorithm(ABC):
         self.data = processed_data
 
     def train(self):
-        
+
         for i in range(self.epochs):
 
-            print(f'Epoch {i+1}')
+            print(f'START EPOCH {i+1}')
 
-            grad, loss, logloss = self.model.grad_loss(self.data)
-            self.model.loss_step((loss,logloss))
+            # Sampling new theta
+            match type(self).__name__:
+                case "TEST": new_theta = self.sample_theta(i)
+                case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
+                case "SVGD": new_theta = self.sample_theta()
+                case "VI"  : new_theta = self.sample_theta()
+                case _: raise Exception("Method not Implemented!")
 
-            new_theta = self.sample_theta(i, grad)
+            # Savingnew Theta
             self.model.nn_params = new_theta
             self.model.thetas.append(new_theta)
+
+            # Computing History
+            loss, logloss = self.model.loss_total(self.data)
+            self.model.loss_step((loss,logloss))
+    
 
     @abstractmethod
     def sample_theta(self):

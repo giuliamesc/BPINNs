@@ -39,13 +39,16 @@ class CoreNN():
         """ Getter for nn_params property """
         weights = [layer.get_weights()[0] for layer in self.model.layers]
         biases  = [layer.get_weights()[1] for layer in self.model.layers]
-        return (weights, biases)
+        theta = list()
+        for w, b in zip(weights, biases):
+            theta.append(w)
+            theta.append(b)
+        return theta
 
     @nn_params.setter
     def nn_params(self, theta):
         """ Setter for nn_params property """
-        weights, biases = theta
-        for layer, weight, bias in zip(self.model.layers, weights, biases):
+        for layer, weight, bias in zip(self.model.layers, theta[0::2], theta[1::2]):
             layer.set_weights((weight,bias))
 
     def __build_NN(self, seed):

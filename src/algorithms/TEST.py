@@ -10,7 +10,7 @@ class TEST(Algorithm):
     def __init__(self, bayes_nn, param_method):
         super().__init__(bayes_nn, param_method)
 
-    def sample_theta(self, num, *kw):
+    def sample_theta(self, num):
         self.model.initialize_NN(num+self.model.seed)
         theta = self.model.nn_params
         return theta

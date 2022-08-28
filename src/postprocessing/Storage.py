@@ -43,7 +43,11 @@ class Storage():
             folder_path = os.path.join(self.path_thetas, folder)
             weights = self.__load_list(folder_path, "w", 2)
             biases  = self.__load_list(folder_path, "b", 2)
-            thetas.append((weights,biases))
+            theta = list()
+            for w, b in zip(weights, biases):
+                theta.append(w)
+                theta.append(b)
+            thetas.append(theta)
         return thetas
 
     @thetas.setter
@@ -51,8 +55,8 @@ class Storage():
         self.__set_thetas_folder(len(values))
         for value, folder in zip(values, os.listdir(self.path_thetas)):
             folder_path = os.path.join(self.path_thetas, folder)
-            self.__save_list(folder_path, "w", value[0], 2)
-            self.__save_list(folder_path, "b", value[1], 2)
+            self.__save_list(folder_path, "w", value[0::2], 2)
+            self.__save_list(folder_path, "b", value[1::2], 2)
 
     @property
     def confidence(self):

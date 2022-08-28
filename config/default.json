@@ -1,7 +1,7 @@
 {
 	"general":{
 		"dataset": "laplace1D_cos",
-		"method" : "TEST"
+		"method" : "HMC"
 	},
 
 	"experiment":{
@@ -37,10 +37,10 @@
 	},
 
 	"HMC":{
-		"epochs" : 5,
+		"epochs" : 50,
 		"burn-in": 7,
-		"HMC_L"  : 20,
-		"HMC_dt" : 4e-5,
+		"HMC_L"  : 50,
+		"HMC_dt" : 1e-2,
 		"HMC_ns" : 3e-4
 	},
 
