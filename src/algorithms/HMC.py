@@ -12,7 +12,7 @@ class HMC(Algorithm):
         
         self.burn_in = param_method["burn_in"]
         self.HMC_L   = param_method["HMC_L"]
-        self.HMC_dt  = param_method["HMC_dt"]
+        self.HMC_dt  = param_method["HMC_K"] / self.HMC_L
         self.eta = 1.0
         self.selected = list()
 
