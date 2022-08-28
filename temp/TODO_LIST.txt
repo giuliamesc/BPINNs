@@ -1,10 +1,10 @@
 ### IMPLEMENTAZIONI GROSSE
-- Implemetare gli Algoritmi 
-    - HMC    
+- Implemetare gli Algoritmi  
     - VI    
     - SVGD
-- COMMENTARE
-    - Algoritmi
+- HMC 
+    - Calcolo di AR...
+    - Tuning ??
 - Varie
     - Rimettere il noise in loss data!
 
