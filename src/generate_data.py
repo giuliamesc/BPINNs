@@ -161,7 +161,7 @@ analytical_domain = {
     "laplace1D_cos": {
         "mesh_type": "sobol",
         "resolution": 1000,
-        "domain": [(0,8)]
+        "domain": [(-1,1)]
         },
     "laplace2D_cos": {
         "mesh_type": "sobol",

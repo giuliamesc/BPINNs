@@ -14,7 +14,7 @@
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 3
+		"n_neurons" : 16
 	},
 
 	"coeff":{
@@ -37,8 +37,8 @@
 	},
 
 	"HMC":{
-		"epochs" : 1,
-		"burn_in": 0,
+		"epochs" : 100,
+		"burn_in": 20,
 		"HMC_L"  : 200,
 		"HMC_K"  : 1e-0,
 		"HMC_dt" : 1e-2,
@@ -46,11 +46,11 @@
 	},
 
 	"SVGD":{
-		"epochs" : 2000
+		"epochs" : 10
 	},
 
 	"VI":{
-		"epochs" : 2000
+		"epochs" : 10
 	},
 
 	"TEST":{

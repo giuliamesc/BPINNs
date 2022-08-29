@@ -28,7 +28,7 @@ class LossNN(CoreNN):
         self.compute_residual = comp_res
         
     def __loss_residual(self, inputs):
-        return 0., 0.
+        #return 0., 0.
         """
         Computes the MSE and log-likelihood of the data 
         inputs: (num_collocation, n_input)

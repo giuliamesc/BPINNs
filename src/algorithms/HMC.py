@@ -14,7 +14,7 @@ class HMC(Algorithm):
         self.HMC_L   = param_method["HMC_L"]
         #self.HMC_dt  = param_method["HMC_K"] / self.HMC_L
         self.HMC_dt  = param_method["HMC_dt"]
-        self.eta = 1.0
+        self.eta = 0.01
         self.selected = list()
 
     def __leapfrog_step(self, old_theta, r, dt): # SI potrebbe cancellare old_theta
@@ -79,8 +79,8 @@ class HMC(Algorithm):
 
     def select_thetas(self, thetas_train):
         """ Compute burn-in and skip samples """
-        self.selected = self.selected[-self.burn_in:]
-        return thetas_train[-self.burn_in:]
+        self.selected = self.selected[self.burn_in:]
+        return thetas_train[self.burn_in:]
 
     def train_log(self):
         """ Report log of the training"""
@@ -88,8 +88,6 @@ class HMC(Algorithm):
         self.compute_time()
         accepted = sum(self.selected)
         rejected = len(self.selected) - accepted
-        print(f"\tAccepted Values: \
-            {accepted}/{accepted+rejected} \
-            {100*accepted/(accepted+rejected) :1.2f}%")
+        print(f"\tAccepted Values: {accepted}/{accepted+rejected} {100*accepted/(accepted+rejected) :1.2f}%")
         if self.debug_flag:
             print(f"Thetas: {len(self.model.thetas)}")
