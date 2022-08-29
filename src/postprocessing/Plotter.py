@@ -51,7 +51,7 @@ class Plotter():
         x, idx = self.__order_inputs(x)
 
         plt.figure()
-        blurring = 0.2/len(func[1])
+        blurring = 0.5/len(func[1])
         for func_sample in func[1]:
             plt.plot(x, func_sample[idx,0], 'b-', markersize=0.01, alpha=blurring)
 

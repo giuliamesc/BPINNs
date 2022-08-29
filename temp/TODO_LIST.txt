@@ -1,13 +1,9 @@
 ### IMPLEMENTAZIONI GROSSE
-- Implemetare gli Algoritmi  
+- Nuovi Algoritmi  
     - VI    
     - SVGD
 - HMC 
-    - Calcolo di AR...
     - Tuning ??
-- Varie
-    - Rimettere il noise in loss data!
-
 ############################################################
 
 ## COSE DA FARE GROSSE

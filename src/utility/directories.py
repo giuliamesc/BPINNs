@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 
 def create_keeper(path):
@@ -6,12 +7,15 @@ def create_keeper(path):
     file_name = os.path.join(path,".gitkeep")
     open(file_name, 'w')
 
-def create_single_dir(base_path, last_path, keep = False):
+def create_single_dir(base_path, last_path, keep = False, over = False):
     """ Creation of a single directory """
     folder_path = base_path if last_path is None else os.path.join(base_path, last_path)
     
     try: os.makedirs(folder_path)
-    except: pass
+    except: 
+        if over:
+            shutil.rmtree(folder_path)
+            os.makedirs(folder_path)
 
     if keep: create_keeper(folder_path) 
     
@@ -39,7 +43,7 @@ def create_directories(par):
         path_result = create_single_dir(path_case, path_test)
     else:
         ## if save_flag = False store everything in a directories named "trash" that will be overwritten everytime
-        path_result = create_single_dir(path_case,"trash")
+        path_result = create_single_dir(path_case,"trash",over=True)
 
     path_plot   = create_single_dir(path_result, "plot")
     path_values = create_single_dir(path_result, "values")

@@ -28,6 +28,7 @@ class LossNN(CoreNN):
         self.compute_residual = comp_res
         
     def __loss_residual(self, inputs):
+        return 0., 0.
         """
         Computes the MSE and log-likelihood of the data 
         inputs: (num_collocation, n_input)
@@ -96,7 +97,7 @@ class LossNN(CoreNN):
         """ Creation of the dictionary containing all MSEs and log-likelihoods """
         loss, logloss = dict(), dict()
         loss["res"],   logloss["res"]   = self.__loss_residual(dataset.coll_data[0])
-        loss["data"],  logloss["data"]  = self.__loss_data(dataset.exact_data[0], dataset.exact_data[1])
+        loss["data"],  logloss["data"]  = self.__loss_data(dataset.exact_data_noise[0], dataset.exact_data_noise[1])
         loss["prior"], logloss["prior"] = self.__loss_prior()
         loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values()) # TF SUM?
         return loss, logloss
