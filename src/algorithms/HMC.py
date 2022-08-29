@@ -12,7 +12,8 @@ class HMC(Algorithm):
         
         self.burn_in = param_method["burn_in"]
         self.HMC_L   = param_method["HMC_L"]
-        self.HMC_dt  = param_method["HMC_K"] / self.HMC_L
+        #self.HMC_dt  = param_method["HMC_K"] / self.HMC_L
+        self.HMC_dt  = param_method["HMC_dt"]
         self.eta = 1.0
         self.selected = list()
 
@@ -33,17 +34,21 @@ class HMC(Algorithm):
             #alpha = min(0, +h1-h0) # Tesi e Paper
             alpha = min(0, -h1+h0) # Codice Daniele?
             p = np.log(np.random.uniform())
-            accept = alpha <= p
         else:
             #alpha = min(1, np.exp(+h1-h0)) # Tesi e Paper
             alpha = min(1, np.exp(-h1+h0)) # Codice Daniele?
             p = np.random.uniform()
-            accept = alpha <= p
+        
+        #accept = alpha <= p
+        accept = alpha >= p
 
         if self.debug_flag:
             print(f"\th0: {h0 :1.3e}")
             print(f"\th1: {h1 :1.3e}")
-            print(f"\t h: {h1-h0 :1.3e}")
+            #print(f"\t h: {h1-h0 :1.3e}")
+            print(f"\th: {h0-h1 :1.3e}")
+            if not logarithmic_flag: print(f"\ta: {alpha*100 :1.2f}%")
+            else : print(f"\ta: {np.exp(alpha)*100 :1.2f}%")
 
         if accept:
             if self.debug_flag: print("\tACCEPT")
@@ -86,3 +91,5 @@ class HMC(Algorithm):
         print(f"\tAccepted Values: \
             {accepted}/{accepted+rejected} \
             {100*accepted/(accepted+rejected) :1.2f}%")
+        if self.debug_flag:
+            print(f"Thetas: {len(self.model.thetas)}")

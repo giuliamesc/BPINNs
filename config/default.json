@@ -24,8 +24,8 @@
 	},
 
 	"sigmas":{
-		"data_pn" : 1e-0,
-		"pde_pn"  : 1e-0,
+		"data_pn" : 1e-2,
+		"pde_pn"  : 1e-2,
 		"data_pn_flag": "False",
 		"pde_pn_flag" : "False"
 	},
@@ -37,11 +37,11 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
+		"epochs" : 100,
 		"burn_in": 0,
-		"HMC_L"  : 50,
-		"HMC_K"  : 5e-1,
-		"HMC_dt" : 2e-3,
+		"HMC_L"  : 200,
+		"HMC_K"  : 1e-0,
+		"HMC_dt" : 1e-2,
 		"HMC_ns" : 3e-4
 	},
 

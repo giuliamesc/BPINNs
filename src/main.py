@@ -100,4 +100,4 @@ plotter.plot_confidence(dataset, functions_confidence)
 plotter.plot_nn_samples(dataset, functions_nn_samples)
 print(" END ".center(gui_len,'*'))
 
-#plotter.show_plot()
+plotter.show_plot()
