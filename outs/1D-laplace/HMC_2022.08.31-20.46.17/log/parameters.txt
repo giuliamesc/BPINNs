@@ -1,0 +1,39 @@
+GENERAL
+	method:   HMC 
+	dataset:  laplace1D_cos 
+
+EXPERIMENT
+	num_collocation:  100 
+	num_fitting:      8 
+	noise_lv:         0.01 
+	batch_size:       4 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   16 
+
+PARAMETERS
+	res:    0.0 
+	data:   1.0 
+	prior:  1.0 
+
+SIGMAS
+	data_pn:       0.01 
+	pde_pn:        0.01 
+	data_pn_flag:  False 
+	pde_pn_flag:   False 
+
+UTILS
+	random_seed:  22 
+	debug_flag:   False 
+	save_flag:    True 
+
+HMC
+	epochs:   1000 
+	burn_in:  200 
+	HMC_L:    20 
+	HMC_K:    1.0 
+	HMC_dt:   0.01 
+	HMC_ns:   0.0003 
+

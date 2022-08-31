@@ -105,6 +105,7 @@ class Dataset:
         if self.num_collocation > inputs.shape[0] : 
             raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {inputs.shape[0]}')
         index_coll = index[:self.num_collocation]
+        index_coll.append(index[-1])
         self.inputs_coll = inputs[index_coll,:]
         self.U_coll = u[index_coll,:]
         self.F_coll = f[index_coll,:]
@@ -114,6 +115,7 @@ class Dataset:
         if self.num_fitting > inputs.shape[0] : 
             raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {inputs.shape[0]}')
         index_exac = index[:self.num_fitting]
+        index_exac.append(index[-1])
         self.inputs_exact = inputs[index_exac,:]
         self.U_exact = u[index_exac,:]
         self.F_exact = f[index_exac,:]

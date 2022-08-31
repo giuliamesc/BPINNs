@@ -28,7 +28,7 @@ class LossNN(CoreNN):
         self.compute_residual = comp_res
         
     def __loss_residual(self, inputs):
-        #return 0., 0.
+        return 0.0, 0.0
         """
         Computes the MSE and log-likelihood of the data 
         inputs: (num_collocation, n_input)
@@ -91,7 +91,7 @@ class LossNN(CoreNN):
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
         """ It's a consistent estimator?? (with n_d, n_r) """
-        return -1*(- 0.5 * n * mse * tf.math.exp(log_var) + 0.5 * n * log_var)
+        return 0.5 * n * mse * tf.math.exp(log_var) - 0.5 * n * log_var
 
     def loss_total(self, dataset):
         """ Creation of the dictionary containing all MSEs and log-likelihoods """

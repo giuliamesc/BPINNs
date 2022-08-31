@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from tqdm import tqdm
 import time, datetime
 
 class Algorithm(ABC):
@@ -27,30 +28,36 @@ class Algorithm(ABC):
         processed_data = self.model.pre_process(dataset)
         self.data = processed_data
 
+    def __train_step(self, epoch):
+
+        # Sampling new theta
+        match type(self).__name__:
+            case "TEST": new_theta = self.sample_theta(epoch)
+            case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
+            case "SVGD": new_theta = self.sample_theta()
+            case "VI"  : new_theta = self.sample_theta()
+            case _: raise Exception("Method not Implemented!")
+        # Saving new Theta
+        self.model.nn_params = new_theta
+        # Computing History
+        loss, logloss = self.model.loss_total(self.data)
+        self.model.loss_step((loss,logloss))
+        
+        return new_theta
+
     def train(self):
 
         # Store thetas in this round of training
         thetas_train = list()
-
+        
         # Sampling new thetas
-        for i in range(self.epochs):
-
-            if self.debug_flag: print(f'START EPOCH {i+1}')
-
-            # Sampling new theta
-            match type(self).__name__:
-                case "TEST": new_theta = self.sample_theta(i)
-                case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
-                case "SVGD": new_theta = self.sample_theta()
-                case "VI"  : new_theta = self.sample_theta()
-                case _: raise Exception("Method not Implemented!")
-
-            # Saving new Theta
-            self.model.nn_params = new_theta
-            thetas_train.append(new_theta)
-            # Computing History
-            loss, logloss = self.model.loss_total(self.data)
-            self.model.loss_step((loss,logloss))
+        if self.debug_flag :
+            for i in range(self.epochs):
+                print(f'START EPOCH {i+1}')
+                thetas_train.append(self.__train_step(i))
+        else:
+            for i in tqdm(range(self.epochs)):
+                thetas_train.append(self.__train_step(i))
     
         # Select whict thetas must be saved
         thetas_train = self.select_thetas(thetas_train)

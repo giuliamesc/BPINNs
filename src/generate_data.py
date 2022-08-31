@@ -89,9 +89,9 @@ class AnalyticalData:
         l_bounds = [i[0] for i in self.domain_data["domain"]]
         u_bounds = [i[1] for i in self.domain_data["domain"]]
         sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
-
         sampler = qmc.Sobol(d=self.dimension, scramble=False)
         sample = sampler.random_base2(m=sobolexp)
+        sample = np.concatenate((sample, np.array([[1.]*self.dimension])))
         self.grid = qmc.scale(sample, l_bounds, u_bounds).T
 
         names = ["x","y","z"]
@@ -160,8 +160,8 @@ class AnalyticalData:
 analytical_domain = {
     "laplace1D_cos": {
         "mesh_type": "sobol",
-        "resolution": 1000,
-        "domain": [(-1,1)]
+        "resolution": 200,
+        "domain": [(0,1)]
         },
     "laplace2D_cos": {
         "mesh_type": "sobol",
@@ -172,8 +172,8 @@ analytical_domain = {
 
 analytical_solution = {
     "laplace1D_cos": {
-        "u": lambda *x: np.cos(x[0]),
-        "f": lambda *x: np.cos(x[0])
+        "u": lambda *x: np.cos(8*x[0]),
+        "f": lambda *x: 64*np.cos(8*x[0])
         },
     "laplace2D_cos": {
         "u": lambda *x: np.cos(x[0])*np.cos(x[1]),
@@ -187,5 +187,5 @@ if __name__ == "__main__":
         os.chdir(new_dir)
         print(f"Working Directory moved to: {new_dir}")
     AnalyticalData("laplace1D_cos", do_plots = True, test_only = False, save_plot = True)
-    AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)
+    #AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)
     plt.show(block=True)

@@ -68,13 +68,15 @@ class Plotter():
     def __plot_train(self, losses, name, title):
         """ Plots all the loss history; used in plot_losses """
         plt.figure()
+        x = list(range(1,len(losses['Total'])+1))
         if name[:-4] == "LogLoss":
-            plt.plot(losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
+            plt.plot(x, losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
         for key, value in losses.items():
             if key == "Total": continue
-            plt.plot(value, lw=1.0, alpha=0.7, label = key)
+            plt.plot(x, value, lw=1.0, alpha=0.7, label = key)
 
         plt.title(f"History of {title}")
+        plt.xticks([])
         plt.xlabel('Epochs')
         plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
         plt.ylabel(title)
