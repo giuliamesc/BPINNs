@@ -3,7 +3,10 @@
     - VI    
     - SVGD
 - HMC 
-    - Tuning ??
+    - Significato parametri
+    - Pre-post processing
+- Loss Prior
+- Trainble sigmas
 ############################################################
 
 ## COSE DA FARE GROSSE

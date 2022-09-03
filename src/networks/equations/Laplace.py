@@ -22,14 +22,19 @@ class Laplace(Equation):
             lap = Operators.laplacian_vector(tape, u, x, self.comp_dim.n_out_sol)
         return lap + f
 
-    def pre_process(self, dataset):
-        """
-        Pre-process in Laplace problem is the identity transformation
-        """
-        return dataset
+    def comp_process(self, dataset):
+        params = dict()
+        return params
 
-    def post_process(self, outputs):
-        """
-        Post-process in Laplace problem is the identity transformation
-        """
+    def data_process(self, dataset, params):
+        """ TO BE DONE """
+        new_dataset = dataset.copy()
+        return new_dataset
+
+    def pre_process(self, inputs, params):
+        """ Pre-process in Laplace problem is the identity transformation """
+        return inputs
+
+    def post_process(self, outputs, params):
+        """ Post-process in Laplace problem is the identity transformation """
         return outputs

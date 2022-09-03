@@ -161,7 +161,7 @@ analytical_domain = {
     "laplace1D_cos": {
         "mesh_type": "sobol",
         "resolution": 200,
-        "domain": [(0,8)]
+        "domain": [(0,1)]
         },
     "laplace2D_cos": {
         "mesh_type": "sobol",
@@ -172,8 +172,8 @@ analytical_domain = {
 
 analytical_solution = {
     "laplace1D_cos": {
-        "u": lambda *x: np.cos(x[0]),
-        "f": lambda *x: np.cos(x[0])
+        "u": lambda *x: np.cos(x[0]*8),
+        "f": lambda *x: 64*np.cos(x[0]*8)
         },
     "laplace2D_cos": {
         "u": lambda *x: np.cos(x[0])*np.cos(x[1]),

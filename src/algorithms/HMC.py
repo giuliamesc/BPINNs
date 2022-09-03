@@ -10,9 +10,10 @@ class HMC(Algorithm):
     def __init__(self, bayes_nn, param_method, debug_flag):
         super().__init__(bayes_nn, param_method, debug_flag)
         
+        if param_method["burn_in"] >= param_method["epochs"]:
+            raise Exception("Burn-in is too high for this number of epochs!")
         self.burn_in = param_method["burn_in"]
         self.HMC_L   = param_method["HMC_L"]
-        #self.HMC_dt  = param_method["HMC_K"] / self.HMC_L
         self.HMC_dt  = param_method["HMC_dt"]
         self.eta = 0.01
         self.selected = list()

@@ -12,12 +12,15 @@ class PredNN(CoreNN):
         - Uncertainity Quantification
     """
     
-    def __init__(self, pre, post, **kw):
+    def __init__(self, pre, post, proc, data, **kw):
         
         super(PredNN, self).__init__(**kw)
         # Functions for pre and post processing of inputs and outputs of the network
-        self.pre_process = pre
+        self.process_params = dict()
+        self.pre_process  = pre
         self.post_process = post
+        self.comp_process = proc
+        self.data_process = data
         # Empty list where samples of network parameters will be stored
         self.thetas = list() 
 
@@ -25,7 +28,7 @@ class PredNN(CoreNN):
         """ Computes output sampling with one given theta """
         self.nn_params = theta
         sample = self.forward(inputs, split=True)
-        return self.post_process(sample)
+        return self.post_process(sample, self.process_params)
     
     def __predict(self, inputs, n_thetas = None):
         """ 
@@ -33,7 +36,7 @@ class PredNN(CoreNN):
         out_sol: list with len n_thetas, of tf tensor (n_sample, n_out_sol)
         out_par: list with len n_thetas, of tf tensor (n_sample, n_out_par)
         """
-        inputs = self.pre_process(inputs)
+        inputs = self.pre_process(inputs, self.process_params)
         out_sol = list()
         out_par = list()
 

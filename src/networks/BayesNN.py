@@ -15,11 +15,15 @@ class BayesNN(PredNN, LossNN):
 
         equation  = self.__initialize_equation(par)
         comp_res  = equation.compute_residual
+        
         pre_proc  = equation.pre_process
         post_proc = equation.post_process
+        comp_proc = equation.comp_process
+        data_proc = equation.data_process
         
         super(BayesNN, self).__init__(par=par, comp_res=comp_res,
-                                      pre=pre_proc, post=post_proc)
+                                      pre=pre_proc, post=post_proc, 
+                                      proc=comp_proc, data=data_proc)
 
     def __initialize_losses(self):
         """ Initializes empty MSE and log-likelihood dictionaries """

@@ -23,9 +23,25 @@ class Equation(ABC):
         need to be overridden in child classes
         """
         return None
+    
+    @abstractmethod
+    def comp_process(self, dataset):
+        """
+        Extracts the relevant features from the dataset to perform pre-processing, 
+        need to be overridden in child classes
+        """
+        return None
 
     @abstractmethod
-    def pre_process(self, dataset):
+    def data_process(self, dataset, params):
+        """
+        Builds the pre-processed dataset, 
+        need to be overridden in child classes
+        """
+        return None
+
+    @abstractmethod
+    def pre_process(self, inputs, params):
         """
         Pre-processes the dataset given as input to the network, 
         need to be overridden in child classes
@@ -33,7 +49,7 @@ class Equation(ABC):
         return None
 
     @abstractmethod
-    def post_process(self, outputs):
+    def post_process(self, outputs, params):
         """
         Transforms back the output of the network, 
         need to be overridden in child classes
