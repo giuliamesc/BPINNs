@@ -76,9 +76,7 @@ class Plotter():
             plt.plot(x, value, lw=1.0, alpha=0.7, label = key)
 
         plt.title(f"History of {title}")
-        plt.xticks([])
         plt.xlabel('Epochs')
-        plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
         plt.ylabel(title)
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, title)
