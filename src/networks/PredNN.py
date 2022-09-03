@@ -120,11 +120,11 @@ class PredNN(CoreNN):
     def disp_errors(self, message, values):
         """ Format of the error printing """
         if len(values) == 1:
-            print(f"   {message}: {values[0]:1.3e}")
+            print(f"   {message}: {100*values[0]:1.2f}%")
         else:
             labels = ["x", "y", "z"][:len(values)]
             for label, value in zip(labels, values):
-                print(f"   {message} in direction {label}: {value:1.3e}")
+                print(f"   {message} in direction {label}: {100*value:1.2f}%")
 
     def fill_thetas(self, new_thetas):
         """ Initializes the list of thetas with a given set """

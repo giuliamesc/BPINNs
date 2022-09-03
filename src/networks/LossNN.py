@@ -28,11 +28,11 @@ class LossNN(CoreNN):
         self.compute_residual = comp_res
         
     def __loss_residual(self, inputs):
-        return 0.0, 0.0
         """
         Computes the MSE and log-likelihood of the data 
         inputs: (num_collocation, n_input)
         """
+        if self.coeff["res"] == 0.0: return 0.0, 0.0
         # compute loss using pde_constraint
         pde_res = self.compute_residual(inputs, self.forward)
         mse_res = self.__mse(pde_res)
@@ -53,6 +53,7 @@ class LossNN(CoreNN):
         targets : np(num_fitting, n_out_sol)
         outputs : tf(num_fitting, n_out_sol)
         """
+        if self.coeff["data"] == 0.0: return 0.0, 0.0
         # Normal(output | target, 1 / betaD * I)
         outputs, _ = self.forward(inputs, split = True)
         mse_data = self.__mse(outputs-targets)
@@ -70,6 +71,7 @@ class LossNN(CoreNN):
         Compute the logloss of the prior 
         AGGIUNGI DIMENSIONI
         """
+        if self.coeff["prior"] == 0.0: return 0.0, 0.0
         loss_prior = 0.
         log_prior = 0.
         # compute log prior of w (t-student)

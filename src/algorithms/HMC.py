@@ -33,10 +33,12 @@ class HMC(Algorithm):
         if logarithmic_flag:
             #alpha = min(0, +h1-h0) # Tesi e Paper
             alpha = min(0, -h1+h0) # Codice Daniele?
+            if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
             p = np.log(np.random.uniform())
         else:
             #alpha = min(1, np.exp(+h1-h0)) # Tesi e Paper
             alpha = min(1, np.exp(-h1+h0)) # Codice Daniele?
+            if np.isnan(h1): alpha = 0.0 # Avoid NaN values
             p = np.random.uniform()
         
         #accept = alpha <= p
@@ -72,7 +74,7 @@ class HMC(Algorithm):
         """ COMMENTARE """
         r_0 = [tf.random.normal(x.shape) for x in theta_0]
         r     = r_0.copy()
-        theta = theta_0.copy()  
+        theta = theta_0.copy()
         for _ in range(self.HMC_L):
             theta, r = self.__leapfrog_step(theta, r, self.HMC_dt)
         return self.__accept_reject(theta_0, theta, r_0, r)
@@ -89,5 +91,3 @@ class HMC(Algorithm):
         accepted = sum(self.selected)
         rejected = len(self.selected) - accepted
         print(f"\tAccepted Values: {accepted}/{accepted+rejected} {100*accepted/(accepted+rejected) :1.2f}%")
-        if self.debug_flag:
-            print(f"Thetas: {len(self.model.thetas)}")

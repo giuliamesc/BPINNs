@@ -6,8 +6,8 @@
 
 	"experiment":{
 		"num_collocation": 100,
-		"num_fitting"    : 8,
-		"noise_lv"   : 0.01,
+		"num_fitting"    : 16,
+		"noise_lv"   : 0.05,
 		"batch_size" : 4
 	},
 
@@ -20,7 +20,7 @@
 	"coeff":{
 		"res"  : 0.0,
 		"data" : 1.0,
-		"prior": 1.0
+		"prior": 0.0
 	},
 
 	"sigmas":{
@@ -32,17 +32,17 @@
 
 	"utils":{
 		"random_seed": 22,
-		"debug_flag" : "False",
-		"save_flag"  : "True"
+		"debug_flag" : "True",
+		"save_flag"  : "False"
 	},
 
 	"HMC":{
-		"epochs" : 1000,
-		"burn_in": 200,
+		"epochs" : 500,
+		"burn_in": 100,
 		"HMC_L"  : 20,
-		"HMC_K"  : 1e-0,
 		"HMC_dt" : 1e-2,
-		"HMC_ns" : 3e-4
+		"HMC_ns" : 3e-4, 
+		"HMC_K"  : 1e-0
 	},
 
 	"SVGD":{
