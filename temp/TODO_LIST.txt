@@ -1,27 +1,26 @@
-### IMPLEMENTAZIONI GROSSE
-- Nuovi Algoritmi  
-    - VI    
-    - SVGD
-- HMC 
-    - Significato parametri
-    - Pre-post processing
+### Rete Neurale
 - Loss Prior
-- Trainble sigmas
-############################################################
+- Trainable Sigmas
 
-## COSE DA FARE GROSSE
+### Equazioni
+- Pre processing data
+- Pre-post processing vector
+
+### Hamiltonian Monetcarlo
+- Studio iperparametri
+- Tuning
+
+### Nuovi Algoritmi  
+- Variational Inference    
+- SVGD
+
+### Input e Salvataggi
+- Migliorare save params
+- Valutare il salvataggio dei theta
+
+### PROPOSTE VARIE
 - Warning per diagnostica tuning
-
-## COSE DA FARE MEDIE
 - Migliorare Debug Flag
-
-## COSE DA FARE VELOCI
-- Cambiare da prop a numero l'import dati
-
-## IDEE DI IMPLEMENTAZIONE
-- Usare Logging
-
-## IDEE E CONSIDERAZIONI VARIE
 - Decoratori per Error management ??
-
-
+- Cambiare da prop a numero l'import dati
+- Usare Logging
