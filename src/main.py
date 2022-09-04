@@ -11,6 +11,7 @@ gui_len = set_gui_len()
 # %% Import Local Classes
 
 from setup import Parser, Param             # Setup
+from setup import AnalyticalData            # Data Generation
 from setup import Dataset, Dataloader       # Dataset Creation
 from networks import BayesNN                # Models
 from postprocessing import Storage, Plotter # Postprocessing
@@ -21,18 +22,27 @@ print(" START ".center(gui_len,'*'))
 args   = Parser().parse_args()   # Load a param object from command-line
 config = load_json(args.config)  # Load params from config file
 params = Param(config, args)     # Combines args and config
-debug_flag = params.utils["debug_flag"] 
+debug_flag = params.utils["debug_flag"]
 
 print("Bayesian PINN with", params.method)
 print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
-print("Dataset used:", params.dataset)
 print(" DONE ".center(gui_len,'*'))
 
+
 # %% Datasets Creation
-print("Dataset creation...")
+
+
+print("Dataset Creation")
+if params.utils["gen_flag"]:
+    print("\tGenerating new dataset...")
+    AnalyticalData(params.dataset)
+else:
+    print("\tStored dataset used:", params.dataset)
+
 dataset = Dataset(params)
 print("\tNumber of fitting data:", dataset.num_fitting)
 print("\tNumber of collocation data:", dataset.num_collocation)
+print(" DONE ".center(gui_len,'*'))
 
 #print("Building dataloader...") 
 #batch_loader = Dataloader(dataset, params.experiment["batch_size"], params.utils['random_seed'])
@@ -41,11 +51,12 @@ print("\tNumber of collocation data:", dataset.num_collocation)
 
 # %% Model Building
 
-print("Initializing the Bayesian PINN...")
+print("Building the Model")
+print("\tInitializing the Bayesian PINN...")
 bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
-print("Chosing", params.method ,"algorithm...")
+print("\tChosing", params.method ,"algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
-print("Building", params.method ,"algorithm...")
+print("\tBuilding", params.method ,"algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))
@@ -100,4 +111,4 @@ plotter.plot_confidence(dataset, functions_confidence)
 plotter.plot_nn_samples(dataset, functions_nn_samples)
 print(" END ".center(gui_len,'*'))
 
-plotter.show_plot()
+#plotter.show_plot()

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 import time, datetime
-import tensorflow as tf
 
 class Algorithm(ABC):
     """
@@ -53,7 +52,7 @@ class Algorithm(ABC):
         # Sampling new thetas
         if self.debug_flag :
             for i in range(self.epochs):
-                print(f'START EPOCH {i+1}')
+                print(f'  START EPOCH {i+1}')
                 thetas_train.append(self.__train_step(i))
         else:
             for i in tqdm(range(self.epochs)):

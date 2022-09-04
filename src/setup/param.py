@@ -1,3 +1,5 @@
+from setup.select_problem import switch_problem
+
 class Param:
     """Initializer"""
     def __init__(self, hp, args):
@@ -19,10 +21,13 @@ class Param:
         self.param_method = hp[self.method]
         self.__command_line_update_method(vars(args))
 
+        data_config  = switch_problem(self.dataset)
+        self.physics = data_config.physics
+
         # set all useful parameters from physical domain and dimension
-        self.phys_dim = Dimension(self.dataset, True)
-        self.comp_dim = Dimension(self.dataset, False)
-        self.pde = self.phys_dim.pde[self.dataset]
+        self.phys_dim = Dimension(data_config, True)
+        self.comp_dim = Dimension(data_config, False)
+        self.pde = self.phys_dim.pde
 
         # Convert string of boolean in boolean
         self.__change_string_to_bool()
@@ -59,34 +64,14 @@ class Param:
 
 class Dimension():
     
-    def __init__(self, problem, physical):
+    def __init__(self, data_config, physical):
 
-        self.__def_params()
-        self.dimensions = self.phys_dom if physical else self.comp_dom
+        self.pde = data_config.pde
+        self.dimensions = data_config.phys_dom if physical else data_config.comp_dom
 
         ## store the dimension input (1D, 2D or 3D)
-        self.n_input   = self.dimensions[problem][0]
+        self.n_input   = self.dimensions["n_input"]
         ## dimension of solution
-        self.n_out_sol = self.dimensions[problem][1]
+        self.n_out_sol = self.dimensions["n_out_sol"]
         ## dimension of parametric field
-        self.n_out_par = self.dimensions[problem][2]
-
-    def __def_params(self):
-
-        """ Dictionary for pde given the dataset used """
-        self.pde = {
-        "laplace1D_cos": "laplace",
-        "laplace2D_cos": "laplace"
-        }
-
-        """ Dictionary for I/O dimensions of the dataset used """
-        self.phys_dom = {
-        "laplace1D_cos": (1,1,1),
-        "laplace2D_cos": (2,1,1)
-        }
-
-        """ Dictionary for I/O dimensions of the network used """
-        self.comp_dom = {
-        "laplace1D_cos": (1,1,1),
-        "laplace2D_cos": (2,1,1)
-        }
+        self.n_out_par = self.dimensions["n_out_par"]

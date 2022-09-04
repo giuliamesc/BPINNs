@@ -8,6 +8,7 @@ class Laplace(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
+        self.mu = par.physics["diffusion"]
         
     def compute_residual(self, x, forward_pass):
         """
@@ -20,7 +21,7 @@ class Laplace(Equation):
             tape.watch(x)
             u, f = forward_pass(x, split = True)
             lap = Operators.laplacian_vector(tape, u, x, self.comp_dim.n_out_sol)
-        return lap + f
+        return self.mu * lap + f
 
     def comp_process(self, dataset):
         params = dict()
@@ -28,7 +29,7 @@ class Laplace(Equation):
 
     def data_process(self, dataset, params):
         """ TO BE DONE """
-        new_dataset = dataset.copy()
+        new_dataset = dataset
         return new_dataset
 
     def pre_process(self, inputs, params):

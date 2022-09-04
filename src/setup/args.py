@@ -21,7 +21,8 @@ class Parser(ArgumentParser):
                         help="""Methods to use for BPINN. Available:
         		                - HMC  (Hamiltonian Monte Carlo)
         			            - SVGD (Stein Variational Gradient Descent)
-                                - VI   (variational inference) 
+                                - VI   (variational inference)
+                                - TEST (use for debug purpouses)
                             """)
 
         # Experiment
@@ -50,6 +51,7 @@ class Parser(ArgumentParser):
         self.add_argument('--random_seed', type=int,  help='Random seed for np and tf random generator')
         self.add_argument('--debug_flag' , type=bool, help='Prints general debug utilities at each iteration')
         self.add_argument('--save_flag'  , type=bool, help='Flag to save results in a new folder')
+        self.add_argument('--gen_flag'   , type=bool, help='Flag for new data generation')
 
         # %% Algoritm Parameters
         self.add_argument('--epochs', type=int, help='Number of epochs to train')

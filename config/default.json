@@ -1,7 +1,7 @@
 {
 	"general":{
-		"dataset": "laplace1D_cos",
-		"method" : "HMC"
+		"dataset": "Laplace1D_cos",
+		"method" : "TEST"
 	},
 
 	"experiment":{
@@ -33,7 +33,8 @@
 	"utils":{
 		"random_seed": 22,
 		"debug_flag" : "True",
-		"save_flag"  : "False"
+		"save_flag"  : "False",
+		"gen_flag"   : "True"
 	},
 
 	"HMC":{

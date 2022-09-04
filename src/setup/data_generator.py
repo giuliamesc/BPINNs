@@ -1,8 +1,9 @@
 # %% Import of Packages
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
-import os
+from .select_problem import switch_problem
 
 # %% Class Setup
 class AnalyticalData:
@@ -20,14 +21,19 @@ class AnalyticalData:
         - save_folder: Path to store data
     
     """
-    def __init__(self, test_case, do_plots = False, test_only = False, save_plot = False):
+    def __init__(self, test_case, do_plots = False, test_only = False, save_plot = False, is_main = False):
+        
+        data_config = switch_problem(test_case)
+        
         self.test_case = test_case
         self.do_plots  = do_plots
         self.test_only = test_only
         self.save_plot = save_plot
-
-        self.solution = analytical_solution[self.test_case]
-        self.domain_data = analytical_domain[self.test_case]
+        self.is_main   = is_main
+        self.gui_len   = max(50,int(os.get_terminal_size().columns/3))
+        
+        self.solution    = data_config.analytical_solution
+        self.domain_data = data_config.analytical_domain
         self.dimension = len(self.domain_data["domain"])
         self.save_folder = '../data'
 
@@ -35,13 +41,14 @@ class AnalyticalData:
 
     def __creating_loop(self):
         """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
-        print(f"Generating dataset: {self.test_case}".center(os.get_terminal_size().columns,'*'))
+        if self.is_main:
+            print(f" Generating dataset: {self.test_case} ".center(self.gui_len,'*'))
         self.__build_directory()
         self.__create_domain()
         self.__create_solutions()
         if self.do_plots:
             self.__plotter()
-        print(f"Dataset {self.test_case} generated!")
+        print(f"Dataset {self.test_case} generated")
 
 # %% Build Solution
     def __create_solutions(self):
@@ -104,7 +111,8 @@ class AnalyticalData:
         """ Saves the data generated """
         filename = os.path.join(self.save_path,name)
         np.save(filename,data)
-        print(f'\tSaved {name}')
+        if self.is_main:
+            print(f'\tSaved {name}')
 
     def __build_directory(self):
         """ Builds a directory for the case study (if it is a test, the trash folder) """
@@ -114,11 +122,12 @@ class AnalyticalData:
                 os.mkdir(trash_path)
             self.save_folder = os.path.join(trash_path)
         self.save_path = os.path.join(self.save_folder,self.test_case)
-        if not(os.path.isdir(self.save_path)):
-            os.mkdir(self.save_path)
-            print(f'Folder {self.save_path} created')
-        else:
-            print('Folder already present')
+        if self.is_main:
+            if not(os.path.isdir(self.save_path)):
+                os.mkdir(self.save_path)
+                print(f'Folder {self.save_path} created')
+            else:
+                print('Folder already present')
 
     def __load(self,name):
         """ Loader of .npy files """
@@ -155,37 +164,7 @@ class AnalyticalData:
                 if var_name not in ["x","y","z"]:
                     self.__plot(var_name)
 
-# %% Main
-
-analytical_domain = {
-    "laplace1D_cos": {
-        "mesh_type": "sobol",
-        "resolution": 200,
-        "domain": [(0,1)]
-        },
-    "laplace2D_cos": {
-        "mesh_type": "sobol",
-        "resolution": 10000,
-        "domain": [(0,8),(0,6)]
-        }
-    }
-
-analytical_solution = {
-    "laplace1D_cos": {
-        "u": lambda *x: np.cos(x[0]*8),
-        "f": lambda *x: 64*np.cos(x[0]*8)
-        },
-    "laplace2D_cos": {
-        "u": lambda *x: np.cos(x[0])*np.cos(x[1]),
-        "f": lambda *x: np.cos(x[0])*np.cos(x[1])
-        }
-    }
-
-if __name__ == "__main__":
-    if os.getcwd()[-3:] != "src":
-        new_dir = os.path.join(os.getcwd(),"src")
-        os.chdir(new_dir)
-        print(f"Working Directory moved to: {new_dir}")
-    AnalyticalData("laplace1D_cos", do_plots = True, test_only = False, save_plot = True)
-    #AnalyticalData("laplace2D_cos", do_plots = True, test_only = True, save_plot = True)
-    plt.show(block=True)
+    def show_plot(self):
+        """ Shows the plots """
+        print(f" END ".center(self.gui_len,'*'))
+        plt.show(block = True)

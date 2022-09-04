@@ -13,6 +13,7 @@ class Equation(ABC):
             n_out_sol -> dimension of solution
             n_out_par -> dimension of parametric field
         """
+        self.physics  = par.physics
         self.phys_dim = par.phys_dim
         self.comp_dim = par.comp_dim
 

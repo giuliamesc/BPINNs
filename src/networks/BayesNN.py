@@ -37,8 +37,8 @@ class BayesNN(PredNN, LossNN):
     def __initialize_equation(self, par):
         """ Initializes a class of equation describing the problem """
         equation = par.dataset
-        if   equation == "laplace1D_cos": return Laplace(par)
-        elif equation == "laplace2D_cos": return Laplace(par)
+        if   equation == "Laplace1D_cos": return Laplace(par)
+        elif equation == "Laplace2D_cos": return Laplace(par)
         else: raise("Equation not implemeted!")
 
     def loss_step(self, new_losses):

@@ -43,7 +43,7 @@ To exit from the virtual environment, use `deactivate`
 
 ## :computer: Source Code 
 - `main.py` is the executable script, relying on all the below modules.
-- `generate_data.py`is the script to be runned before the main for each new test case and it generates a new data subfolder.
+- `new_data.py`is the script to be runned before the main for each new test case and it generates a new data subfolder.
 - :file_folder: `setup` is a module containing:
     - the class to parse command line arguments (in `args.py`)
     - the class to set parameters (in `param.py`), reading them both from the configuration files and from command line
