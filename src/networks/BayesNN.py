@@ -1,6 +1,5 @@
 from .PredNN import PredNN
 from .LossNN import LossNN
-from .equations import Laplace
 
 class BayesNN(PredNN, LossNN):
     """
@@ -8,12 +7,12 @@ class BayesNN(PredNN, LossNN):
     - Contains loss history
     """
 
-    def __init__(self, par):
+    def __init__(self, par, equation_class):
         
         self.seed    = par.utils["random_seed"] 
         self.history = self.__initialize_losses()
 
-        equation  = self.__initialize_equation(par)
+        equation  = equation_class(par)
         comp_res  = equation.compute_residual
         
         pre_proc  = equation.pre_process
@@ -33,13 +32,6 @@ class BayesNN(PredNN, LossNN):
             loss_dict[key]    = list()
             logloss_dict[key] = list()
         return (loss_dict, logloss_dict)
-
-    def __initialize_equation(self, par):
-        """ Initializes a class of equation describing the problem """
-        equation = par.dataset
-        if   equation == "Laplace1D_cos": return Laplace(par)
-        elif equation == "Laplace2D_cos": return Laplace(par)
-        else: raise("Equation not implemeted!")
 
     def loss_step(self, new_losses):
         """ Appends new losses to loss history """

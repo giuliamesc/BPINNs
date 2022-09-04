@@ -1,7 +1,7 @@
 # %% Utilities
 from utility import set_directory, set_warning, set_gui_len
 from utility import load_json, create_directories
-from utility import switch_algorithm, switch_problem
+from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Setup utilities
 set_directory()
@@ -23,7 +23,7 @@ args   = Parser().parse_args()   # Load a param object from command-line
 config = load_json(args.config)  # Load params from config file
 params = Param(config, args)     # Combines args and config
 
-data_config = switch_problem(params.dataset)
+data_config = switch_dataset(params.dataset)
 params.data_config = data_config
 debug_flag  = params.utils["debug_flag"]
 
@@ -54,11 +54,13 @@ print(" DONE ".center(gui_len,'*'))
 # %% Model Building
 
 print("Building the Model")
+print("\tChosing", params.pde, "equation...")
+equation = switch_equation(params.dataset)
 print("\tInitializing the Bayesian PINN...")
-bayes_nn = BayesNN(params) # Initialize the correct Bayesian NN
-print("\tChosing", params.method ,"algorithm...")
+bayes_nn = BayesNN(params, equation) # Initialize the Bayesian NN
+print("\tChosing", params.method, "algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
-print("\tBuilding", params.method ,"algorithm...")
+print("\tBuilding", params.method, "algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch
 print(" DONE ".center(gui_len,'*'))

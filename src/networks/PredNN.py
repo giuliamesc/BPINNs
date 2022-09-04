@@ -1,7 +1,6 @@
-from msilib.schema import Error
 from .CoreNN import CoreNN
-import numpy as np
 import tensorflow as tf
+import numpy as np
 
 class PredNN(CoreNN):
     """

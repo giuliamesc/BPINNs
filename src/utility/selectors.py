@@ -1,5 +1,6 @@
 import algorithms as alg
-import setup.config as sc
+import datasets   as data
+import equations  as eq
 
 def switch_algorithm(method):
     """ Returns an instance of the class corresponding to the selected method """
@@ -10,7 +11,13 @@ def switch_algorithm(method):
         case "VI"  : return alg.VI
         case _ : raise Exception("This algorithm does not exist!")
 
-def switch_problem(dataset_name):
+def switch_dataset(dataset_name):
     match dataset_name:
-        case "Laplace1D_cos": return sc.Laplace1D_cos()
+        case "Laplace1D_cos": return data.Laplace1D_cos()
         case _ : raise Exception("This dataset configuration does not exist!")
+
+def switch_equation(dataset_name):
+    match dataset_name:
+        case "Laplace1D_cos": return eq.Laplace
+        case "Laplace1D_cos": return eq.Laplace
+        case _ : raise Exception("This equation does not exist!")

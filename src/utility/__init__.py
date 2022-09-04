@@ -1,3 +1,3 @@
 from .setup import set_directory, set_warning, set_gui_len, load_json
 from .directories import create_directories
-from .selectors import switch_algorithm, switch_problem
+from .selectors import switch_algorithm, switch_dataset, switch_equation
