@@ -1,7 +1,8 @@
 {
 	"general":{
-		"dataset": "Laplace1D_cos",
-		"method" : "HMC"
+		"problem"  : "Laplace1D",
+		"case_name": "",
+		"method"   : "HMC"
 	},
 
 	"experiment":{

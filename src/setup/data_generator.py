@@ -22,6 +22,7 @@ class AnalyticalData:
     def __init__(self, data_config, gui_len, do_plots=False, test_only=False, save_plot=False, is_main=False):
       
         self.test_case = data_config.name
+        print(self.test_case)
         self.gui_len   = gui_len
 
         self.do_plots  = do_plots
@@ -118,7 +119,8 @@ class AnalyticalData:
             if not(os.path.isdir(trash_path)):
                 os.mkdir(trash_path)
             self.save_folder = os.path.join(trash_path)
-        self.save_path = os.path.join(self.save_folder,self.test_case)
+        self.save_path = os.path.join(self.save_folder, self.test_case)
+        print(self.save_path)
         if self.is_main:
             if not(os.path.isdir(self.save_path)):
                 os.mkdir(self.save_path)

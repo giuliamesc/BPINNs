@@ -11,13 +11,18 @@ def switch_algorithm(method):
         case "VI"  : return alg.VI
         case _ : raise Exception("This algorithm does not exist!")
 
-def switch_dataset(dataset_name):
-    match dataset_name:
-        case "Laplace1D_cos": return data.Laplace1D_cos()
+def switch_dataset(problem, case_name):
+    match problem:
+        case "Laplace1D": 
+            match case_name:
+                case "":    return data.Laplace1D_default()
+                case "cos": return data.Laplace1D_cos()
+                case _ : raise Exception("This case test does not exist!")
+        case "Laplace2D": raise Exception("Not implemeted yet")
         case _ : raise Exception("This dataset configuration does not exist!")
 
-def switch_equation(dataset_name):
-    match dataset_name:
-        case "Laplace1D_cos": return eq.Laplace
-        case "Laplace1D_cos": return eq.Laplace
+def switch_equation(problem):
+    match problem:
+        case "Laplace1D": return eq.Laplace
+        case "Laplace2D": return eq.Laplace
         case _ : raise Exception("This equation does not exist!")

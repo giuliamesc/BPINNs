@@ -23,7 +23,7 @@ args   = Parser().parse_args()   # Load a param object from command-line
 config = load_json(args.config)  # Load params from config file
 params = Param(config, args)     # Combines args and config
 
-data_config = switch_dataset(params.dataset)
+data_config = switch_dataset(params.problem, params.case_name)
 params.data_config = data_config
 debug_flag  = params.utils["debug_flag"]
 
@@ -55,7 +55,7 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Building the Model")
 print("\tChosing", params.pde, "equation...")
-equation = switch_equation(params.dataset)
+equation = switch_equation(params.problem)
 print("\tInitializing the Bayesian PINN...")
 bayes_nn = BayesNN(params, equation) # Initialize the Bayesian NN
 print("\tChosing", params.method, "algorithm...")

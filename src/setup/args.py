@@ -10,11 +10,16 @@ class Parser(ArgumentParser):
     							You have to provide the parameters for at least the method you've selected.
         						You can also overwrite some parameters directly from terminal
                             """)
-        # Dataset (choose the data for the problem)
-        self.add_argument('--dataset', type=str, 
+        # Problem (choose the physical problem)
+        self.add_argument('--problem', type=str, 
                         help="""Choose the experiment :
-                                - laplace1D_cos (1D, Laplace)
-                                - laplace2D_cos (2D, Laplace)
+                                - laplace1D (1D, Laplace)
+                                - laplace2D (2D, Laplace)
+                            """)
+        # Dataset (choose the data for the problem)
+        self.add_argument('--case_name', type=str, 
+                        help="""Choose the experiment :
+                                - cos (1D-2D, Laplace)
                             """)
         # Algorithm (choose training algorithm)
         self.add_argument('--method', type=str, 

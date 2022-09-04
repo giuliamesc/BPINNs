@@ -17,6 +17,7 @@
 ### Input e Salvataggi
 - Migliorare save params
 - Valutare il salvataggio dei theta
+- Cartelle outs
 
 ### PROPOSTE VARIE
 - Warning per diagnostica tuning
