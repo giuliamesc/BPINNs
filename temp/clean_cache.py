@@ -1,6 +1,11 @@
 import os
 import shutil
 
+def print_path(full_path):
+    index = full_path.find("pacs_bpinns")
+    small_path = full_path[index:]
+    print(small_path)
+
 src_wd = os.path.join(os.getcwd(), "src")
 for folder in os.listdir(src_wd):
     if folder[-3:] == ".py": continue
@@ -8,7 +13,7 @@ for folder in os.listdir(src_wd):
     cache = os.path.join(folder_path, "__pycache__")
     if os.path.isdir(cache):
         shutil.rmtree(cache)
-        print(cache)
+        print_path(cache)
 
 outs_wd = os.path.join(os.getcwd(), "outs")
 for folder in os.listdir(outs_wd):
@@ -17,11 +22,11 @@ for folder in os.listdir(outs_wd):
     trash = os.path.join(folder_path,"trash")
     if os.path.isdir(trash):
         shutil.rmtree(trash)
-        print(trash)
+        print_path(trash)
 
 data_wd = os.path.join(os.getcwd(), "data")
 trash = os.path.join(data_wd,"trash")
 if os.path.isdir(trash):
     shutil.rmtree(trash)
-    print(trash)
+    print_path(trash)
 

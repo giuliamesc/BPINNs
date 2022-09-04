@@ -1,7 +1,7 @@
 {
 	"general":{
 		"dataset": "Laplace1D_cos",
-		"method" : "TEST"
+		"method" : "HMC"
 	},
 
 	"experiment":{
@@ -32,14 +32,14 @@
 
 	"utils":{
 		"random_seed": 22,
-		"debug_flag" : "True",
+		"debug_flag" : "False",
 		"save_flag"  : "False",
 		"gen_flag"   : "True"
 	},
 
 	"HMC":{
-		"epochs" : 100,
-		"burn_in": 20,
+		"epochs" : 500,
+		"burn_in": 100,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
 		"HMC_ns" : 3e-4
