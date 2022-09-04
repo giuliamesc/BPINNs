@@ -1,7 +1,7 @@
 # %% Utilities
 from utility import set_directory, set_warning, set_gui_len
 from utility import load_json, create_directories
-from utility import switch_algorithm
+from utility import switch_algorithm, switch_problem
 
 # Setup utilities
 set_directory()
@@ -22,7 +22,10 @@ print(" START ".center(gui_len,'*'))
 args   = Parser().parse_args()   # Load a param object from command-line
 config = load_json(args.config)  # Load params from config file
 params = Param(config, args)     # Combines args and config
-debug_flag = params.utils["debug_flag"]
+
+data_config = switch_problem(params.dataset)
+params.data_config = data_config
+debug_flag  = params.utils["debug_flag"]
 
 print("Bayesian PINN with", params.method)
 print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
@@ -31,13 +34,12 @@ print(" DONE ".center(gui_len,'*'))
 
 # %% Datasets Creation
 
-
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(params.dataset)
+    AnalyticalData(data_config)
 else:
-    print("\tStored dataset used:", params.dataset)
+    print("\tStored dataset used:", data_config.name)
 
 dataset = Dataset(params)
 print("\tNumber of fitting data:", dataset.num_fitting)

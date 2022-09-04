@@ -1,5 +1,3 @@
-from setup.select_problem import switch_problem
-
 class Param:
     """Initializer"""
     def __init__(self, hp, args):
@@ -21,16 +19,23 @@ class Param:
         self.param_method = hp[self.method]
         self.__command_line_update_method(vars(args))
 
-        data_config  = switch_problem(self.dataset)
-        self.physics = data_config.physics
+        # Convert string of boolean in boolean
+        self.__change_string_to_bool()
 
+    @property
+    def data_config(self):
+        return self.config
+
+    @data_config.setter
+    def data_config(self, data_config): 
+        
+        self.config = data_config
+
+        self.pde = data_config.pde
+        self.physics = data_config.physics
         # set all useful parameters from physical domain and dimension
         self.phys_dim = Dimension(data_config, True)
         self.comp_dim = Dimension(data_config, False)
-        self.pde = self.phys_dim.pde
-
-        # Convert string of boolean in boolean
-        self.__change_string_to_bool()
 
     def __string_to_bool(self, s):
         """ Convert string "True","False" to boolean True and False """

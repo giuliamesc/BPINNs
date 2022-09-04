@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Laplace1D(ABC):
-    
+
     # Name of the differential equation
     pde = "laplace"
     # Parameters to be set in the equation
@@ -32,6 +32,7 @@ class Laplace1D(ABC):
 @dataclass
 class Laplace1D_cos(Laplace1D):
 
+    name = "Laplace1D_cos"
     physics = {"diffusion" : 1.}
     analytical_domain = {
         "mesh_type" : "sobol",

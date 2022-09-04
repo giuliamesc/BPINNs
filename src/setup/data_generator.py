@@ -3,7 +3,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
-from .select_problem import switch_problem
 
 # %% Class Setup
 class AnalyticalData:
@@ -21,11 +20,9 @@ class AnalyticalData:
         - save_folder: Path to store data
     
     """
-    def __init__(self, test_case, do_plots = False, test_only = False, save_plot = False, is_main = False):
-        
-        data_config = switch_problem(test_case)
-        
-        self.test_case = test_case
+    def __init__(self, data_config, do_plots = False, test_only = False, save_plot = False, is_main = False):
+      
+        self.test_case = data_config.name
         self.do_plots  = do_plots
         self.test_only = test_only
         self.save_plot = save_plot

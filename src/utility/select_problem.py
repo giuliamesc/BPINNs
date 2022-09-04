@@ -1,4 +1,4 @@
-from .config import Laplace1D_cos
+from setup.config import Laplace1D_cos
 
 def switch_problem(dataset_name):
     match dataset_name:
