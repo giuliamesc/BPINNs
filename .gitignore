@@ -1,6 +1,6 @@
 # User Defined
 **/trash/
-**/__deprecated_version/
+#**/deprecated
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
