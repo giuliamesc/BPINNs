@@ -1,10 +1,9 @@
-# %% Import of Packages
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
 
-# %% Class Setup
+
 class AnalyticalData:
     """
     - Generates the dataset from an analytical solution and stores points and functions in .npy files
@@ -20,14 +19,15 @@ class AnalyticalData:
         - save_folder: Path to store data
     
     """
-    def __init__(self, data_config, do_plots = False, test_only = False, save_plot = False, is_main = False):
+    def __init__(self, data_config, gui_len, do_plots=False, test_only=False, save_plot=False, is_main=False):
       
         self.test_case = data_config.name
+        self.gui_len   = gui_len
+
         self.do_plots  = do_plots
         self.test_only = test_only
         self.save_plot = save_plot
         self.is_main   = is_main
-        self.gui_len   = max(50,int(os.get_terminal_size().columns/3))
         
         self.solution    = data_config.analytical_solution
         self.domain_data = data_config.analytical_domain
@@ -47,7 +47,7 @@ class AnalyticalData:
             self.__plotter()
         print(f"Dataset {self.test_case} generated")
 
-# %% Build Solution
+    # %% Build Solution
     def __create_solutions(self):
         """ Creates solution and parametric field files """
         for key,_ in self.solution.items():
@@ -61,7 +61,7 @@ class AnalyticalData:
         sol = func(*grid)
         self.__save_data(name, sol)
 
-# %% Build Domain
+    # %% Build Domain
     def __create_domain(self):
         """ Creates the spatial domain with the random points generation technique chosen """
         if self.domain_data["mesh_type"] == "uniform":
@@ -103,7 +103,7 @@ class AnalyticalData:
             self.__save_data(names[i], self.grid[i])
 
 
-# %% Loading and Saving
+    # %% Loading and Saving
     def __save_data(self, name, data):
         """ Saves the data generated """
         filename = os.path.join(self.save_path,name)
@@ -130,7 +130,7 @@ class AnalyticalData:
         """ Loader of .npy files """
         return np.load(os.path.join(self.save_path, f'{name}.npy'))
 
-# %% Postprocess
+    # %% Postprocess
     def __plot(self, var_name):
         """ Used in __plotter; plots var_name profile (distinguishing 1D, 2D, 3D case) """
         var = self.__load(var_name)

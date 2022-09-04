@@ -37,7 +37,7 @@ print(" DONE ".center(gui_len,'*'))
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(data_config)
+    AnalyticalData(data_config, gui_len)
 else:
     print("\tStored dataset used:", data_config.name)
 
