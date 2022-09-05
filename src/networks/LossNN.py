@@ -23,10 +23,11 @@ class LossNN(CoreNN):
         super(LossNN, self).__init__(par, **kw)
         # Parameters for combining losses
         self.coeff  = par.coeff
-        self.sigmas = par.sigmas
+        self.sg_params = [self.__convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
+        self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
         # Function for residual evaluation
         self.compute_residual = comp_res
-        
+
     def __loss_residual(self, inputs):
         """
         Computes the MSE and log-likelihood of the data 
@@ -39,7 +40,7 @@ class LossNN(CoreNN):
 
         # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
         n_r = pde_res.shape[0] # number of samples
-        log_var = self.sigmas["pde_pn"] # log(1/betaR)
+        log_var = self.sg_params[0][1] # log(1/betaR)
 
         log_res = self.__normal_loglikelihood(mse_res, n_r, log_var)
         log_res *= self.coeff["res"]
@@ -59,7 +60,7 @@ class LossNN(CoreNN):
         mse_data = self.__mse(outputs-targets)
 
         n_d = outputs.shape[0]
-        log_var = self.sigmas["data_pn"] # log(1/betaD)
+        log_var = self.sg_params[0][0] # log(1/betaD)
 
         log_data = self.__normal_loglikelihood(mse_data, n_d, log_var)
         log_data*= self.coeff["data"]
@@ -105,9 +106,17 @@ class LossNN(CoreNN):
         return loss, logloss
 
     def grad_loss(self, dataset):
-        with tf.GradientTape() as tape:
+
+        with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
+            tape.watch(self.sg_params)
             _, logloss = self.loss_total(dataset)
-        gradients = tape.gradient(logloss["Total"], self.model.trainable_variables) 
-        return gradients
+        
+        grad_thetas = tape.gradient(logloss["Total"], self.model.trainable_variables)
+        grad_sigmas = tape.gradient(logloss["Total"], self.sg_params)
+        
+        if not self.sg_flags[0]: grad_sigmas[0] *= [0.0, 1.0] # if data prior noise not trainable
+        if not self.sg_flags[1]: grad_sigmas[0] *= [1.0, 0.0] # if  pde prior noise not trainable
+        
+        return grad_thetas, grad_sigmas
 

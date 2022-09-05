@@ -13,7 +13,8 @@ class TEST(Algorithm):
     def sample_theta(self, num):
         self.model.initialize_NN(num+self.model.seed)
         theta = self.model.nn_params
-        return theta
+        sigma = self.model.sg_params
+        return theta, sigma
 
     def select_thetas(self, thetas_train):
         """ Compute burn-in and skip samples """

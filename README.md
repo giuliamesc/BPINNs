@@ -43,23 +43,28 @@ To exit from the virtual environment, use `deactivate`
 
 ## :computer: Source Code 
 - `main.py` is the executable script, relying on all the below modules.
-- `new_data.py`is the script to be runned before the main for each new test case and it generates a new data subfolder.
+- `main_data.py` is a script that can be run independently from the main and it generates a new data subfolder for each new test case.
 - :file_folder: `setup` is a module containing:
     - the class to parse command line arguments (in `args.py`)
     - the class to set parameters (in `param.py`), reading them both from the configuration files and from command line
-    - `data_creation.py` contains the class for dataset creation starting from raw data stored in the folder `data`
-    - `data_loader` defines the data loader class (now not in use)
-- :file_folder: `networks` contains classes for each part of the Bayesian Neural Netwok. 
-    The network built is an instance of the class `BayesNN`, which inherits methods and attributes from `LossNN` and `PredNN`, having the loss computation and the prediction/post-processing functionalities, respectively. In turn, the above classes inherit from `CoreNN`, representing a basic fully connected network)
-    - :file_folder: `equations` contains the differential operators library (`Operators.py`) and, in separate files, the definition of dataset pre and post processing and physical loss for each problem studied
+    - `data_creation.py`  contains the class for dataset creation starting from raw data stored in the folder `data`
+    - `data_generator.py` contains the class to generate raw data 
+    - `data_loader.py` defines the data loader class (now not in use)
+- :file_folder: `utility` contains technical auxiliary tasks; in particular, `selectors.py` switches to the test case under analysis among the files contained in the three folders below 
 - :file_folder: `algorithms` is a module containing classes representing the training algorithms proposed in this project:
     - (WIP): Hamiltionian Monte Carlo (`HMC`)
     - (WIP): Stein Variational Gradient Descent (`SVGD`)
     - (WIP): Variational Inference (`VI`)
+- :file_folder: `datasets` contains: 
+    - `data_template.py` an abstract class with data information structure (number of points, mesh type...)
+    - `NAME_template.py` contains the template for all the test cases around the `NAME` problem
+    - `NAME_config.py` contains the case specific infromation for `NAME` test case 
+- :file_folder: `equations` contains the differential operators library (`Operators.py`) and, in separate files, the definition of physical loss and dataset pre/post processing criteria for each problem studied
+- :file_folder: `networks` contains classes for each part of the Bayesian Neural Netwok. 
+    The network built is an instance of the class `BayesNN`, which inherits methods and attributes from `LossNN` and `PredNN`, having the loss computation and the prediction/post-processing functionalities, respectively. In turn, the above classes inherit from `CoreNN`, representing a basic fully connected network)
 - :file_folder: `postprocessing` is a module with:
     - the class `Plotter` to generate the plots and save them in the folder `outs`
     - the class `Storage` to store and load results, uncertainty quantification study, loss history and network parameters 
-- :file_folder: `utility` contains technical auxiliary tasks.
 
 ## :books: References
 - *B-PINNs: Bayesian Physics-Informed Neural Networks for Forward and Inverse PDE Problems with Noisy Data*, Liu Yang, Xuhui Meng, George Em Karniadakis, Mar 2020.

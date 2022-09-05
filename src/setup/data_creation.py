@@ -99,22 +99,16 @@ class Dataset:
         self.F_dom = f
 
         # build collocation dataset from domain dataset
-        # np.random.shuffle(index) USE ONLY FOR LINSPACE!
         if self.num_collocation > inputs.shape[0] : 
             raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {inputs.shape[0]}')
-        #index_coll = index[:self.num_collocation]
-        #index_coll.append(index[-1])
         index_coll = self.__select_indexes(inputs.shape[0], self.num_collocation)
         self.inputs_coll = inputs[index_coll,:]
         self.U_coll = u[index_coll,:]
         self.F_coll = f[index_coll,:]
 
         # build exact dataset from domain dataset
-        # np.random.shuffle(index) USE ONLY FOR LINSPACE!
         if self.num_fitting > inputs.shape[0] : 
             raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {inputs.shape[0]}')
-        #index_exac = index[:self.num_fitting]
-        #index_exac.append(index[-1])
         index_exac = self.__select_indexes(inputs.shape[0], self.num_fitting)
         self.inputs_exact = inputs[index_exac,:]
         self.U_exact = u[index_exac,:]

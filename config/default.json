@@ -2,7 +2,7 @@
 	"general":{
 		"problem"  : "Laplace1D",
 		"case_name": "",
-		"method"   : "TEST"
+		"method"   : "HMC"
 	},
 
 	"experiment":{
@@ -27,20 +27,20 @@
 	"sigmas":{
 		"data_pn" : 1e-2,
 		"pde_pn"  : 1e-2,
-		"data_pn_flag": "False",
-		"pde_pn_flag" : "False"
+		"data_pn_flag": "True",
+		"pde_pn_flag" : "True"
 	},
 
 	"utils":{
 		"random_seed": 28,
-		"debug_flag" : "False",
+		"debug_flag" : "True",
 		"save_flag"  : "False",
 		"gen_flag"   : "True"
 	},
 
 	"HMC":{
-		"epochs" : 500,
-		"burn_in": 100,
+		"epochs" : 100,
+		"burn_in": 20,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
 		"HMC_ns" : 3e-4
