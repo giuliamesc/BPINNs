@@ -10,6 +10,7 @@ class Laplace(Data_Config):
 
 @dataclass
 class Laplace1D(Laplace):
+    problem = "Laplace1D"
     # Dimensions of the physical domain: dimension of inputs, solution and parametric field
     phys_dom = {
         "n_input"   : 1,
@@ -23,6 +24,7 @@ class Laplace1D(Laplace):
 
 @dataclass
 class Laplace2D(Laplace):
+    problem = "Laplace2D"
     # Dimensions of the physical domain: dimension of inputs, solution and parametric field
     phys_dom = {
         "n_input"   : 2,

@@ -26,6 +26,7 @@ class Dataset:
     def __init__(self, par):
         """The constructor"""
         self.pde_type = par.pde
+        self.problem = par.problem
         self.name_example = par.dataset
         self.mesh_type = par.config.analytical_domain["mesh_type"]
 
@@ -77,7 +78,8 @@ class Dataset:
 
     def __load_dataset(self):
         """load data from dataset"""
-        path = os.path.join("../data", self.name_example)
+        path = os.path.join("../data", self.problem)
+        path = os.path.join(path, self.name_example)
 
         inputs = list()
         for var_file in os.listdir(path):

@@ -5,7 +5,7 @@ class Param:
         self.problem   = hp["general"]["problem"]   # problem used
         self.case_name = hp["general"]["case_name"] # case used
         self.method    = hp["general"]["method"]    # method used: SVGD, HMC, VI, ...
-        if len(self.case_name) == 0: self.case_name = "default"
+        if self.case_name == "": self.case_name = "default"
 
         self.experiment   = hp["experiment"]   # experiment param
         self.architecture = hp["architecture"] # NN architecture param

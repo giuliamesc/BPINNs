@@ -21,12 +21,12 @@ def __create_single_dir(base_path, last_path, keep = False, over = False):
 def create_directories(par):
     """ Create all the directories we need to store the results """
     
-    problem_folder  = __create_single_dir("../outs", par.problem, keep=True)
-    algorith_folder = __create_single_dir(problem_folder, par.method, keep=True)
+    problem_folder   = __create_single_dir("../outs", par.problem, keep=True)
+    algorithm_folder = __create_single_dir(problem_folder, par.method, keep=True)
     case_time = f"{datetime.now().strftime('%Y.%m.%d-%H.%M.%S')}"
     case_name = par.case_name + "_" + case_time if par.utils["save_flag"] else "trash"
     if par.case_name == "default": case_name = "trash"
-    case_folder = __create_single_dir(algorith_folder, case_name, over=True)
+    case_folder = __create_single_dir(algorithm_folder, case_name, over=True)
     
     path_plot   = __create_single_dir(case_folder, "plot")
     path_values = __create_single_dir(case_folder, "values")
@@ -35,3 +35,9 @@ def create_directories(par):
     __create_single_dir(path_values, "samples")
 
     return path_plot, path_values, path_thetas, path_log
+
+def create_data_folders(problem, name, save):
+    problem_folder  = __create_single_dir("../data", problem, keep=True)
+    if not save: name = "trash"
+    case_folder     = __create_single_dir(problem_folder, name, over=True)
+    return case_folder

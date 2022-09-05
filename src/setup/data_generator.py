@@ -1,34 +1,20 @@
-from logging import raiseExceptions
-import os
-import numpy as np
+from utility import create_data_folders
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
+import numpy as np
+import os
 
 
 class AnalyticalData:
-    """
-    - Generates the dataset from an analytical solution and stores points and functions in .npy files
 
-    Attributes:
-        - test_case: Test case used
-        - do_plots: Boolean to generate plots
-        - test_only: Boolean to consider the current run as test
-        - save_plot: Boolean to save plots
-        - solution: Solution and parametric field
-        - domain_data: Spatial coordinates
-        - dimension: Dimension of the input space
-        - save_folder: Path to store data
-    
-    """
-    def __init__(self, data_config, gui_len, do_plots=False, test_only=False, save_plot=False, is_main=False):
+    def __init__(self, data_config, gui_len, do_plots=False, test_only=False, is_main=False):
       
         self.test_case = data_config.name
-        print(self.test_case)
+        self.problem   = data_config.problem
         self.gui_len   = gui_len
 
         self.do_plots  = do_plots
         self.test_only = test_only
-        self.save_plot = save_plot
         self.is_main   = is_main
         
         self.solution    = data_config.analytical_solution
@@ -42,7 +28,7 @@ class AnalyticalData:
         """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
         if self.is_main:
             print(f" Generating dataset: {self.test_case} ".center(self.gui_len,'*'))
-        self.__build_directory()
+        self.save_path = create_data_folders(self.problem , self.test_case, not self.test_only)
         self.__create_domain()
         self.__create_solutions()
         if self.do_plots:
@@ -124,26 +110,10 @@ class AnalyticalData:
     # %% Loading and Saving
     def __save_data(self, name, data):
         """ Saves the data generated """
-        filename = os.path.join(self.save_path,name)
+        filename = os.path.join(self.save_path, name)
         np.save(filename,data)
         if self.is_main:
             print(f'\tSaved {name}')
-
-    def __build_directory(self):
-        """ Builds a directory for the case study (if it is a test, the trash folder) """
-        if self.test_only:
-            trash_path = os.path.join(self.save_folder,"trash")
-            if not(os.path.isdir(trash_path)):
-                os.mkdir(trash_path)
-            self.save_folder = os.path.join(trash_path)
-        self.save_path = os.path.join(self.save_folder, self.test_case)
-        print(self.save_path)
-        if self.is_main:
-            if not(os.path.isdir(self.save_path)):
-                os.mkdir(self.save_path)
-                print(f'Folder {self.save_path} created')
-            else:
-                print('Folder already present')
 
     def __load(self,name):
         """ Loader of .npy files """
@@ -165,8 +135,7 @@ class AnalyticalData:
         else:
             print("Plotter non available")
         plt.title(f'{var_name}{var_dim}')
-        if self.save_plot:
-            plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
+        plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
 
     def __plotter(self):
         """ Plotter """
