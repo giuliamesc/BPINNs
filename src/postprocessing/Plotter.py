@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import numpy as np
 import os
 
@@ -114,12 +113,21 @@ class Plotter():
         self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
         self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likelihood)")
 
-    def plot_sigmas(self, sigma_d, sigma_r):
-        self.__plot_sigma(sigma_d)
-        self.__plot_sigma(sigma_r)
+    def plot_sigmas(self, sigmas):
+        if sigmas[0] is None and sigmas[1] is None : return  
+        plt.figure()
+        if sigmas[0] is not None : 
+            x = list(range(1,len(sigmas[0])+1))
+            plt.plot(x, 1/np.exp(sigmas[0]), 'b', lw=1.0, alpha=1.0, label = "Variance Data")
+        if sigmas[1] is not None : 
+            x = list(range(1,len(sigmas[1])+1))
+            plt.plot(x, 1/np.exp(sigmas[1]), 'r', lw=1.0, alpha=1.0, label = "Variance Residual")
+        plt.title(f"History of Sigmas")
+        plt.xlabel('Epochs')
+        plt.ylabel('Sigmas')
+        plt.legend(prop={'size': 9})
+        self.__save_plot(self.path_plot, "sigmas")
 
-    def __plot_sigma(self, sigma):
-        pass
 
     def __wait_input(self, key):
         """ Start a loop that will run until the user enters key """

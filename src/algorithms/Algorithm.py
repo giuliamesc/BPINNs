@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 import time, datetime
+import os
 
 class Algorithm(ABC):
     """
@@ -46,27 +47,29 @@ class Algorithm(ABC):
         
         return new_theta, new_sigma
 
+    def __train_loop(self, epochs):
+        epochs_loop = range(epochs)
+        if not self.debug_flag: 
+             epochs_loop = tqdm(epochs_loop)
+             epochs_loop.ncols=int(os.get_terminal_size().columns/2)
+             epochs_loop.set_description_str("Training Progress")
+        return epochs_loop
+
     def train(self):
 
         # Store thetas in this round of training
         thetas_train = list()
         sigmas_train = list()
         # Sampling new thetas
-        if self.debug_flag :
-            for i in range(self.epochs):
-                print(f'  START EPOCH {i+1}')
-                step = self.__train_step(i)
-                thetas_train.append(step[0])
-                sigmas_train.append(step[1])
-        else:
-            for i in tqdm(range(self.epochs)):
-                step = self.__train_step(i)
-                thetas_train.append(step[0])
-                sigmas_train.append(step[1])
+        self.epochs_loop = self.__train_loop(self.epochs) 
+        for i in self.epochs_loop:
+            if self.debug_flag: print(f'  START EPOCH {i+1}')
+            step = self.__train_step(i)
+            thetas_train.append(step[0])
+            sigmas_train.append(step[1])
     
-        # Select whict thetas must be saved
-        thetas_train = self.select_thetas(thetas_train)
-        sigmas_train = self.select_thetas(sigmas_train)
+        # Select which thetas must be saved
+        thetas_train, sigmas_train = self.select_thetas(thetas_train, sigmas_train)
         # Save thetas in the bnn
         self.model.thetas += thetas_train
         self.model.sigmas += sigmas_train

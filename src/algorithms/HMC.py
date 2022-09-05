@@ -15,22 +15,28 @@ class HMC(Algorithm):
         self.burn_in = param_method["burn_in"]
         self.HMC_L   = param_method["HMC_L"]
         self.HMC_dt  = param_method["HMC_dt"]
-        self.eta = 0.01
+        self.HMC_ns  = param_method["HMC_ns"]
+        self.eta = 0.5
         self.selected = list()
 
-    def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
+    def __check_trainable(self, s):
+        if not self.model.sg_flags[0]: s[0] *= [0.0, 1.0]
+        if not self.model.sg_flags[1]: s[0] *= [1.0, 0.0]
+        return s
+
+    def __leapfrog_step(self, old_theta, old_sigma, r, s, dt, ns): # SI potrebbe cancellare old_theta
         """ COMMENTARE """
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
-        
+        s = [ x - y * ns/2 for x,y in zip(s, grad_sigma)]
+
         self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)]
-        self.model.sg_params = [ x + y * dt for x,y in zip(old_sigma, s)]
+        self.model.sg_params = [ x + y * ns for x,y in zip(old_sigma, s)] 
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
+        s = [ x - y * ns/2 for x,y in zip(s, grad_sigma)]
         
         return self.model.nn_params, self.model.sg_params, r, s
 
@@ -64,6 +70,12 @@ class HMC(Algorithm):
             theta = theta[0]
             sigma = sigma[1]
             self.selected.append(False)
+
+        acc_rate = f"{100*sum(self.selected)/len(self.selected):1.2f}%"
+        if self.debug_flag:
+            print(f"\tAR: {acc_rate}")
+        if not self.debug_flag:
+            self.epochs_loop.set_postfix({"Acc.Rate": acc_rate})
         
         return theta, sigma
 
@@ -78,19 +90,22 @@ class HMC(Algorithm):
     
     def sample_theta(self, theta_0, sigma_0):
         """ COMMENTARE """
-        r_0 = [tf.random.normal(x.shape) for x in theta_0] 
-        s_0 = [tf.random.normal((2,))]
+        r_0 = [tf.random.normal(x.shape, stddev=self.eta) for x in theta_0] 
+        s_0 = [tf.random.normal((2,), stddev=self.eta)]
+        s_0 = self.__check_trainable(s_0)
         r, s = r_0.copy(), s_0.copy()
         theta = theta_0.copy()
         sigma = sigma_0.copy()
         for _ in range(self.HMC_L):
-            theta, sigma, r, s = self.__leapfrog_step(theta, sigma, r, s, self.HMC_dt)
+            theta, sigma, r, s = self.__leapfrog_step(theta, sigma, r, s, self.HMC_dt, self.HMC_ns)
         return self.__accept_reject((theta_0,theta), (sigma_0,sigma), (r_0,r), (s_0,s))
 
-    def select_thetas(self, thetas_train):
+    def select_thetas(self, thetas_train, sigmas_train):
         """ Compute burn-in and skip samples """
         self.selected = self.selected[self.burn_in:]
-        return thetas_train[self.burn_in:]
+        thetas_train = thetas_train[self.burn_in:]
+        sigmas_train = sigmas_train[self.burn_in:]
+        return thetas_train, sigmas_train
 
     def train_log(self):
         """ Report log of the training"""

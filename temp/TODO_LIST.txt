@@ -1,6 +1,5 @@
 ### Rete Neurale
 - Loss Prior
-- Trainable Sigmas
 
 ### Equazioni
 - Pre processing data
@@ -17,7 +16,10 @@
 ### Input e Salvataggi
 - Migliorare save params
 - Valutare il salvataggio dei theta
-- Cartelle outs
+
+## Altro
+- GuiLen global?
+- atch??
 
 ### PROPOSTE VARIE
 - Warning per diagnostica tuning

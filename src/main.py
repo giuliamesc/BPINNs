@@ -1,9 +1,10 @@
 # %% Utilities
-from utility import set_directory, set_warning, set_gui_len
+from utility import set_config, set_directory, set_warning, set_gui_len
 from utility import load_json, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Setup utilities
+configuration_file = None
 set_directory()
 set_warning()
 gui_len = set_gui_len()
@@ -20,7 +21,7 @@ from postprocessing import Storage, Plotter # Postprocessing
 
 print(" START ".center(gui_len,'*'))
 args   = Parser().parse_args()   # Load a param object from command-line
-config_file = args.config        # Use args.config for command line argument 
+config_file = set_config(args.config, configuration_file)
 config = load_json(config_file)  # Load params from config file
 params = Param(config, args)     # Combines args and config
 
@@ -109,10 +110,11 @@ print(" DONE ".center(gui_len,'*'))
 print("Loading data...")
 plotter = Plotter(path_plot)
 load_storage = Storage(path_values, path_thetas, path_log)
-print("Plotting the losses...")
+print("Plotting the history...")
 history = load_storage.history
 plotter.plot_losses(history)
 sigmas  = load_storage.sigmas
+plotter.plot_sigmas(sigmas)
 print("Plotting the results...")
 functions_confidence = load_storage.confidence
 functions_nn_samples = load_storage.nn_samples

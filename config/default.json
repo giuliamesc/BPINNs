@@ -39,11 +39,11 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
+		"epochs" : 200,
+		"burn_in": 50,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
-		"HMC_ns" : 3e-4
+		"HMC_ns" : 1e-3
 	},
 
 	"SVGD":{

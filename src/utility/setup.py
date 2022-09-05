@@ -2,6 +2,10 @@ import json
 import os
 import logging
 
+
+def set_config(default, hard_coded):
+    return default if hard_coded is None else hard_coded
+
 def set_directory():
     """ Sets the working directory """
     if os.getcwd()[-3:] != "src":
