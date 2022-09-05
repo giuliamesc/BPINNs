@@ -20,7 +20,8 @@ from postprocessing import Storage, Plotter # Postprocessing
 
 print(" START ".center(gui_len,'*'))
 args   = Parser().parse_args()   # Load a param object from command-line
-config = load_json(args.config)  # Load params from config file
+config_file = args.config        # Use args.config for command line argument 
+config = load_json(config_file)  # Load params from config file
 params = Param(config, args)     # Combines args and config
 
 data_config = switch_dataset(params.problem, params.case_name)
