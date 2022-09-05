@@ -108,5 +108,6 @@ class LossNN(CoreNN):
         with tf.GradientTape() as tape:
             tape.watch(self.model.trainable_variables)
             _, logloss = self.loss_total(dataset)
-        return tape.gradient(logloss["Total"], self.model.trainable_variables)
+        gradients = tape.gradient(logloss["Total"], self.model.trainable_variables) 
+        return gradients
 
