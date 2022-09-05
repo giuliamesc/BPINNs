@@ -25,33 +25,25 @@ class HMC(Algorithm):
         r = [ x - y * dt/2 for x,y in zip(r, self.model.grad_loss(self.data))]
         return self.model.nn_params, r
 
+    def __compute_alpha(self, h0, h1):
+        #alpha = min(0, +h1-h0) #  Alpha value - Tesi e Paper ??
+        alpha = min(0, -h1+h0)                 # Alpha value - Aggiustamento
+        if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
+        return alpha, np.log(np.random.uniform())
+
     def __accept_reject(self, theta_0, theta_1, r_0, r_1):
         """ COMMENTARE E DEBUGGARE """
         h0 = self.__hamiltonian(theta_0, r_0)
         h1 = self.__hamiltonian(theta_1, r_1)
         
-        logarithmic_flag = True # MODIFY FOR DEBUG
-        if logarithmic_flag:
-            #alpha = min(0, +h1-h0) # Tesi e Paper
-            alpha = min(0, -h1+h0) # Codice Daniele?
-            if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
-            p = np.log(np.random.uniform())
-        else:
-            #alpha = min(1, np.exp(+h1-h0)) # Tesi e Paper
-            alpha = min(1, np.exp(-h1+h0)) # Codice Daniele?
-            if np.isnan(h1): alpha = 0.0 # Avoid NaN values
-            p = np.random.uniform()
+        alpha, p = self.__compute_alpha(h0, h1)
+        accept = alpha >= p #accept = alpha <= p ??
         
-        #accept = alpha <= p
-        accept = alpha >= p
-
         if self.debug_flag:
             print(f"\th0: {h0 :1.3e}")
             print(f"\th1: {h1 :1.3e}")
-            #print(f"\t h: {h1-h0 :1.3e}")
-            print(f"\th: {h0-h1 :1.3e}")
-            if not logarithmic_flag: print(f"\ta: {alpha*100 :1.2f}%")
-            else : print(f"\ta: {np.exp(alpha)*100 :1.2f}%")
+            print(f"\th: {h0-h1 :1.3e}") #print(f"\t h: {h1-h0 :1.3e}") ??
+            print(f"\ta: {np.exp(alpha)*100 :1.2f}%")
 
         if accept:
             if self.debug_flag: print("\tACCEPT")
