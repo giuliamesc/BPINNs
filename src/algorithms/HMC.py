@@ -26,10 +26,10 @@ class HMC(Algorithm):
         return self.model.nn_params, r
 
     def __compute_alpha(self, h0, h1):
-        #alpha = min(0, +h1-h0) #  Alpha value - Tesi e Paper ??
-        alpha = min(0, -h1+h0)                 # Alpha value - Aggiustamento
+        p     = np.log(np.random.uniform())
+        alpha = min(0, -h1+h0)  #alpha = min(0, +h1-h0) # Alpha value 
         if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
-        return alpha, np.log(np.random.uniform())
+        return alpha, p
 
     def __accept_reject(self, theta_0, theta_1, r_0, r_1):
         """ COMMENTARE E DEBUGGARE """
