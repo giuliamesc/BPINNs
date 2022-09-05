@@ -28,8 +28,11 @@ for folder in os.listdir(outs_wd):
             print_path(trash)
 
 data_wd = os.path.join(os.getcwd(), "data")
-trash = os.path.join(data_wd, "trash")
-if os.path.isdir(trash):
-    shutil.rmtree(trash)
-    print_path(trash)
+for folder in os.listdir(outs_wd):
+    if folder == ".gitkeep": continue
+    folder_path = os.path.join(data_wd, folder)  
+    trash = os.path.join(folder_path, "trash")
+    if os.path.isdir(trash):
+        shutil.rmtree(trash)
+        print_path(trash)
 
