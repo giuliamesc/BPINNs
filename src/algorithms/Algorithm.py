@@ -69,6 +69,7 @@ class Algorithm(ABC):
         sigmas_train = self.select_thetas(sigmas_train)
         # Save thetas in the bnn
         self.model.thetas += thetas_train
+        self.model.sigmas += sigmas_train
         # Report training information
         self.train_log()
 

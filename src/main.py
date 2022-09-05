@@ -93,8 +93,11 @@ print("Saving data...")
 save_storage.save_parameter(params)
 save_storage.save_errors(errors)
 # Saving Training
-save_storage.history = bayes_nn.history
-save_storage.thetas  = bayes_nn.thetas
+save_storage.history  = bayes_nn.history
+save_storage.thetas   = bayes_nn.thetas
+# Saving Sigmas
+save_storage.sg_flags = bayes_nn.sg_flags
+save_storage.sigmas   = bayes_nn.sigmas
 # Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
@@ -108,6 +111,7 @@ load_storage = Storage(path_values, path_thetas, path_log)
 print("Plotting the losses...")
 history = load_storage.history
 plotter.plot_losses(history)
+sigmas  = load_storage.sigmas
 print("Plotting the results...")
 functions_confidence = load_storage.confidence
 functions_nn_samples = load_storage.nn_samples

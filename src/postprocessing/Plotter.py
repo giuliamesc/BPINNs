@@ -114,6 +114,13 @@ class Plotter():
         self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
         self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likelihood)")
 
+    def plot_sigmas(self, sigma_d, sigma_r):
+        self.__plot_sigma(sigma_d)
+        self.__plot_sigma(sigma_r)
+
+    def __plot_sigma(self, sigma):
+        pass
+
     def __wait_input(self, key):
         """ Start a loop that will run until the user enters key """
         key_input = ''

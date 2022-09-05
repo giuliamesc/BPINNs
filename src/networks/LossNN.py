@@ -23,10 +23,12 @@ class LossNN(CoreNN):
         super(LossNN, self).__init__(par, **kw)
         # Parameters for combining losses
         self.coeff  = par.coeff
-        self.sg_params = [self.__convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
-        self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
         # Function for residual evaluation
         self.compute_residual = comp_res
+        
+        self.sg_params = [self.__convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
+        self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
+        self.sigmas = list()
 
     def __loss_residual(self, inputs):
         """
