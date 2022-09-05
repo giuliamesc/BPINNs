@@ -2,7 +2,7 @@
 	"general":{
 		"problem"  : "Laplace1D",
 		"case_name": "",
-		"method"   : "HMC"
+		"method"   : "TEST"
 	},
 
 	"experiment":{
@@ -32,7 +32,7 @@
 	},
 
 	"utils":{
-		"random_seed": 22,
+		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
 		"gen_flag"   : "True"

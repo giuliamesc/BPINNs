@@ -15,9 +15,9 @@ def switch_dataset(problem, case_name):
     match problem:
         case "Laplace1D": 
             match case_name:
-                case "":    return data.Laplace1D_default()
-                case "cos": return data.Laplace1D_cos()
-                case _ : raise Exception("This case test does not exist!")
+                case "default": return data.Laplace1D_default()
+                case "cos":     return data.Laplace1D_cos()
+                case _ :  raise Exception("This case test does not exist!")
         case "Laplace2D": raise Exception("Not implemeted yet")
         case _ : raise Exception("This dataset configuration does not exist!")
 

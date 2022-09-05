@@ -1,6 +1,6 @@
-# %% Import Standard Packages
 import os
 import numpy as np
+import warnings
 
 # %% Start Main Class
 
@@ -26,9 +26,10 @@ class Dataset:
     def __init__(self, par):
         """The constructor"""
         self.pde_type = par.pde
-        self.name_example = par.dataset # name of dataset to use
+        self.name_example = par.dataset
+        self.mesh_type = par.config.analytical_domain["mesh_type"]
 
-        self.__num_fitting = par.experiment["num_fitting"] # num of exact data
+        self.__num_fitting     = par.experiment["num_fitting"] # num of exact data
         self.__num_collocation = par.experiment["num_collocation"] # num of collocation data
         self.noise_lv = par.experiment["noise_lv"]
         
@@ -97,15 +98,13 @@ class Dataset:
         self.U_dom = u
         self.F_dom = f
 
-        # n_domain is simply the length of one of the dataset, x for instance
-        index = list(range(inputs.shape[0]))
-
         # build collocation dataset from domain dataset
         # np.random.shuffle(index) USE ONLY FOR LINSPACE!
         if self.num_collocation > inputs.shape[0] : 
             raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {inputs.shape[0]}')
-        index_coll = index[:self.num_collocation]
-        index_coll.append(index[-1])
+        #index_coll = index[:self.num_collocation]
+        #index_coll.append(index[-1])
+        index_coll = self.__select_indexes(inputs.shape[0], self.num_collocation)
         self.inputs_coll = inputs[index_coll,:]
         self.U_coll = u[index_coll,:]
         self.F_coll = f[index_coll,:]
@@ -114,11 +113,30 @@ class Dataset:
         # np.random.shuffle(index) USE ONLY FOR LINSPACE!
         if self.num_fitting > inputs.shape[0] : 
             raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {inputs.shape[0]}')
-        index_exac = index[:self.num_fitting]
-        index_exac.append(index[-1])
+        #index_exac = index[:self.num_fitting]
+        #index_exac.append(index[-1])
+        index_exac = self.__select_indexes(inputs.shape[0], self.num_fitting)
         self.inputs_exact = inputs[index_exac,:]
         self.U_exact = u[index_exac,:]
         self.F_exact = f[index_exac,:]
+
+    def __select_indexes(self, res, num):
+        # n_domain is simply the length of one of the dataset, x for instance
+        index = list(range(res))
+        match self.mesh_type:
+            case "random"  : return index[:num]
+            case "sobol"   :
+                if not ((num-1) & (num-2)): return index[:num] + [index[-1]]
+                elif not ((num) & (num-1)): return index[:num]
+                elif num < 80: 
+                    warnings.warn("Non optimal choice of resolution for Sobol mesh")
+                    return index[:num]
+            case "uniform" : 
+                delta = (res - res//num * num) // 2 
+                new_index = index[delta::res//num]
+                new_index[0], new_index[-1] = index[0], index[-1]
+                return new_index
+            case _ : Exception("This mesh type doesn't exists")
 
 
     def build_dataset(self):

@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -65,12 +66,28 @@ class AnalyticalData:
     # %% Build Domain
     def __create_domain(self):
         """ Creates the spatial domain with the random points generation technique chosen """
-        if self.domain_data["mesh_type"] == "uniform":
-            self.__create_uniform_domain()
-        elif self.domain_data["mesh_type"] == "sobol":
-            self.__create_sobol_domain()
-        else:
-            raise Exception("This mesh type doesn't exists")
+        match self.domain_data["mesh_type"]:
+            case "uniform": self.__create_uniform_domain()
+            case "sobol"  : self.__create_sobol_domain()
+            case "random" : self.__create_random_domain()
+            case _ : Exception("This mesh type doesn't exists")
+    
+    def __create_random_domain(self):
+        """ Used in __create_domain; generation of a random uniform spatial mesh """
+        x = np.zeros([self.domain_data["resolution"], self.dimension])
+
+        for i in range(self.dimension):
+            x[:,i] = np.random.uniform(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1],
+                                 self.domain_data["resolution"])              
+        if self.dimension == 2:
+            raise Exception("Not Implemented for d=2!")
+        if self.dimension == 3:
+            raise Exception("Not Implemented for d=3!")
+
+        self.grid = np.reshape(x,[self.dimension, self.domain_data["resolution"]**self.dimension])
+        names = ["x","y","z"]
+        for i in range(self.dimension):
+            self.__save_data(names[i], self.grid[i])
 
     def __create_uniform_domain(self):
         """ Used in __create_domain; generation of a uniform spatial mesh """

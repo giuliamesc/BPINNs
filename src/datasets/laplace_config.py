@@ -8,7 +8,7 @@ class Laplace1D_default(Laplace1D):
     physics = {"diffusion" : 1.}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
-        "mesh_type" : "sobol",
+        "mesh_type" : "uniform",
         "resolution": 200,
         "domain": [(0,1)]}
     # Lambda expression of the solution and the parametric field
@@ -22,7 +22,7 @@ class Laplace1D_cos(Laplace1D):
     physics = {"diffusion" : 1.}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
-        "mesh_type" : "sobol",
+        "mesh_type" : "uniform",
         "resolution": 200,
         "domain": [(0,1)]}
     # Lambda expression of the solution and the parametric field
