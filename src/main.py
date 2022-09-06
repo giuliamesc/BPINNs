@@ -4,7 +4,8 @@ from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Setup utilities
-configuration_file = "HMC_laplace"
+configuration_file = None
+#configuration_file = "HMC_laplace"
 set_directory()
 set_warning()
 gui_len = set_gui_len()

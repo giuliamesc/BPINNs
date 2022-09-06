@@ -16,6 +16,6 @@ class TEST(Algorithm):
         sigma = self.model.sg_params
         return theta, sigma
 
-    def select_thetas(self, thetas_train):
+    def select_thetas(self, thetas_train, sigmas_train):
         """ Compute burn-in and skip samples """
-        return thetas_train
+        return thetas_train, sigmas_train
