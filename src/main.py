@@ -12,8 +12,7 @@ gui_len = set_gui_len()
 # %% Import Local Classes
 
 from setup import Parser, Param             # Setup
-from setup import AnalyticalData            # Data Generation
-from setup import Dataset, Dataloader       # Dataset Creation
+from setup import AnalyticalData, Dataset   # Dataset Creation
 from networks import BayesNN                # Models
 from postprocessing import Storage, Plotter # Postprocessing
 
@@ -48,11 +47,6 @@ dataset = Dataset(params)
 print("\tNumber of fitting data:", dataset.num_fitting)
 print("\tNumber of collocation data:", dataset.num_collocation)
 print(" DONE ".center(gui_len,'*'))
-
-#print("Building dataloader...") 
-#batch_loader = Dataloader(dataset, params.experiment["batch_size"], params.utils['random_seed'])
-#batch_loader = batch_loader.dataload_collocation() # Build the dataloader for minibatch training
-#print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
