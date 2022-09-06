@@ -1,1 +1,1 @@
-from .laplace_config import Laplace1D_cos, Laplace1D_default
+from .config_laplace import Laplace1D_cos, Laplace1D_default

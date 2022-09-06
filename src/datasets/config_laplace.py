@@ -1,10 +1,10 @@
-from .laplace_template import Laplace1D, Laplace2D
+from .template_laplace import Laplace1D, Laplace2D
 from dataclasses import dataclass
 import numpy as np
 
 @dataclass
 class Laplace1D_default(Laplace1D):
-    name    = "Laplace1D_default"
+    name    = "default"
     physics = {"diffusion" : 1.}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
