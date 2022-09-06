@@ -1,12 +1,15 @@
-import os
+from utility import set_directory
 import shutil
+import os
+
+set_directory()
 
 def print_path(full_path):
     index = full_path.find("pacs_bpinns")
     small_path = full_path[index:]
     print(small_path)
 
-src_wd = os.path.join(os.getcwd(), "src")
+src_wd = os.getcwd()
 for folder in os.listdir(src_wd):
     if folder[-3:] == ".py": continue
     folder_path = os.path.join(src_wd, folder)
@@ -15,7 +18,7 @@ for folder in os.listdir(src_wd):
         shutil.rmtree(cache)
         print_path(cache)
 
-outs_wd = os.path.join(os.getcwd(), "outs")
+outs_wd = os.path.join(src_wd, "..\outs")
 for problem_folder in os.listdir(outs_wd):
     if problem_folder == ".gitkeep": continue
     problem_path = os.path.join(outs_wd, problem_folder)
@@ -27,7 +30,7 @@ for problem_folder in os.listdir(outs_wd):
             shutil.rmtree(trash)
             print_path(trash)
 
-data_wd = os.path.join(os.getcwd(), "data")
+data_wd = os.path.join(src_wd, "..\data")
 for problem_folder in os.listdir(data_wd):
     if problem_folder == ".gitkeep": continue
     problem_path = os.path.join(data_wd, problem_folder) 
