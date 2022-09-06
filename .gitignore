@@ -1,7 +1,8 @@
 # User Defined
-temp
 **/trash/
 **/deprecated
+**/prove
+**/altro
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
