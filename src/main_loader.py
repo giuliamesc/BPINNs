@@ -6,15 +6,27 @@ import os
 set_directory()
 gui_len = set_gui_len()
 
-prob_name = "Laplace1D"
+def print_selection(base_folder, message):
+    print(" SELECTION ".center(gui_len,'*'))
+    print(f"Available {message}s:")
+    for code, folder in enumerate(os.listdir(base_folder)[1:]):
+        print(f"{code+1:2d}) {folder}")
+
+def choose_folder(base_folder, message):
+    print_selection(base_folder, message)
+    code = int(input(f"Select code of chosen {message}: "))
+    return os.listdir(base_folder)[code]
+
+base_path = "../outs"
+prob_name = choose_folder(base_path, "problem")
 prob_path = os.path.join("../outs", prob_name)
-
-case_name = "default"
+case_name = choose_folder(prob_path, "setup case")
 case_path = os.path.join(prob_path, case_name)
-
-test_name = "trash"
+test_name = choose_folder(case_path, "test case")
 test_path = os.path.join(case_path, test_name)
 
+print(" START ".center(gui_len,'*'))
+print("Loading directories...")
 path_plot, path_data, path_values, path_thetas, path_log = create_paths(test_path)
 print("Loading data...")
 plotter = Plotter(path_plot)
