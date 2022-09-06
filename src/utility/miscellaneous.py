@@ -1,7 +1,7 @@
+from genericpath import isdir
 import json
 import os
 import logging
-
 
 def set_config(default, hard_coded):
     return default if hard_coded is None else hard_coded
@@ -27,3 +27,9 @@ def load_json(path):
     with open(os.path.join("../config", path +".json")) as hpFile:
         hp = json.load(hpFile)
     return hp
+
+def check_dataset(data_config):
+    path = os.path.join("../data", data_config.problem)
+    path = os.path.join(path, data_config.name)
+    if os.path.isdir(path): return
+    raise Exception(f"Dataset {data_config.name} doesn't exists! (Maybe need to generate it)")

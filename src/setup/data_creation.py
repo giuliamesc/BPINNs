@@ -27,7 +27,7 @@ class Dataset:
         """The constructor"""
         self.pde_type = par.pde
         self.problem = par.problem
-        self.name_example = par.dataset
+        self.name_example = par.folder_name
         self.mesh_type = par.config.analytical_domain["mesh_type"]
 
         self.__num_fitting     = par.experiment["num_fitting"] # num of exact data

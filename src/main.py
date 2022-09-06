@@ -1,6 +1,6 @@
 # %% Utilities
 from utility import set_config, set_directory, set_warning, set_gui_len
-from utility import load_json, create_directories
+from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Setup utilities
@@ -41,6 +41,7 @@ if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
     AnalyticalData(data_config, gui_len)
 else:
+    check_dataset(data_config)
     print("\tStored dataset used:", data_config.name)
 
 dataset = Dataset(params)
@@ -87,8 +88,8 @@ print(" DONE ".center(gui_len,'*'))
 # %% Saving
 
 print("Building saving directories...")
-path_plot, path_values, path_thetas, path_log = create_directories(params)
-save_storage = Storage(path_values, path_thetas, path_log)
+path_plot, path_data, path_values, path_thetas, path_log = create_directories(params)
+save_storage = Storage(path_data, path_values, path_thetas, path_log)
 
 print("Saving data...")
 # Saving Details and Results
@@ -109,7 +110,7 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_values, path_thetas, path_log)
+load_storage = Storage(path_data, path_values, path_thetas, path_log)
 print("Plotting the history...")
 history = load_storage.history
 plotter.plot_losses(history)
@@ -118,8 +119,8 @@ plotter.plot_sigmas(sigmas)
 print("Plotting the results...")
 functions_confidence = load_storage.confidence
 functions_nn_samples = load_storage.nn_samples
-plotter.plot_confidence(dataset, functions_confidence)
-plotter.plot_nn_samples(dataset, functions_nn_samples)
+plotter.plot_confidence(dataset.dom_data, dataset.exact_data_noise, functions_confidence)
+plotter.plot_nn_samples(dataset.dom_data, dataset.exact_data_noise, functions_nn_samples)
 print(" END ".center(gui_len,'*'))
 
-plotter.show_plot()
+#plotter.show_plot()

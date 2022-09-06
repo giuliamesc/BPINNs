@@ -80,10 +80,10 @@ class Plotter():
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, title)
 
-    def plot_confidence(self, dataset, functions):
+    def plot_confidence(self, dom_data, fit_data, functions):
         """ Plots mean and standard deviation of solution and parametric field samples """
-        inputs, u_true, f_true = dataset.dom_data
-        u_points, u_values, _  = dataset.exact_data_noise
+        inputs, u_true, f_true = dom_data
+        u_points, u_values, _  = fit_data
 
         u = (u_true, functions['sol_NN'], functions['sol_std'])
         u_fit = (u_points, u_values)
@@ -94,10 +94,10 @@ class Plotter():
         self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
         self.__save_plot(self.path_plot, 'f_confidence.png')
 
-    def plot_nn_samples(self, dataset, functions):
+    def plot_nn_samples(self, dom_data, fit_data, functions):
         """ Plots all the samples of solution and parametric field """
-        inputs, u_true, f_true = dataset.dom_data
-        u_points, u_values, _  = dataset.exact_data_noise
+        inputs, u_true, f_true = dom_data
+        u_points, u_values, _  = fit_data
 
         u = (u_true, functions['sol_samples'])
         u_fit = (u_points, u_values)

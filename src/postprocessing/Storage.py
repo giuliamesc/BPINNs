@@ -15,8 +15,9 @@ class Storage():
         - save_parameter
         - save_errors
     """
-    def __init__(self, path_values, path_thetas, path_log):
+    def __init__(self, path_data, path_values, path_thetas, path_log):
 
+        self.path_data   = path_data
         self.path_values = path_values
         self.path_thetas = path_thetas
         self.path_log    = path_log
@@ -75,6 +76,16 @@ class Storage():
         sigma_r = np.array([value[0][1].numpy() for value in values])
         if self.sg_flags[0] : np.save(file_name_d, sigma_d)
         if self.sg_flags[1] : np.save(file_name_r, sigma_r)
+
+    @property
+    def data(self):
+        dom_data = None
+        fit_data = None
+        return dom_data, fit_data
+
+    @data.setter
+    def data(self, dom_data, fit_data):
+        pass
 
     @property
     def confidence(self):
@@ -170,7 +181,7 @@ class Storage():
     def save_parameter(self, par):
         """Save parameters"""
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
-            general = dict(method = par.method, dataset = par.dataset)
+            general = dict(method = par.method, dataset = par.folder_name)
             self.__write_par_line(outfile, "GENERAL\n", general)
             self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
             self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
