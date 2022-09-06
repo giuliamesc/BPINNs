@@ -79,13 +79,24 @@ class Storage():
 
     @property
     def data(self):
-        dom_data = None
-        fit_data = None
-        return dom_data, fit_data
+        dom_data, fit_data = [None, None, None], [None, None, None]
+        dom_data[0] = np.load(os.path.join(self.path_data, "dom_inp.npy"))
+        dom_data[1] = np.load(os.path.join(self.path_data, "dom_sol.npy"))
+        dom_data[2] = np.load(os.path.join(self.path_data, "dom_par.npy"))
+        fit_data[0] = np.load(os.path.join(self.path_data, "fit_inp.npy"))
+        fit_data[1] = np.load(os.path.join(self.path_data, "fit_sol.npy"))
+        fit_data[2] = np.load(os.path.join(self.path_data, "fit_par.npy"))
+        return (dom_data, fit_data)
 
     @data.setter
-    def data(self, dom_data, fit_data):
-        pass
+    def data(self, dataset):
+        dom_data, fit_data = dataset[0], dataset[1]
+        np.save(os.path.join(self.path_data, "dom_inp.npy"), dom_data[0])
+        np.save(os.path.join(self.path_data, "dom_sol.npy"), dom_data[1])
+        np.save(os.path.join(self.path_data, "dom_par.npy"), dom_data[2])
+        np.save(os.path.join(self.path_data, "fit_inp.npy"), fit_data[0])
+        np.save(os.path.join(self.path_data, "fit_sol.npy"), fit_data[1])
+        np.save(os.path.join(self.path_data, "fit_par.npy"), fit_data[2])
 
     @property
     def confidence(self):

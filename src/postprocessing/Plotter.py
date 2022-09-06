@@ -83,10 +83,10 @@ class Plotter():
     def plot_confidence(self, dom_data, fit_data, functions):
         """ Plots mean and standard deviation of solution and parametric field samples """
         inputs, u_true, f_true = dom_data
-        u_points, u_values, _  = fit_data
+        ex_points, u_values, _  = fit_data
 
         u = (u_true, functions['sol_NN'], functions['sol_std'])
-        u_fit = (u_points, u_values)
+        u_fit = (ex_points, u_values)
         f = (f_true, functions['par_NN'], functions['par_std'])
 
         self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
@@ -97,10 +97,10 @@ class Plotter():
     def plot_nn_samples(self, dom_data, fit_data, functions):
         """ Plots all the samples of solution and parametric field """
         inputs, u_true, f_true = dom_data
-        u_points, u_values, _  = fit_data
+        ex_points, u_values, _  = fit_data
 
         u = (u_true, functions['sol_samples'])
-        u_fit = (u_points, u_values)
+        u_fit = (ex_points, u_values)
         f = (f_true, functions['par_samples'])
 
         self.__plot_nn_samples_1D(inputs[:,0], u, label = ('x','u'), fit = u_fit)

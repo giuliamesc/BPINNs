@@ -41,3 +41,11 @@ def create_data_folders(problem, name, save):
     if not save: name = "trash"
     case_folder     = __create_single_dir(problem_folder, name, over=True)
     return case_folder
+
+def create_paths(case_folder):
+    path_plot   = os.path.join(case_folder, "plot")
+    path_data   = os.path.join(case_folder, "data")
+    path_values = os.path.join(case_folder, "values")
+    path_thetas = os.path.join(case_folder, "thetas")
+    path_log    = os.path.join(case_folder, "log")
+    return path_plot, path_data, path_values, path_thetas, path_log

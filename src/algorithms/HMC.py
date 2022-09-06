@@ -15,9 +15,12 @@ class HMC(Algorithm):
         self.burn_in = param_method["burn_in"]
         self.HMC_L   = param_method["HMC_L"]
         self.HMC_dt  = param_method["HMC_dt"]
-        self.HMC_ns  = param_method["HMC_ns"]
+        self.HMC_ns  = param_method["HMC_ns"] 
+        
         self.eta = 0.5
         self.selected = list()
+        if self.burn_in >= param_method["epochs"]:
+            self.burn_in = 0
 
     def __check_trainable(self, s):
         if not self.model.sg_flags[0]: s[0] *= [0.0, 1.0]

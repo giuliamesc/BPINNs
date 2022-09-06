@@ -2,7 +2,7 @@
 	"general":{
 		"problem"  : "Laplace1D",
 		"case_name": "",
-		"method"   : "TEST"
+		"method"   : "HMC"
 	},
 
 	"experiment":{
@@ -39,22 +39,10 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
+		"epochs" : 500,
+		"burn_in": 100,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
 		"HMC_ns" : 1e-3
-	},
-
-	"SVGD":{
-		"epochs" : 10
-	},
-
-	"VI":{
-		"epochs" : 10
-	},
-
-	"TEST":{
-		"epochs" : 5
 	}
 }

@@ -4,7 +4,7 @@ from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Setup utilities
-configuration_file = None
+configuration_file = "HMC_laplace"
 set_directory()
 set_warning()
 gui_len = set_gui_len()
@@ -89,6 +89,8 @@ print("Saving data...")
 # Saving Details and Results
 save_storage.save_parameter(params)
 save_storage.save_errors(errors)
+# Saving Dataset
+save_storage.data = (dataset.dom_data, dataset.exact_data_noise) 
 # Saving Training
 save_storage.history  = bayes_nn.history
 save_storage.thetas   = bayes_nn.thetas
@@ -105,6 +107,7 @@ print(" DONE ".center(gui_len,'*'))
 print("Loading data...")
 plotter = Plotter(path_plot)
 load_storage = Storage(path_data, path_values, path_thetas, path_log)
+loaded_data  = load_storage.data
 print("Plotting the history...")
 history = load_storage.history
 plotter.plot_losses(history)
@@ -113,8 +116,8 @@ plotter.plot_sigmas(sigmas)
 print("Plotting the results...")
 functions_confidence = load_storage.confidence
 functions_nn_samples = load_storage.nn_samples
-plotter.plot_confidence(dataset.dom_data, dataset.exact_data_noise, functions_confidence)
-plotter.plot_nn_samples(dataset.dom_data, dataset.exact_data_noise, functions_nn_samples)
+plotter.plot_confidence(loaded_data[0], loaded_data[1], functions_confidence)
+plotter.plot_nn_samples(loaded_data[0], loaded_data[1], functions_nn_samples)
 print(" END ".center(gui_len,'*'))
 
-#plotter.show_plot()
+plotter.show_plot()

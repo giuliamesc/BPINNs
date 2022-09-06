@@ -19,7 +19,7 @@
 
 ## Altro
 - GuiLen global?
-- atch??
+- batch??
 
 ### PROPOSTE VARIE
 - Warning per diagnostica tuning
