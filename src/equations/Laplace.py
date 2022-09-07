@@ -8,7 +8,7 @@ class Laplace(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
-        self.mu = par.physics["diffusion"]
+        self.mu = tf.constant(par.physics["diffusion"])
         
     def compute_residual(self, x, forward_pass):
         """
