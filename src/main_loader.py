@@ -31,17 +31,13 @@ path_plot, path_data, path_values, path_thetas, path_log = create_paths(test_pat
 print("Loading data...")
 plotter = Plotter(path_plot)
 load_storage = Storage(path_data, path_values, path_thetas, path_log)
-loaded_data  = load_storage.data
 print("Plotting the history...")
-history = load_storage.history
-plotter.plot_losses(history)
-sigmas  = load_storage.sigmas
-plotter.plot_sigmas(sigmas)
+plotter.plot_losses(load_storage.history)
+plotter.plot_sigmas(load_storage.sigmas)
 print("Plotting the results...")
-functions_confidence = load_storage.confidence
-functions_nn_samples = load_storage.nn_samples
-plotter.plot_confidence(loaded_data[0], loaded_data[1], functions_confidence)
-plotter.plot_nn_samples(loaded_data[0], loaded_data[1], functions_nn_samples)
+loaded_data  = load_storage.data
+plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
+plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
 print(" END ".center(gui_len,'*'))
 
 plotter.show_plot()

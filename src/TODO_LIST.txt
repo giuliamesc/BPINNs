@@ -1,5 +1,6 @@
 ### Rete Neurale
 - Loss Prior
+- Preprocessing
 
 ### Equazioni
 - Pre processing data

@@ -192,7 +192,7 @@ class Storage():
     def save_parameter(self, par):
         """Save parameters"""
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
-            general = dict(method = par.method, dataset = par.folder_name)
+            general = dict(method = par.method, problem = par.problem, case_name = par.case_name)
             self.__write_par_line(outfile, "GENERAL\n", general)
             self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
             self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
