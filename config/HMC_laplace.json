@@ -8,7 +8,7 @@
 	"experiment":{
 		"num_collocation": 100,
 		"num_fitting"    : 16,
-		"noise_lv"   : 0.2,
+		"noise_lv"   : 0.05,
 		"batch_size" : 4
 	},
 
@@ -39,8 +39,8 @@
 	},
 
 	"HMC":{
-		"epochs" : 500,
-		"burn_in": 100,
+		"epochs" : 5000,
+		"burn_in": 500,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
 		"HMC_ns" : 1e-3
