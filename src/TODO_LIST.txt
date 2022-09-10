@@ -1,6 +1,5 @@
 ### Rete Neurale
 - Loss Prior
-- Preprocessing
 
 ### Equazioni
 - Pre processing data
@@ -16,7 +15,6 @@
 
 ### Input e Salvataggi
 - Migliorare save params
-- Valutare il salvataggio dei theta
 
 ## Altro
 - GuiLen global?
@@ -24,7 +22,5 @@
 
 ### PROPOSTE VARIE
 - Warning per diagnostica tuning
-- Migliorare Debug Flag
-- Decoratori per Error management ??
-- Cambiare da prop a numero l'import dati
+- Decoratori per Error management ???
 - Usare Logging
