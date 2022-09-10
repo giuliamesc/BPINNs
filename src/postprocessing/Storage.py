@@ -128,10 +128,9 @@ class Storage():
     def __write_txt_line(self, outfile, my_str, vec):
         comps = ["x", "y", "z"][:len(vec)]
         aux_str = my_str + " by component:" + "\n"
-        aux_str = aux_str.ljust(20)
+        outfile.write(aux_str)
         for idx, comp in enumerate(comps):
-            aux_str = aux_str + comp + ":"
-            outfile.write(f"{aux_str} {vec[idx]:1.4f} \t")
+            outfile.write(f"\t{comp}: {100*vec[idx]:1.2f}%")
         outfile.write("\n")
 
     def __write_par_line(self, outfile, field, value):

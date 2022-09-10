@@ -3,6 +3,7 @@ import shutil
 import os
 
 set_directory()
+print("Deleted Folders:")
 
 def print_path(full_path):
     index = full_path.find("pacs_bpinns")
