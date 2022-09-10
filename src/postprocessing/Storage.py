@@ -1,6 +1,5 @@
 import numpy as np
 import shutil
-import json
 import os
 
 class Storage():

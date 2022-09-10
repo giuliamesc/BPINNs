@@ -119,26 +119,29 @@ class PredNN(CoreNN):
         u_q = self.__compute_UQ(function_confidence)
         return err | u_q
 
-    def disp_errors(self, message, values):
-        """ Format of the error printing """
-        if len(values) == 1:
-            print(f"   {message}: {100*values[0]:1.2f}%")
-        else:
-            labels = ["x", "y", "z"][:len(values)]
-            for label, value in zip(labels, values):
-                print(f"   {message} in direction {label}: {100*value:1.2f}%")
-
     def fill_thetas(self, new_thetas):
         """ Initializes the list of thetas with a given set """
         if not self.thetas.empty:
             raise Warning("Some thetas have been deleted!") 
         self.thetas = new_thetas
 
+    def __disp_UQ(self, tag, means, maxs): # VALUTA SE CONSIDERARE IN RELAZIONE AL NOISE
+        form = lambda value: f"{100*value:1.2f}%"
+        labels = ["x", "y", "z"][:len(means)]
+        for label, mean, mx in zip(labels, means, maxs):
+            if    len(means) == 1:     print(f"\t{tag} UQ: (mean) {form(mean)} - (max) {form(mx)}")
+            else: print(f"\t{tag} UQ in direction {label}: (mean) {form(mean)} - (max) {form(mx)}")
+
+    def __disp_err(self, tag, errors):
+        form = lambda value: f"{100*value:1.2f}%"
+        labels = ["x", "y", "z"][:len(errors)]
+        for label, error in zip(labels, errors):
+            if    len(errors) == 1:    print(f"\t{tag} error: {form(error)}")
+            else: print(f"\t{tag} error in direction {label}: {form(error)}")
+
     def show_errors(self, errors):
-        """ Print on terminal the errors computed above """
-        self.disp_errors("Relative sol error", errors["error_sol"])
-        self.disp_errors("Relative par error", errors["error_par"])
-        self.disp_errors("Mean UQ sol", errors["uq_sol_mean"])
-        self.disp_errors("Mean UQ par", errors["uq_par_mean"])
-        self.disp_errors("Max UQ sol", errors["uq_sol_max"])
-        self.disp_errors("Max UQ par", errors["uq_par_max"])
+        """ Prints on terminal the errors computed above """
+        self.__disp_err("Sol", errors["error_sol"])
+        self.__disp_err("Par", errors["error_par"])
+        self.__disp_UQ( "Sol", errors["uq_sol_mean"], errors["uq_sol_max"])
+        self.__disp_UQ( "Par", errors["uq_par_mean"], errors["uq_par_max"])

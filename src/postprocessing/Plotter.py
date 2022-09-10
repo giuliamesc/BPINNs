@@ -50,7 +50,7 @@ class Plotter():
         x, idx = self.__order_inputs(x)
 
         plt.figure()
-        blurring = 2/len(func[1])
+        blurring = min(1.0, 2/len(func[1]))
         for func_sample in func[1]:
             plt.plot(x, func_sample[idx,0], 'b-', markersize=0.01, alpha=blurring)
 
@@ -91,8 +91,8 @@ class Plotter():
 
         self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_confidence.png')
-        self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
-        self.__save_plot(self.path_plot, 'f_confidence.png')
+        #self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
+        #self.__save_plot(self.path_plot, 'f_confidence.png')
 
     def plot_nn_samples(self, dom_data, fit_data, functions):
         """ Plots all the samples of solution and parametric field """
@@ -105,8 +105,8 @@ class Plotter():
 
         self.__plot_nn_samples_1D(inputs[:,0], u, label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_nn_samples.png')
-        self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
-        self.__save_plot(self.path_plot, 'f_nn_samples.png')
+        #self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
+        #self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
     def plot_losses(self, losses):
         """ Generates the plots of MSE and log-likelihood """
