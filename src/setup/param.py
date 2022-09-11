@@ -38,6 +38,8 @@ class Param:
         # set all useful parameters from physical domain and dimension
         self.phys_dim = Dimension(data_config, True)
         self.comp_dim = Dimension(data_config, False)
+        self.inverse  = "inverse" if data_config.inv_flag else "direct"
+        self.inv_flag = data_config.inv_flag
 
     def __string_to_bool(self, s):
         """ Convert string "True","False" to boolean True and False """

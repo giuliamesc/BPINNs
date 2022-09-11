@@ -1,13 +1,11 @@
 ### Rete Neurale
 - Loss Prior
+- Problema inverso
+- Eliminare Sigmas
 
 ### Equazioni
 - Pre processing data
 - Pre-post processing vector
-
-### Hamiltonian Monetcarlo
-- Studio iperparametri
-- Tuning
 
 ### Nuovi Algoritmi  
 - Variational Inference    

@@ -5,8 +5,8 @@ from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Manual configuration
 configuration_file = None
-#configuration_file = "HMC_laplace"
 configuration_file = "HMC_regression"
+#configuration_file = "HMC_laplace"
 
 # Setup utilities
 set_directory()
@@ -32,8 +32,8 @@ data_config = switch_dataset(params.problem, params.case_name)
 params.data_config = data_config
 debug_flag  = params.utils["debug_flag"]
 
-print("Bayesian PINN with", params.method)
-print("Solve the inverse problem of " + str(params.phys_dim.n_input) + "D " + params.pde)
+print(f"Bayesian PINN using {params.method}")
+print(f"Solve the {params.inverse} problem of {params.pde} {params.phys_dim.n_input}D ")
 print(" DONE ".center(gui_len,'*'))
 
 
@@ -45,23 +45,23 @@ if params.utils["gen_flag"]:
     AnalyticalData(data_config, gui_len)
 else:
     check_dataset(data_config)
-    print("\tStored dataset used:", data_config.name)
+    print(f"\tStored dataset used: {data_config.name}")
 
 dataset = Dataset(params)
-print("\tNumber of fitting data:", dataset.num_fitting)
-print("\tNumber of collocation data:", dataset.num_collocation)
+print(f"\tNumber of fitting data: {dataset.num_fitting}")
+print(f"\tNumber of collocation data: {dataset.num_collocation}")
 print(" DONE ".center(gui_len,'*'))
 
 # %% Model Building
 
 print("Building the Model")
-print("\tChosing", params.pde, "equation...")
+print(f"\tChosing {params.pde} equation...")
 equation = switch_equation(params.problem)
 print("\tInitializing the Bayesian PINN...")
 bayes_nn = BayesNN(params, equation) # Initialize the Bayesian NN
-print("\tChosing", params.method, "algorithm...")
+print(f"\tChosing {params.method} algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
-print("\tBuilding", params.method, "algorithm...")
+print(f"\tBuilding {params.method} algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training
 print(" DONE ".center(gui_len,'*'))

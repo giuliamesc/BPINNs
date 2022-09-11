@@ -8,6 +8,8 @@ class Data_Config(ABC):
     name = None
     # Name of the differential equation
     pde = None
+    # Flag for inverse problem
+    inv_flag = False
     # Dimensions of the physical domain: dimension of inputs, solution and parametric field
     phys_dom = {
         "n_input"   : int,

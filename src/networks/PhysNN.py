@@ -7,7 +7,7 @@ class PhysNN(CoreNN):
         
         self.pinn = equation(par)
         self.n_out_par = par.comp_dim.n_out_par
-        self.inv_prob  = False # Flag for inverse problem
+        self.inv_flag  = par.inv_flag
 
     def forward(self, inputs):
         u_tilde = super(PhysNN, self).forward(inputs)
