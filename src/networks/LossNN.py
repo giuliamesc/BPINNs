@@ -1,7 +1,7 @@
-from .CoreNN import CoreNN
+from .PhysNN import PhysNN
 import tensorflow as tf
 
-class LossNN(CoreNN):
+class LossNN(PhysNN):
     """
     - Evaluate PDEs residuals (using pde constraint)
     - Compute mean-squared-errors and loglikelihood
@@ -18,36 +18,16 @@ class LossNN(CoreNN):
         - Total: sum of the previous
     """
 
-    def __init__(self, par, comp_res, **kw):
+    def __init__(self, par, **kw):
 
         super(LossNN, self).__init__(par, **kw)
         # Parameters for combining losses
         self.coeff  = par.coeff
-        # Function for residual evaluation
-        self.compute_residual = comp_res
-        
         self.sg_params = [self.__convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
         self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
         self.sigmas = list()
 
-    def __loss_residual(self, inputs):
-        """
-        Computes the MSE and log-likelihood of the data 
-        inputs: (num_collocation, n_input)
-        """
-        if self.coeff["res"] == 0.0: return 0.0, 0.0
-        # compute loss using pde_constraint
-        pde_res = self.compute_residual(inputs, self.forward)
-        mse_res = self.__mse(pde_res)
-
-        # log loss for a Gaussian -> Normal(loss_1 | zeros, 1/betaR*Identity)
-        n_r = pde_res.shape[0] # number of samples
-        log_var = self.sg_params[0][1] # log(1/betaR)
-
-        log_res = self.__normal_loglikelihood(mse_res, n_r, log_var)
-        log_res *= self.coeff["res"]
-
-        return self.__convert(mse_res), self.__convert(log_res)
+    def __loss_residual(self, _): return 0.0, 0.0 # DEPRECATED
 
     def __loss_data(self, inputs, targets):
         """
@@ -56,9 +36,8 @@ class LossNN(CoreNN):
         targets : np(num_fitting, n_out_sol)
         outputs : tf(num_fitting, n_out_sol)
         """
-        if self.coeff["data"] == 0.0: return 0.0, 0.0
         # Normal(output | target, 1 / betaD * I)
-        outputs, _ = self.forward(inputs, split = True)
+        outputs, _  = self.forward(inputs)
         mse_data = self.__mse(outputs-targets)
 
         n_d = outputs.shape[0]
@@ -99,13 +78,13 @@ class LossNN(CoreNN):
         return 0.5 * n * mse * tf.math.exp(log_var) - 0.5 * n * log_var
 
     def loss_total(self, dataset):
-        """ Creation of the dictionary containing all MSEs and log-likelihoods """
-        loss, logloss = dict(), dict()
-        loss["res"],   logloss["res"]   = self.__loss_residual(dataset.coll_data[0])
-        loss["data"],  logloss["data"]  = self.__loss_data(dataset.exact_data_noise[0], dataset.exact_data_noise[1])
-        loss["prior"], logloss["prior"] = self.__loss_prior()
-        loss["Total"], logloss["Total"] = sum(loss.values()), sum(logloss.values()) # TF SUM?
-        return loss, logloss
+        """ Creation of the dictionary containing all posteriors and log-likelihoods """
+        posterior, loglike = dict(), dict()
+        posterior["res"],   loglike["res"]   = self.__loss_residual(dataset.coll_data[0])
+        posterior["data"],  loglike["data"]  = self.__loss_data(dataset.exact_data_noise[0], dataset.exact_data_noise[1])
+        posterior["prior"], loglike["prior"] = self.__loss_prior()
+        posterior["Total"], loglike["Total"] = sum(posterior.values()), sum(loglike.values())
+        return posterior, loglike
 
     def grad_loss(self, dataset):
 

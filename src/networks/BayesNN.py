@@ -7,22 +7,12 @@ class BayesNN(PredNN, LossNN):
     - Contains loss history
     """
 
-    def __init__(self, par, equation_class):
+    def __init__(self, par, equation):
         
         self.seed    = par.utils["random_seed"] 
         self.history = self.__initialize_losses()
+        super(BayesNN, self).__init__(par = par, equation = equation)
 
-        equation  = equation_class(par)
-        comp_res  = equation.compute_residual
-        
-        pre_proc  = equation.pre_process
-        post_proc = equation.post_process
-        comp_proc = equation.comp_process
-        data_proc = equation.data_process
-        
-        super(BayesNN, self).__init__(par=par, comp_res=comp_res,
-                                      pre=pre_proc, post=post_proc, 
-                                      proc=comp_proc, data=data_proc)
 
     def __initialize_losses(self):
         """ Initializes empty MSE and log-likelihood dictionaries """

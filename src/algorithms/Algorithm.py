@@ -26,8 +26,8 @@ class Algorithm(ABC):
 
     @data_train.setter
     def data_train(self, dataset):
-        self.model.process_params = self.model.comp_process(dataset)
-        self.data = self.model.data_process(dataset, self.model.process_params)
+        self.model.process_params = self.model.pinn.comp_process(dataset)
+        self.data = self.model.pinn.data_process(dataset, self.model.process_params)
 
     def __train_step(self, epoch):
 

@@ -1,8 +1,8 @@
-from .CoreNN import CoreNN
+from .PhysNN import PhysNN
 import tensorflow as tf
 import numpy as np
 
-class PredNN(CoreNN):
+class PredNN(PhysNN):
     """
     - Computes a sample given thetas and inputs
     - Outputs a prediction given samples of theta
@@ -11,23 +11,19 @@ class PredNN(CoreNN):
         - Uncertainity Quantification
     """
     
-    def __init__(self, pre, post, proc, data, **kw):
+    def __init__(self, **kw):
         
         super(PredNN, self).__init__(**kw)
         # Functions for pre and post processing of inputs and outputs of the network
         self.process_params = dict()
-        self.pre_process  = pre
-        self.post_process = post
-        self.comp_process = proc
-        self.data_process = data
         # Empty list where samples of network parameters will be stored
         self.thetas = list() 
 
     def __compute_sample(self, theta, inputs):
         """ Computes output sampling with one given theta """
         self.nn_params = theta
-        sample = self.forward(inputs, split=True)
-        return self.post_process(sample, self.process_params)
+        sample = self.forward(inputs)
+        return self.pinn.post_process(sample, self.process_params)
     
     def __predict(self, inputs, n_thetas = None):
         """ 
@@ -35,7 +31,7 @@ class PredNN(CoreNN):
         out_sol: list with len n_thetas, of tf tensor (n_sample, n_out_sol)
         out_par: list with len n_thetas, of tf tensor (n_sample, n_out_par)
         """
-        inputs = self.pre_process(inputs, self.process_params)
+        inputs = self.pinn.pre_process(inputs, self.process_params)
         out_sol = list()
         out_par = list()
 

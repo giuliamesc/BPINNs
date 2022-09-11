@@ -13,6 +13,9 @@ def switch_algorithm(method):
 
 def switch_dataset(problem, case_name):
     match problem:
+        case "Regression":
+            match case_name:
+                case "reg1D": return data.Regression1D()
         case "Laplace1D": 
             match case_name:
                 case "default": return data.Laplace1D_default()
@@ -24,6 +27,7 @@ def switch_dataset(problem, case_name):
 
 def switch_equation(problem):
     match problem:
-        case "Laplace1D": return eq.Laplace
-        case "Laplace2D": return eq.Laplace
+        case "Regression": return eq.Regression
+        case "Laplace1D":  return eq.Laplace
+        case "Laplace2D":  return eq.Laplace
         case _ : raise Exception("This equation does not exist!")

@@ -13,10 +13,10 @@ class CoreNN():
         - weights is a list of numpy arrays 
             - 1 layer               : shape (n_input, n_neurons)
             - (n_layers - 1) layers : shape (n_neurons, n_neurons) 
-            - 1 layer               : shape (n_neurons, n_out_sol+n_out_par)
+            - 1 layer               : shape (n_neurons, n_out_sol)
         - biases is a list of numpy arrays 
             - n_layers layers       : shape (n_neurons,) 
-            - 1 layer               : shape (n_out_sol+n_out_par,)
+            - 1 layer               : shape (n_out_sol,)
     """
 
     def __init__(self, par):
@@ -24,7 +24,6 @@ class CoreNN():
         # Domain dimensions
         self.n_inputs  = par.comp_dim.n_input
         self.n_out_sol = par.comp_dim.n_out_sol
-        self.n_out_par = par.comp_dim.n_out_par
 
         # Architecture parameters
         self.n_layers   = par.architecture["n_layers"]
@@ -67,37 +66,21 @@ class CoreNN():
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
                       kernel_initializer='glorot_uniform', bias_initializer='zeros'))
         # Output Layer
-        model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
-                  kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+        model.add(tf.keras.layers.Dense(self.n_out_sol, 
+                      kernel_initializer='glorot_uniform', bias_initializer='zeros'))
 
         return model
 
     def initialize_NN(self, seed):
-        """ Initialization of the Neural Network with given random seed"""
+        """ Initialization of the Neural Network with given random seed """
         self.model = self.__build_NN(seed)
         
 
-    def forward(self, inputs, split = False):
+    def forward(self, inputs):
         """ 
-        Simple prediction on Solution and Parametric field 
+        Simple prediction on draft of Solution
         inputs : np array  (n_samples, n_input)
-        [split = False] output : tf tensor (n_samples, n_out_sol + n_out_par)
-        [split = True] out_sol : tf tensor (n_samples, n_out_sol)
-        [split = True] out_par : tf tensor (n_samples, n_out_par)
+        output : tf tensor (n_samples, n_out_sol)
         """
-
         x = tf.convert_to_tensor(inputs)
-        output = self.model(x) # compute the output of NN at the inputs data
-        
-        if not split: return output
-        out_sol = output[:,:self.n_out_sol] # select solution output
-        out_par = output[:,self.n_out_sol:] # select parametric field output
-        return out_sol, out_par
-
-    def grad_nn_theta(self, inputs):
-        """ Returns the gradient of the output of the net with respect to the weights and biases (shape: [sample x output x theta]) """
-        with tf.GradientTape() as tape:
-            tape.watch(self.model.trainable_variables)
-            x = tf.convert_to_tensor(inputs)
-            output = self.model(x)
-        return tape.jacobian(output, self.model.trainable_variables)
+        return self.model(x)
