@@ -9,6 +9,9 @@ class Regression(Equation):
     def __init__(self, par):
         super().__init__(par)
 
+    def parametric_field(self, surr_model):
+        return surr_model
+
     def comp_process(self, dataset):
         params = dict()
         return params

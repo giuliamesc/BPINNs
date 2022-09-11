@@ -7,9 +7,10 @@ class PhysNN(CoreNN):
         
         self.pinn = equation(par)
         self.n_out_par = par.comp_dim.n_out_par
+        self.inv_prob  = False # Flag for inverse problem
 
     def forward(self, inputs):
         u_tilde = super(PhysNN, self).forward(inputs)
         u = u_tilde
-        f = u_tilde # To be updated
+        f = self.pinn.parametric_field(u_tilde)
         return u, f

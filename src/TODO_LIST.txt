@@ -16,11 +16,14 @@
 ### Input e Salvataggi
 - Migliorare save params
 
-## Altro
-- GuiLen global?
-- batch??
+## Idee
+- Salvataggio per vari selezioni
+    - epochs, burn-in, skips
+- Dizionari per property del dataset
 
 ### PROPOSTE VARIE
 - Warning per diagnostica tuning
 - Decoratori per Error management ???
 - Usare Logging
+- Guilen Global - funzione di print center
+- Batch

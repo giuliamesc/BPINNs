@@ -63,7 +63,7 @@ print("\tChosing", params.method, "algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
 print("\tBuilding", params.method, "algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
-train_algorithm.data_train = dataset # Insert the dataset used for training # Decidi se separare qua in batch
+train_algorithm.data_train = dataset # Insert the dataset used for training
 print(" DONE ".center(gui_len,'*'))
 
 # %% Training
@@ -120,4 +120,4 @@ plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
 plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
 print(" END ".center(gui_len,'*'))
 
-#plotter.show_plot()
+plotter.show_plot()

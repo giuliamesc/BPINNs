@@ -14,20 +14,16 @@ class HMC(Algorithm):
         skip    : number of epochs to skip during sampling
         HMC_L   : number of leap-frog steps to perform
         HMC_dt  : time interval for thetas update
-        HMC_ns  : time interval for sigmas update
         """
         if param_method["burn_in"] >= param_method["epochs"]:
             raise Exception("Burn-in is too high for this number of epochs!")
+        
         self.burn_in = param_method["burn_in"]
         self.skip    = param_method["skip"]
         self.HMC_L   = param_method["HMC_L"]
-        self.HMC_dt  = param_method["HMC_dt"]
-        self.HMC_ns  = param_method["HMC_ns"] 
-        
-        self.eta = 0.5
+        self.HMC_dt  = param_method["HMC_dt"] 
+        self.HMC_eta = param_method["HMC_eta"] 
         self.selected = list()
-        if self.burn_in >= param_method["epochs"]:
-            self.burn_in = 0
 
     def __check_trainable(self, s):
         """ If the sigmas are not trainable, sets sigma vector to zero """
@@ -35,19 +31,19 @@ class HMC(Algorithm):
         if not self.model.sg_flags[1]: s[0] *= [1.0, 0.0]
         return s
 
-    def __leapfrog_step(self, old_theta, old_sigma, r, s, dt, ns): # SI potrebbe cancellare old_theta
+    def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * ns/2 for x,y in zip(s, grad_sigma)]
+        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
 
         self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)]
-        self.model.sg_params = [ x + y * ns for x,y in zip(old_sigma, s)] 
+        self.model.sg_params = [ x + y * dt for x,y in zip(old_sigma, s)] 
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * ns/2 for x,y in zip(s, grad_sigma)]
+        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
         
         return self.model.nn_params, self.model.sg_params, r, s
 
@@ -97,31 +93,24 @@ class HMC(Algorithm):
         return theta, sigma
 
     def __hamiltonian(self, theta, sigma, r, s):
-        """ 
-        Evaluation of the Hamiltonian function: 
-        U : negative log-likelihood
-        v_r : 0.5 * eta * r^T * r
-        v_s : 0.5 * eta * s^T * s
-        V = v_r + v_s
-        H = U + V 
-        """
+        """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
         self.model.sg_params = sigma
         u = self.model.loss_total(self.data)[1]["Total"].numpy()
-        v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.eta**2/2
-        v_s = sum([tf.norm(t).numpy()**2 for t in s]) * self.eta**2/2
+        v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
+        v_s = sum([tf.norm(t).numpy()**2 for t in s]) * self.HMC_eta**2/2
         return u + v_r + v_s
     
     def sample_theta(self, theta_0, sigma_0):
         """ Samples one parameter vector given its previous value """
-        r_0 = [tf.random.normal(x.shape, stddev=self.eta) for x in theta_0] 
-        s_0 = [tf.random.normal((2,), stddev=self.eta)]
+        r_0 = [tf.random.normal(x.shape, stddev=self.HMC_eta) for x in theta_0] 
+        s_0 = [tf.random.normal((2,), stddev=self.HMC_eta)]
         s_0 = self.__check_trainable(s_0)
         r, s = r_0.copy(), s_0.copy()
         theta = theta_0.copy()
         sigma = sigma_0.copy()
         for _ in range(self.HMC_L):
-            theta, sigma, r, s = self.__leapfrog_step(theta, sigma, r, s, self.HMC_dt, self.HMC_ns)
+            theta, sigma, r, s = self.__leapfrog_step(theta, sigma, r, s, self.HMC_dt)
         return self.__accept_reject((theta_0,theta), (sigma_0,sigma), (r_0,r), (s_0,s))
 
     def select_thetas(self, thetas_train, sigmas_train):

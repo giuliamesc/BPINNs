@@ -34,8 +34,7 @@ class Parser(ArgumentParser):
         self.add_argument('--num_collocation', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation data")
         self.add_argument('--num_fitting',     type=int,   help="Needs to be integer. Number of Domain Data to use as sparse exact data")
         self.add_argument('--noise_lv',        type=float, help="Artificial noise in exact dataset")
-        self.add_argument('--batch_size',      type=int,   help="Batch size for training collocation. Select 0 if you don't want a batch")
-
+        
         # Architecture
         self.add_argument('--activation', type=str, help='Activation function for hidden layers')
         self.add_argument('--n_layers'  , type=int, help='Number of hidden layers in the NN')
@@ -65,7 +64,6 @@ class Parser(ArgumentParser):
         self.add_argument('--burn-in', type=int,   help="Number of samples to use in HMC (after burn-in). Needs to be <= epochs")
         self.add_argument('--HMC_L'  , type=int,   help="L: number of leapfrog step in HMC")
         self.add_argument('--HMC_dt' , type=float, help="dt: step size in HMC")
-        self.add_argument('--HMC_ns' , type=float, help="ns: step size in HMC for log betas")
 
         # SVGD
 

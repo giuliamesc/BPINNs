@@ -1,15 +1,14 @@
 {
 	"general":{
 		"problem"  : "Regression",
-		"case_name": "sin",
+		"case_name": "cos",
 		"method"   : "HMC"
 	},
 
 	"experiment":{
 		"num_collocation": 100,
 		"num_fitting"    : 16,
-		"noise_lv"   : 0.05,
-		"batch_size" : 4
+		"noise_lv"   : 0.05
 	},
 
 	"architecture":{
@@ -25,9 +24,9 @@
 	},
 
 	"sigmas":{
-		"data_pn" : 1e-2,
+		"data_pn" : 1e0,
 		"pde_pn"  : 1e-2,
-		"data_pn_flag": "True",
+		"data_pn_flag": "False",
 		"pde_pn_flag" : "False"
 	},
 
@@ -39,11 +38,11 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
+		"epochs" : 100,
+		"burn_in": 20,
 		"skip"   : 10,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
-		"HMC_ns" : 1e-3		
+		"HMC_eta": 1.0	
 	}
 }

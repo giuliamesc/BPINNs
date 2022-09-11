@@ -42,26 +42,12 @@ class LossNN(PhysNN):
         """ Negative log-likelihood """
         return 0.5 * n * mse * tf.math.exp(log_var) - 0.5 * n * log_var
 
-    def __loss_residual(self, _): return 0.0, 0.0 # DEPRECATED
-
-    def __loss_data(self, inputs, targets):
-        """
-        Computes the MSE and log-likelihood of the data 
-        inputs  : np(num_fitting, n_input)
-        targets : np(num_fitting, n_out_sol)
-        outputs : tf(num_fitting, n_out_sol)
-        """
+    def __loss_data(self, outputs, targets):
         # Normal(output | target, 1 / betaD * I)
-        outputs, _  = self.forward(inputs)
-        mse_data = self.__mse(outputs-targets)
-
-        n_d = outputs.shape[0]
-        log_var = self.sg_params[0][0] # log(1/betaD)
-
-        log_data = self.__normal_loglikelihood(mse_data, n_d, log_var)
-        log_data*= self.coeff["data"]
-
-        return self.__convert(mse_data), self.__convert(log_data)
+        post_data = self.__mse(outputs-targets)
+        log_var  = self.sg_params[0][0] # log(1/betaD)
+        log_data = self.__normal_loglikelihood(post_data, outputs.shape[0], log_var)
+        return self.__convert(post_data), self.__convert(log_data)
 
     def __loss_prior(self):
         posterior_prior = 0.
@@ -71,10 +57,11 @@ class LossNN(PhysNN):
     def loss_total(self, dataset):
         """ Creation of the dictionary containing all posteriors and log-likelihoods """
         posterior, loglike = dict(), dict()
-        posterior["res"],   loglike["res"]   = self.__loss_residual(dataset.coll_data[0])
-        posterior["data"],  loglike["data"]  = self.__loss_data(dataset.noise_data[0], dataset.noise_data[1])
-        posterior["prior"], loglike["prior"] = self.__loss_prior()
-        posterior["Total"], loglike["Total"] = sum(posterior.values()), sum(loglike.values())
+        outputs = self.forward(dataset.noise_data[0])
+        posterior["res"],    loglike["res"]   = 0.0, 0.0
+        posterior["data_u"], loglike["data_u"] = self.__loss_data(outputs[0], dataset.noise_data[1])
+        posterior["prior"],  loglike["prior"] = self.__loss_prior()
+        posterior["Total"],  loglike["Total"] = sum(posterior.values()), sum(loglike.values())
         return posterior, loglike
 
     def grad_loss(self, dataset):

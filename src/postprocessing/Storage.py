@@ -16,6 +16,7 @@ class Storage():
     """
     def __init__(self, path_data, path_values, path_thetas, path_log):
 
+        self.keys = ("Total", "res", "data_u", "prior")
         self.path_data   = path_data
         self.path_values = path_values
         self.path_thetas = path_thetas
@@ -26,16 +27,14 @@ class Storage():
 
     @property
     def history(self):
-        keys = ("Total", "res", "data", "prior")
-        loss    = self.__load_dict(self.path_log, "loss.npy"   , keys)
-        logloss = self.__load_dict(self.path_log, "logloss.npy", keys)
+        loss    = self.__load_dict(self.path_log, "loss.npy"   , self.keys)
+        logloss = self.__load_dict(self.path_log, "logloss.npy", self.keys)
         return (loss, logloss)
 
     @history.setter
     def history(self, values):
-        keys = ("Total", "res", "data", "prior")
-        self.__save_dict(self.path_log, "loss.npy"   , keys, values[0])
-        self.__save_dict(self.path_log, "logloss.npy", keys, values[1])
+        self.__save_dict(self.path_log, "loss.npy"   , self.keys, values[0])
+        self.__save_dict(self.path_log, "logloss.npy", self.keys, values[1])
 
     @property
     def thetas(self):

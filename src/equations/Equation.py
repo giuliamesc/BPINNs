@@ -16,6 +16,10 @@ class Equation(ABC):
         self.physics  = par.physics
         self.phys_dim = par.phys_dim
         self.comp_dim = par.comp_dim
+
+    @abstractmethod
+    def parametric_field(self, surr_model):
+        return surr_model
     
     @abstractmethod
     def comp_process(self, dataset):
