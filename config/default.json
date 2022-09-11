@@ -1,7 +1,7 @@
 {
 	"general":{
-		"problem"  : "Regression",
-		"case_name": "reg1D",
+		"problem"  : "Laplace1D",
+		"case_name": "sin",
 		"method"   : "TEST"
 	},
 

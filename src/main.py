@@ -3,10 +3,12 @@ from utility import set_config, set_directory, set_warning, set_gui_len
 from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
-# Setup utilities
+# Manual configuration
 configuration_file = None
 #configuration_file = "HMC_laplace"
 configuration_file = "HMC_regression"
+
+# Setup utilities
 set_directory()
 set_warning()
 gui_len = set_gui_len()
@@ -118,4 +120,4 @@ plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
 plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
 print(" END ".center(gui_len,'*'))
 
-plotter.show_plot()
+#plotter.show_plot()

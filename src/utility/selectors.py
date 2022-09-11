@@ -15,19 +15,20 @@ def switch_dataset(problem, case_name):
     match problem:
         case "Regression":
             match case_name:
-                case "reg1D": return data.Regression1D()
+                case "cos": return data.Reg1D_cos()
+                case "sin": return data.Reg1D_sin()
+                case _ :  raise Exception("This case test does not exist!")
         case "Laplace1D": 
             match case_name:
-                case "default": return data.Laplace1D_default()
-                case "cos":     return data.Laplace1D_cos()
-                case "sin":     return data.Laplace1D_sin()
+                case "cos": return data.Laplace1D_cos()
+                case "sin": return data.Laplace1D_sin()
                 case _ :  raise Exception("This case test does not exist!")
         case "Laplace2D": raise Exception("Not implemeted yet")
-        case _ : raise Exception("This dataset configuration does not exist!")
+        case _ : raise Exception(f"This dataset configuration does not exist: {problem}")
 
-def switch_equation(problem):
-    match problem:
+def switch_equation(equation):
+    match equation:
         case "Regression": return eq.Regression
         case "Laplace1D":  return eq.Laplace
         case "Laplace2D":  return eq.Laplace
-        case _ : raise Exception("This equation does not exist!")
+        case _ : raise Exception(f"This equation does not exist: {equation}")

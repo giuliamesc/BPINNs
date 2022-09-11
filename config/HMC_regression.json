@@ -1,7 +1,7 @@
 {
 	"general":{
 		"problem"  : "Regression",
-		"case_name": "reg1D",
+		"case_name": "sin",
 		"method"   : "HMC"
 	},
 
@@ -35,12 +35,12 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "False"
+		"gen_flag"   : "True"
 	},
 
 	"HMC":{
-		"epochs" : 500,
-		"burn_in": 100,
+		"epochs" : 10,
+		"burn_in": 0,
 		"skip"   : 10,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
