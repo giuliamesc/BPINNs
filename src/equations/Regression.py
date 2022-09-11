@@ -8,14 +8,6 @@ class Regression(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
-        
-    def compute_residual(self, x, forward_pass):
-        """
-        u = f
-        u shape: (n_sample x n_out_sol)
-        f shape: (n_sample x n_out_par)
-        """
-        return None
 
     def comp_process(self, dataset):
         params = dict()

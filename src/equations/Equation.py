@@ -16,14 +16,6 @@ class Equation(ABC):
         self.physics  = par.physics
         self.phys_dim = par.phys_dim
         self.comp_dim = par.comp_dim
-
-    @abstractmethod
-    def compute_residual(self, x, forward_pass):
-        """
-        Compute the pde losses, 
-        need to be overridden in child classes
-        """
-        return None
     
     @abstractmethod
     def comp_process(self, dataset):

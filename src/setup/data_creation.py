@@ -24,14 +24,14 @@ class Dataset:
     """
 
     def __init__(self, par):
-        """The constructor"""
+        
         self.pde_type = par.pde
-        self.problem = par.problem
+        self.problem  = par.problem
         self.name_example = par.folder_name
         self.mesh_type = par.config.analytical_domain["mesh_type"]
 
-        self.__num_fitting     = par.experiment["num_fitting"] # num of exact data
-        self.__num_collocation = par.experiment["num_collocation"] # num of collocation data
+        self.num_fitting     = par.experiment["num_fitting"]
+        self.num_collocation = par.experiment["num_collocation"]
         self.noise_lv = par.experiment["noise_lv"]
         
         self.n_input   = par.phys_dim.n_input
@@ -42,39 +42,24 @@ class Dataset:
         self.__flag_dataset_noise = False
         np.random.seed(par.utils["random_seed"])
 
+        self.build_dataset()
+        self.build_noisy_dataset()
+
     @property
     def dom_data(self):
-        self.build_dataset()
         return self.inputs_dom, self.U_dom, self.F_dom
 
     @property
     def coll_data(self):
-        """Return collocation data"""
-        self.build_dataset()
         return self.inputs_coll, self.U_coll, self.F_coll
 
     @property
     def exact_data(self):
-        """ return exact data"""
-        self.build_dataset()
         return self.inputs_exact, self.U_exact, self.F_exact
 
     @property
-    def exact_data_noise(self):
-        """ return exact data + noise """
-        self.build_dataset()
-        self.build_noisy_dataset()
-        return self.inputs_exact, self.U_with_noise, self.F_with_noise
-
-    @property
-    def num_collocation(self):
-        """get number of collocation points"""
-        return self.__num_collocation
-
-    @property
-    def num_fitting(self):
-        """get number of exact points"""
-        return self.__num_fitting
+    def noise_data(self):
+        return self.inputs_exact, self.U_noise, self.F_noise
 
     def __load_dataset(self):
         """load data from dataset"""
@@ -92,7 +77,7 @@ class Dataset:
         u = np.load(os.path.join(path,"u.npy")).astype(np.float32)
         f = np.load(os.path.join(path,"f.npy")).astype(np.float32)
 
-        if(len(f.shape)==1): u = u[...,None] # from shape (n_coll, ) -> (n_coll, 1)
+        if(len(u.shape)==1): u = u[...,None] # from shape (n_coll, ) -> (n_coll, 1)
         if(len(f.shape)==1): f = f[...,None] # add the last dimension only if we are in 1D case
 
         # store domain datasets
@@ -136,26 +121,20 @@ class Dataset:
 
 
     def build_dataset(self):
-        """
-        Build dataset:
-        call the functions to build the dataset
-        """
-        if not self.__flag_dataset_build:  # we build the dataset only the first time
+        """ call the functions to build the dataset """
+        if not self.__flag_dataset_build:
             self.__load_dataset()
             self.__flag_dataset_build = True
 
     def build_noisy_dataset(self):
-        """
-        Add noise to exact data
-        """
+        """ Add noise to exact data """
         self.build_dataset()
-        if self.__flag_dataset_noise: return  # we add the noise only the first time
+        if self.__flag_dataset_noise: return
         
         u_error = np.random.normal(0, self.noise_lv, self.U_exact.shape).astype("float32")
-        self.U_with_noise = self.U_exact + u_error
+        self.U_noise = self.U_exact + u_error
 
-        # not so useful... we use onlt U_with_noise, not F 
         f_error = np.random.normal(0, self.noise_lv, self.F_exact.shape).astype("float32")
-        self.F_with_noise = self.F_exact + f_error
+        self.F_noise = self.F_exact + f_error
 
         self.__flag_dataset_noise = True

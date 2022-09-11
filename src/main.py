@@ -94,7 +94,7 @@ print("Saving data...")
 save_storage.save_parameter(params)
 save_storage.save_errors(errors)
 # Saving Dataset
-save_storage.data = (dataset.dom_data, dataset.exact_data_noise) 
+save_storage.data = (dataset.dom_data, dataset.noise_data) 
 # Saving Training
 save_storage.history  = bayes_nn.history
 save_storage.thetas   = bayes_nn.thetas
