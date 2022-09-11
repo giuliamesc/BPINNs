@@ -15,6 +15,7 @@
 
 ### Input e Salvataggi
 - Migliorare save params
+- Salvataggio nomi chiavi !!!
 
 ## Idee
 - Salvataggio per vari selezioni

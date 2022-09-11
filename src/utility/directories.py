@@ -28,13 +28,13 @@ def create_directories(par):
     case_folder = __create_single_dir(case_folder, file_name, over=True)
     
     path_plot   = __create_single_dir(case_folder, "plot")
-    path_data   = __create_single_dir(case_folder, "data")
     path_values = __create_single_dir(case_folder, "values")
-    path_thetas = __create_single_dir(case_folder, "thetas")
-    path_log    = __create_single_dir(case_folder, "log")
+    __create_single_dir(case_folder, "data")
+    __create_single_dir(case_folder, "thetas")
+    __create_single_dir(case_folder, "log")
     __create_single_dir(path_values, "samples")
 
-    return path_plot, path_data, path_values, path_thetas, path_log
+    return case_folder, path_plot
 
 def create_data_folders(problem, name, save):
     problem_folder  = __create_single_dir("../data", problem, keep=True)

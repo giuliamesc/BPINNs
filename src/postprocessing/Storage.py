@@ -1,3 +1,4 @@
+from utility import create_paths
 import numpy as np
 import shutil
 import os
@@ -14,13 +15,14 @@ class Storage():
         - save_parameter
         - save_errors
     """
-    def __init__(self, path_data, path_values, path_thetas, path_log):
+    def __init__(self, path_folder):
 
         self.keys = ("Total", "res", "data_u", "prior")
-        self.path_data   = path_data
-        self.path_values = path_values
-        self.path_thetas = path_thetas
-        self.path_log    = path_log
+        paths = create_paths(path_folder)
+        self.path_data   = paths[1]
+        self.path_values = paths[2]
+        self.path_thetas = paths[3]
+        self.path_log    = paths[4]
         self.path_sample = os.path.join(self.path_values, "samples")
         self.idx_len = 3
         self.sg_flags = None

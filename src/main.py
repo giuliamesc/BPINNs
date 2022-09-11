@@ -86,8 +86,8 @@ print(" DONE ".center(gui_len,'*'))
 # %% Saving
 
 print("Building saving directories...")
-path_plot, path_data, path_values, path_thetas, path_log = create_directories(params)
-save_storage = Storage(path_data, path_values, path_thetas, path_log)
+path_folder, path_plot = create_directories(params)
+save_storage = Storage(path_folder)
 
 print("Saving data...")
 # Saving Details and Results
@@ -110,7 +110,7 @@ print(" DONE ".center(gui_len,'*'))
 
 print("Loading data...")
 plotter = Plotter(path_plot)
-load_storage = Storage(path_data, path_values, path_thetas, path_log)
+load_storage = Storage(path_folder)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)
 plotter.plot_sigmas(load_storage.sigmas)

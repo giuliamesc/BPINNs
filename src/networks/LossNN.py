@@ -59,7 +59,7 @@ class LossNN(PhysNN):
         posterior, loglike = dict(), dict()
         outputs = self.forward(dataset.noise_data[0])
         posterior["res"],    loglike["res"]   = 0.0, 0.0
-        posterior["data_u"], loglike["data_u"] = self.__loss_data(outputs[0], dataset.noise_data[1])
+        posterior["data_u"], loglike["data_u"] = self.__loss_data(outputs[1], dataset.noise_data[1])
         posterior["prior"],  loglike["prior"] = self.__loss_prior()
         posterior["Total"],  loglike["Total"] = sum(posterior.values()), sum(loglike.values())
         return posterior, loglike
