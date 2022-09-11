@@ -15,12 +15,12 @@ class Laplace1D(Laplace):
     phys_dom = {
         "n_input"   : 1,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}
     # Dimensions of the computational domain: dimension of inputs, solution and parametric field
     comp_dom = {
         "n_input"   : 1,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}
 
 @dataclass
 class Laplace2D(Laplace):

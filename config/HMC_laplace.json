@@ -1,7 +1,7 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"case_name": "sin",
 		"method"   : "HMC"
 	},
 
@@ -35,7 +35,7 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "False"
+		"gen_flag"   : "True"
 	},
 
 	"HMC":{
