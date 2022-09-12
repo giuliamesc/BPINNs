@@ -21,15 +21,8 @@ class LossNN(PhysNN):
     def __init__(self, par, **kw):
 
         super(LossNN, self).__init__(par, **kw)
+        self.keys = ("Total", "data_u") # Total is mandatory
         self.coeff  = par.coeff
-        self.sg_params = [self.__convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
-        self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
-        self.sigmas = list()
-
-    @staticmethod
-    def __convert(tensor): 
-        """ Conversion of a numpy array to tensor """
-        return tf.cast(tensor, dtype=tf.float32)
 
     @staticmethod
     def __mse(vect):
@@ -47,7 +40,18 @@ class LossNN(PhysNN):
         post_data = self.__mse(outputs-targets)
         log_var  = self.sg_params[0][0] # log(1/betaD)
         log_data = self.__normal_loglikelihood(post_data, outputs.shape[0], log_var)
-        return self.__convert(post_data), self.__convert(log_data)
+        return self.tf_convert(post_data), self.tf_convert(log_data)
+
+    def __loss_data_u(self, dataset):
+        outputs = self.forward(dataset.noise_data[0])
+        return self.__loss_data(outputs[0], dataset.noise_data[1])
+
+    def __loss_data_f(self, dataset):
+        outputs = self.forward(dataset.noise_data[0])
+        return self.__loss_data(outputs[1], dataset.noise_data[2])
+
+    def __loss_data_b(self):
+        return 0.0, 0.0
 
     def __loss_prior(self):
         posterior_prior = 0.
@@ -56,13 +60,13 @@ class LossNN(PhysNN):
 
     def loss_total(self, dataset):
         """ Creation of the dictionary containing all posteriors and log-likelihoods """
-        posterior, loglike = dict(), dict()
-        outputs = self.forward(dataset.noise_data[0])
-        posterior["res"],    loglike["res"]   = 0.0, 0.0
-        posterior["data_u"], loglike["data_u"] = self.__loss_data(outputs[1], dataset.noise_data[1])
-        posterior["prior"],  loglike["prior"] = self.__loss_prior()
-        posterior["Total"],  loglike["Total"] = sum(posterior.values()), sum(loglike.values())
-        return posterior, loglike
+        pst, llk = dict(), dict()
+        if "data_u" in self.keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
+        if "data_f" in self.keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
+        if "prior"  in self.keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
+        pst["Total"] = sum(pst.values())
+        llk["Total"] = sum(llk.values())
+        return pst, llk
 
     def grad_loss(self, dataset):
 

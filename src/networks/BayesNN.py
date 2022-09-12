@@ -9,10 +9,9 @@ class BayesNN(PredNN, LossNN):
 
     def __init__(self, par, equation):
         
-        self.seed    = par.utils["random_seed"]
-        self.keys = ("Total", "res", "data_u", "prior")
-        self.history = self.__initialize_losses()
         super(BayesNN, self).__init__(par = par, equation = equation)
+        self.seed    = par.utils["random_seed"]
+        self.history = self.__initialize_losses()
 
 
     def __initialize_losses(self):

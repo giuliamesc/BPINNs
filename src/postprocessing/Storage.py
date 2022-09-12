@@ -17,7 +17,6 @@ class Storage():
     """
     def __init__(self, path_folder):
 
-        self.keys = ("Total", "res", "data_u", "prior")
         paths = create_paths(path_folder)
         self.path_data   = paths[1]
         self.path_values = paths[2]
@@ -29,14 +28,19 @@ class Storage():
 
     @property
     def history(self):
-        loss    = self.__load_dict(self.path_log, "loss.npy"   , self.keys)
-        logloss = self.__load_dict(self.path_log, "logloss.npy", self.keys)
-        return (loss, logloss)
+        keys = list()
+        with open(os.path.join(self.path_log,"keys.txt"),'r') as fk: 
+            for line in fk: keys.append(line[:-1])
+        posterior     = self.__load_dict(self.path_log, "posterior.npy"    , keys)
+        loglikelihood = self.__load_dict(self.path_log, "loglikelihood.npy", keys)
+        return (posterior, loglikelihood)
 
     @history.setter
     def history(self, values):
-        self.__save_dict(self.path_log, "loss.npy"   , self.keys, values[0])
-        self.__save_dict(self.path_log, "logloss.npy", self.keys, values[1])
+        keys = sorted(list(values[0].keys()))
+        with open(os.path.join(self.path_log,"keys.txt"),'w') as fk: fk.write('\n'.join(keys)+"\n")
+        self.__save_dict(self.path_log, "posterior.npy"    , keys, values[0])
+        self.__save_dict(self.path_log, "loglikelihood.npy", keys, values[1])
 
     @property
     def thetas(self):
@@ -182,7 +186,7 @@ class Storage():
         shape_np  = (len(keys),len(values[keys[0]]))
         values_np = np.zeros(shape_np, dtype=np.float32)
 
-        for idx, key in enumerate(keys):
+        for idx, key, in enumerate(keys):
             values_np[idx,:] = values[key]
 
         file_path = os.path.join(path, name)
