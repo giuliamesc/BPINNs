@@ -30,7 +30,7 @@ print("Loading data...")
 plotter = Plotter(os.path.join(test_path,"plot"))
 load_storage = Storage(test_path)
 print("Plotting the history...")
-#plotter.plot_losses(load_storage.history)
+plotter.plot_losses(load_storage.history)
 #plotter.plot_sigmas(load_storage.sigmas)
 print("Plotting the results...")
 loaded_data  = load_storage.data

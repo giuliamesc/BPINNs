@@ -24,25 +24,25 @@
 	},
 
 	"sigmas":{
-		"data_pn" : 1e0,
+		"data_pn" : 1e-2,
 		"pde_pn"  : 1e-2,
 		"data_pn_flag": "True",
 		"pde_pn_flag" : "False"
 	},
 
 	"utils":{
-		"random_seed": 28,
+		"random_seed": 21,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
+		"save_flag"  : "True",
 		"gen_flag"   : "False"
 	},
 
 	"HMC":{
-		"epochs" : 500,
-		"burn_in": 100,
-		"skip"   : 10,
+		"epochs" : 5000,
+		"burn_in": 1000,
+		"skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
-		"HMC_eta": 1e0
+		"HMC_eta": 5e-1
 	}
 }

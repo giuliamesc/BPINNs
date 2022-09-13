@@ -33,7 +33,7 @@ class HMC(Algorithm):
 
     def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
-        ds = dt*1e-2
+        ds = dt/10
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
