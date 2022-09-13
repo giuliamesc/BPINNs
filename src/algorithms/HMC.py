@@ -22,7 +22,7 @@ class HMC(Algorithm):
         self.skip    = param_method["skip"]
         self.HMC_L   = param_method["HMC_L"]
         self.HMC_dt  = param_method["HMC_dt"] 
-        self.HMC_eta = param_method["HMC_eta"] 
+        self.HMC_eta = param_method["HMC_eta"]
         self.selected = list()
 
     def __check_trainable(self, s):
@@ -33,17 +33,18 @@ class HMC(Algorithm):
 
     def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
+        ds = dt*1e-2
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
+        s = [ x - y * ds/2 for x,y in zip(s, grad_sigma)]
 
         self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)]
-        self.model.sg_params = [ x + y * dt for x,y in zip(old_sigma, s)] 
+        self.model.sg_params = [ x + y * ds for x,y in zip(old_sigma, s)] 
 
         grad_theta, grad_sigma = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * dt/2 for x,y in zip(s, grad_sigma)]
+        s = [ x - y * ds/2 for x,y in zip(s, grad_sigma)]
         
         return self.model.nn_params, self.model.sg_params, r, s
 
@@ -65,12 +66,12 @@ class HMC(Algorithm):
         h1 = self.__hamiltonian(theta[1], sigma[1], r[1], s[1])
         
         alpha, p = self.__compute_alpha(h0, h1)
-        accept = alpha >= p #accept = alpha <= p ??
+        accept = alpha >= p
         
         if self.debug_flag:
             print(f"\th0: {h0 :1.3e}")
             print(f"\th1: {h1 :1.3e}")
-            print(f"\th: {h0-h1 :1.3e}") #print(f"\t h: {h1-h0 :1.3e}") ??
+            print(f"\th: {h0-h1 :1.3e}")
             print(f"\ta: {np.exp(alpha)*100 :1.2f}%")
 
         if accept:
