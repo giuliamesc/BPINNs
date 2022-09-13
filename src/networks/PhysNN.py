@@ -11,8 +11,8 @@ class PhysNN(CoreNN):
         self.inv_flag  = par.inv_flag
 
         # Sigmas Operations -> Lambda
-        self.sg_params = [self.tf_convert([par.sigmas["data_pn"], par.sigmas["pde_pn"]])]
-        self.sg_flags  = [par.sigmas["data_pn_flag"], par.sigmas["pde_pn_flag"]]
+        self.sg_params = [self.tf_convert([par.sigmas["data_pn"]])]
+        self.sg_flags  = [par.sigmas["data_pn_flag"]]
         self.sigmas = list()
 
     @staticmethod
@@ -21,7 +21,10 @@ class PhysNN(CoreNN):
         return tf.cast(tensor, dtype=tf.float32)
 
     def forward(self, inputs):
-        u_tilde = super(PhysNN, self).forward(inputs)
+        inputs = self.tf_convert(inputs)
+        with tf.GradientTape() as tape:
+            tape.watch(inputs)
+            u_tilde = super(PhysNN, self).forward(inputs)
         u = u_tilde
-        f = self.pinn.parametric_field(u_tilde)
+        f = self.pinn.parametric_field(u_tilde, inputs, tape)
         return u, f

@@ -10,7 +10,6 @@ class Param:
         self.experiment   = hp["experiment"]   # experiment param
         self.architecture = hp["architecture"] # NN architecture param
         
-        self.coeff  = hp["coeff"]  # coefficient param
         self.sigmas = hp["sigmas"] # sigmas param
         self.utils  = hp["utils"]  # utilities param
 
@@ -50,7 +49,6 @@ class Param:
     def __change_string_to_bool(self):
         """ Change "True" and "False" string to boolean for each bool parameter """
         self.sigmas["data_pn_flag"] = self.__string_to_bool(self.sigmas["data_pn_flag"])
-        self.sigmas["pde_pn_flag"]  = self.__string_to_bool(self.sigmas["pde_pn_flag"])
         self.utils["save_flag"]  = self.__string_to_bool(self.utils["save_flag"])
         self.utils["debug_flag"] = self.__string_to_bool(self.utils["debug_flag"])
         self.utils["gen_flag"]   = self.__string_to_bool(self.utils["gen_flag"])
@@ -62,7 +60,7 @@ class Param:
             if key == "problem"   : self.problem   = args_dict[key]
             if key == "case_name" : self.case_name = args_dict[key]
             if key == "method"    : self.method    = args_dict[key]
-            for jdict in [self.experiment, self.architecture, self.coeff, self.sigmas, self.utils]:
+            for jdict in [self.experiment, self.architecture, self.sigmas, self.utils]:
                 if key in jdict: jdict[key] = args_dict[key]
 
     def __command_line_update_method(self, args_dict):

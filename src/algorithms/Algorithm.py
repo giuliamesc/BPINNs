@@ -51,7 +51,7 @@ class Algorithm(ABC):
         epochs_loop = range(epochs)
         if not self.debug_flag: 
              epochs_loop = tqdm(epochs_loop)
-             epochs_loop.ncols=int(os.get_terminal_size().columns/2)
+             epochs_loop.ncols=max(75,int(os.get_terminal_size().columns/2))
              epochs_loop.set_description_str("Training Progress")
         return epochs_loop
 

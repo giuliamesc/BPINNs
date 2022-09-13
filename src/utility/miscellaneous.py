@@ -20,7 +20,7 @@ def set_warning():
 
 def set_gui_len():
     """ Sets terminal width """
-    return max(50,int(os.get_terminal_size().columns/2))
+    return max(75,int(os.get_terminal_size().columns/2))
 
 def load_json(path):
     """ Load the json file with all the parameters """

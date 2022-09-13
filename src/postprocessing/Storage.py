@@ -67,19 +67,14 @@ class Storage():
     @property 
     def sigmas(self):
         file_name_d = os.path.join(self.path_log, "sigma_d.npy")
-        file_name_r = os.path.join(self.path_log, "sigma_r.npy")
         sigma_d = np.load(file_name_d) if os.path.isfile(file_name_d) else None
-        sigma_r = np.load(file_name_r) if os.path.isfile(file_name_r) else None
-        return sigma_d, sigma_r
+        return sigma_d
     
     @sigmas.setter
     def sigmas(self, values):
         file_name_d = os.path.join(self.path_log, "sigma_d.npy")
-        file_name_r = os.path.join(self.path_log, "sigma_r.npy")
         sigma_d = np.array([value[0][0].numpy() for value in values])
-        sigma_r = np.array([value[0][1].numpy() for value in values])
         if self.sg_flags[0] : np.save(file_name_d, sigma_d)
-        if self.sg_flags[1] : np.save(file_name_r, sigma_r)
 
     @property
     def data(self):
@@ -199,7 +194,6 @@ class Storage():
             self.__write_par_line(outfile, "GENERAL\n", general)
             self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
             self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
-            self.__write_par_line(outfile, "PARAMETERS\n", par.coeff)
             self.__write_par_line(outfile, "SIGMAS\n", par.sigmas)
             self.__write_par_line(outfile, "UTILS\n", par.utils)
             self.__write_par_line(outfile, str(par.method).upper() +"\n", par.param_method)

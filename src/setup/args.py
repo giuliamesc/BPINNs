@@ -40,11 +40,6 @@ class Parser(ArgumentParser):
         self.add_argument('--n_layers'  , type=int, help='Number of hidden layers in the NN')
         self.add_argument('--n_neurons' , type=int, help='Number of neurons in each hidden layer in the NN')
 
-        # Coefficients
-        self.add_argument('--res'  , type=float, help='Weight for   pde log loss')
-        self.add_argument('--data' , type=float, help='Weight for  data log loss')
-        self.add_argument('--prior', type=float, help='Weight for prior log loss')
-
         # Sigmas (prior noise)
         self.add_argument('--data_pn', type=float, help='Noise in data prior (sigma_D)^2')
         self.add_argument( '--pde_pn', type=float, help='Noise in  pde prior (sigma_R)^2')

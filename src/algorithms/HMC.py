@@ -27,8 +27,7 @@ class HMC(Algorithm):
 
     def __check_trainable(self, s):
         """ If the sigmas are not trainable, sets sigma vector to zero """
-        if not self.model.sg_flags[0]: s[0] *= [0.0, 1.0]
-        if not self.model.sg_flags[1]: s[0] *= [1.0, 0.0]
+        if not self.model.sg_flags[0]: s[0] *= [0.0]
         return s
 
     def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
@@ -105,7 +104,7 @@ class HMC(Algorithm):
     def sample_theta(self, theta_0, sigma_0):
         """ Samples one parameter vector given its previous value """
         r_0 = [tf.random.normal(x.shape, stddev=self.HMC_eta) for x in theta_0] 
-        s_0 = [tf.random.normal((2,), stddev=self.HMC_eta)]
+        s_0 = [tf.random.normal((1,), stddev=self.HMC_eta)]
         s_0 = self.__check_trainable(s_0)
         r, s = r_0.copy(), s_0.copy()
         theta = theta_0.copy()

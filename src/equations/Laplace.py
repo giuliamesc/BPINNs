@@ -10,6 +10,11 @@ class Laplace(Equation):
         super().__init__(par)
         self.mu = tf.constant(par.physics["diffusion"])
 
+    def parametric_field(self, u_tilde, inputs, tape):
+        lap_u = Operators.laplacian_vector(tape, u_tilde, inputs, 1)
+        par_f = - self.mu * lap_u
+        return par_f
+
     def comp_process(self, dataset):
         params = dict()
         return params

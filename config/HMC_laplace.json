@@ -17,32 +17,25 @@
 		"n_neurons" : 16
 	},
 
-	"coeff":{
-		"res"  : 0.0,
-		"data" : 1e0,
-		"prior": 0.0
-	},
 
 	"sigmas":{
 		"data_pn" : 1e-2,
-		"pde_pn"  : 1e-2,
-		"data_pn_flag": "True",
-		"pde_pn_flag" : "False"
+		"data_pn_flag": "False"
 	},
 
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
-		"gen_flag"   : "False"
+		"save_flag"  : "True",
+		"gen_flag"   : "True"
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
-		"skip"   : 10,
+		"epochs" : 500,
+		"burn_in": 100,
+		"skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
-		"HMC_eta": 1.0	
+		"HMC_eta": 5e-1	
 	}
 }

@@ -17,17 +17,9 @@
 		"n_neurons" : 16
 	},
 
-	"coeff":{
-		"res"  : 0.0,
-		"data" : 1.0,
-		"prior": 0.0
-	},
-
 	"sigmas":{
 		"data_pn" : 1e-2,
-		"pde_pn"  : 1e-2,
-		"data_pn_flag": "True",
-		"pde_pn_flag" : "False"
+		"data_pn_flag": "True"
 	},
 
 	"utils":{

@@ -18,8 +18,8 @@ class Equation(ABC):
         self.comp_dim = par.comp_dim
 
     @abstractmethod
-    def parametric_field(self, surr_model):
-        return surr_model
+    def parametric_field(self, u_tilde, inputs, tape):
+        return None
     
     @abstractmethod
     def comp_process(self, dataset):

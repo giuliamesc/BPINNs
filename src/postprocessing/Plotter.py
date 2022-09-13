@@ -114,20 +114,15 @@ class Plotter():
         self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likelihood)")
 
     def plot_sigmas(self, sigmas):
-        if sigmas[0] is None and sigmas[1] is None : return  
+        if sigmas is None : return  
         plt.figure()
-        if sigmas[0] is not None : 
-            x = list(range(1,len(sigmas[0])+1))
-            plt.plot(x, 1/np.exp(sigmas[0]), 'b', lw=1.0, alpha=1.0, label = "Variance Data")
-        if sigmas[1] is not None : 
-            x = list(range(1,len(sigmas[1])+1))
-            plt.plot(x, 1/np.exp(sigmas[1]), 'r', lw=1.0, alpha=1.0, label = "Variance Residual")
+        x = list(range(1,len(sigmas)+1))
+        plt.plot(x, 1/np.exp(sigmas), 'b', lw=1.0, alpha=1.0, label = "Variance Data")
         plt.title(f"History of Sigmas")
         plt.xlabel('Epochs')
         plt.ylabel('Sigmas')
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, "sigmas")
-
 
     def __wait_input(self, key):
         """ Start a loop that will run until the user enters key """
