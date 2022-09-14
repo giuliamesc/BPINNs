@@ -22,9 +22,9 @@ class PhysNN(CoreNN):
 
     def forward(self, inputs):
         inputs = self.tf_convert(inputs)
-        with tf.GradientTape() as tape:
+        with tf.GradientTape(persistent=True) as tape:
             tape.watch(inputs)
             u_tilde = super(PhysNN, self).forward(inputs)
-        u = u_tilde
-        f = self.pinn.parametric_field(u_tilde, inputs, tape)
+            u = u_tilde
+            f = self.pinn.parametric_field(u_tilde, inputs, tape)
         return u, f
