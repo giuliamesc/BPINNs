@@ -1,3 +1,4 @@
+from utility import compute_gui_len
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 import time, datetime
@@ -51,7 +52,7 @@ class Algorithm(ABC):
         epochs_loop = range(epochs)
         if not self.debug_flag: 
              epochs_loop = tqdm(epochs_loop)
-             epochs_loop.ncols=max(75,int(os.get_terminal_size().columns/2))
+             epochs_loop.ncols=compute_gui_len()
              epochs_loop.set_description_str("Training Progress")
         return epochs_loop
 

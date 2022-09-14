@@ -18,9 +18,12 @@ def set_warning():
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
     logging.basicConfig(level=logging.ERROR)
 
-def set_gui_len():
-    """ Sets terminal width """
+def compute_gui_len():
     return max(75,int(os.get_terminal_size().columns/2))
+
+def starred_print(message):
+    gui_len = compute_gui_len()
+    print(f" {message} ".center(gui_len,'*'))
 
 def load_json(path):
     """ Load the json file with all the parameters """

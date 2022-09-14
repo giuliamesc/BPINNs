@@ -1,4 +1,4 @@
-from utility import create_data_folders
+from utility import create_data_folders, starred_print
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
 import numpy as np
@@ -7,11 +7,10 @@ import os
 
 class AnalyticalData:
 
-    def __init__(self, data_config, gui_len, do_plots=False, test_only=False, is_main=False):
+    def __init__(self, data_config, do_plots=False, test_only=False, is_main=False):
       
         self.test_case = data_config.name
         self.problem   = data_config.problem
-        self.gui_len   = gui_len
 
         self.do_plots  = do_plots
         self.test_only = test_only
@@ -27,7 +26,7 @@ class AnalyticalData:
     def __creating_loop(self):
         """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
         if self.is_main:
-            print(f" Generating dataset: {self.test_case} ".center(self.gui_len,'*'))
+            starred_print(f"Generating dataset: {self.test_case}")
         self.save_path = create_data_folders(self.problem , self.test_case, not self.test_only)
         self.__create_domain()
         self.__create_solutions()
@@ -151,5 +150,5 @@ class AnalyticalData:
 
     def show_plot(self):
         """ Shows the plots """
-        print(f" END ".center(self.gui_len,'*'))
+        starred_print("END")
         plt.show(block = True)

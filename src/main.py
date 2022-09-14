@@ -1,17 +1,16 @@
 # %% Utilities
-from utility import set_config, set_directory, set_warning, set_gui_len
+from utility import set_config, set_directory, set_warning, starred_print
 from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Manual configuration
 configuration_file = None
-configuration_file = "HMC_regression"
+#configuration_file = "HMC_regression"
 #configuration_file = "HMC_laplace"
 
 # Setup utilities
 set_directory()
 set_warning()
-gui_len = set_gui_len()
 
 # %% Import Local Classes
 
@@ -22,7 +21,7 @@ from postprocessing import Storage, Plotter # Postprocessing
 
 # %% Creating Parameters
 
-print(" START ".center(gui_len,'*'))
+starred_print("START")
 args   = Parser().parse_args()   # Load a param object from command-line
 config_file = set_config(args.config, configuration_file)
 config = load_json(config_file)  # Load params from config file
@@ -34,7 +33,7 @@ debug_flag  = params.utils["debug_flag"]
 
 print(f"Bayesian PINN using {params.method}")
 print(f"Solve the {params.inverse} problem of {params.pde} {params.phys_dim.n_input}D ")
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 
 # %% Datasets Creation
@@ -42,7 +41,7 @@ print(" DONE ".center(gui_len,'*'))
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(data_config, gui_len)
+    AnalyticalData(data_config)
 else:
     check_dataset(data_config)
     print(f"\tStored dataset used: {data_config.name}")
@@ -50,7 +49,7 @@ else:
 dataset = Dataset(params)
 print(f"\tNumber of fitting data: {dataset.num_fitting}")
 print(f"\tNumber of collocation data: {dataset.num_collocation}")
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 # %% Model Building
 
@@ -64,13 +63,13 @@ chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from co
 print(f"\tBuilding {params.method} algorithm...")
 train_algorithm = chosen_algorithm(bayes_nn, params.param_method, debug_flag) # Initialize the algorithm chosen
 train_algorithm.data_train = dataset # Insert the dataset used for training
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 # %% Training
 
 print('Start training...')
 train_algorithm.train() # Create list of theta samples
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 # %% Model Evaluation
 
@@ -81,7 +80,7 @@ print("Computing errors...")
 errors = bayes_nn.test_errors(functions_confidence, dataset)
 print("Showing errors...")
 bayes_nn.show_errors(errors)
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 # %% Saving
 
@@ -104,7 +103,7 @@ save_storage.sigmas   = bayes_nn.sigmas
 # Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
-print(" DONE ".center(gui_len,'*'))
+starred_print("DONE")
 
 # %% Plotting
 
@@ -118,6 +117,6 @@ print("Plotting the results...")
 loaded_data  = load_storage.data
 plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
 plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
-print(" END ".center(gui_len,'*'))
+starred_print("END")
 
 plotter.show_plot()

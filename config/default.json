@@ -1,6 +1,6 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
+		"problem"  : "Regression",
 		"case_name": "sin",
 		"method"   : "TEST"
 	},
