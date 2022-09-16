@@ -20,7 +20,7 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.keys = ("Total", "data_u") # Total is mandatory
+        self.keys = ("Total", "data_f") # Total is mandatory
 
     @staticmethod
     def __mse(vect):
@@ -46,7 +46,7 @@ class LossNN(PhysNN):
 
     def __loss_data_f(self, dataset):
         outputs = self.forward(dataset.noise_data[0])
-        return self.__loss_data(outputs[1], dataset.noise_data[2])
+        return self.__loss_data(outputs[1], dataset.noise_data[1])
 
     def __loss_data_b(self):
         return 0.0, 0.0

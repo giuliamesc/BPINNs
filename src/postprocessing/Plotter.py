@@ -80,7 +80,7 @@ class Plotter():
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, title)
 
-    def plot_confidence(self, dom_data, fit_data, functions):
+    def plot_confidence(self, dom_data, fit_data, functions, only_sol = False):
         """ Plots mean and standard deviation of solution and parametric field samples """
         inputs, u_true, f_true = dom_data
         ex_points, u_values, _  = fit_data
@@ -91,10 +91,11 @@ class Plotter():
 
         self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_confidence.png')
-        #self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
-        #self.__save_plot(self.path_plot, 'f_confidence.png')
+        if only_sol: return
+        self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
+        self.__save_plot(self.path_plot, 'f_confidence.png')
 
-    def plot_nn_samples(self, dom_data, fit_data, functions):
+    def plot_nn_samples(self, dom_data, fit_data, functions, only_sol = False):
         """ Plots all the samples of solution and parametric field """
         inputs, u_true, f_true = dom_data
         ex_points, u_values, _  = fit_data
@@ -105,8 +106,9 @@ class Plotter():
 
         self.__plot_nn_samples_1D(inputs[:,0], u, label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_nn_samples.png')
-        #self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
-        #self.__save_plot(self.path_plot, 'f_nn_samples.png')
+        if only_sol: return
+        self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = None)
+        self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
     def plot_losses(self, losses):
         """ Generates the plots of MSE and log-likelihood """
