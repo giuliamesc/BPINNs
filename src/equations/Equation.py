@@ -18,6 +18,10 @@ class Equation(ABC):
         self.comp_dim = par.comp_dim
 
     @abstractmethod
+    def solution(self, u_tilde, inputs, tape=None):
+        return None
+
+    @abstractmethod
     def parametric_field(self, u_tilde, inputs, tape):
         return None
     

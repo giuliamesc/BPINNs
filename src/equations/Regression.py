@@ -1,4 +1,5 @@
 from .Equation  import Equation
+import tensorflow as tf
 
 class Regression(Equation):
     """
@@ -6,6 +7,9 @@ class Regression(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
+
+    def solution(self, u_tilde, *_):
+        return u_tilde
 
     def parametric_field(self, u_tilde, *_):
         return u_tilde

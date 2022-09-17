@@ -1,6 +1,5 @@
 from .Equation  import Equation
 from .Operators import Operators
-import tensorflow as tf
 
 class Laplace(Equation):
     """
@@ -8,11 +7,16 @@ class Laplace(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
-        self.mu = tf.constant(par.physics["diffusion"])
+        self.mu = par.physics["diffusion"]
+
+    def solution(self, u_tilde, *_):
+        return u_tilde
 
     def parametric_field(self, u_tilde, inputs, tape):
-        lap_u = Operators.laplacian_vector(tape, u_tilde, inputs, 1)
-        par_f = - self.mu * lap_u
+        u_list = Operators.tf_unpack(u_tilde)
+        lap_u  = Operators.laplacian_vector(tape, u_list, inputs)
+        lap_u  = Operators.tf_pack(lap_u)
+        par_f = - lap_u * self.mu
         return par_f
         
     def comp_process(self, dataset):

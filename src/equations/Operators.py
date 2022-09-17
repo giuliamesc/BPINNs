@@ -6,79 +6,75 @@ class Operators:
     Class for differential operators
     
     Notations:
-    x is the derivation variable (n_sample x dim_input)
-    d is dim_output
-    s is a scalar function (n_sample x 1)
-    v is a vector function (n_sample x dim_output)
-    A is a tensor function (n_sample x dim_output x dim_output)
+    x is the input variable (n_sample x dim_inp)
+    s is a scalar     (n_sample x 1)
+    r is a row vector (n_sample x dim_inp)
+    c is a col vector (n_sample x 1) x dim_out
+    t is a tensor     (n_sample x dim_inp) x dim_out
     """
-    
+
+    @staticmethod
+    def tf_unpack(tensor):
+        """ Returns a list whose elements are the tensor representing the columns of the input tensor """
+        return tf.unstack(tf.expand_dims(tensor, axis=-2), axis=-1) 
+
+    @staticmethod
+    def tf_pack(tensor_list):
+        """ Returns a list whose elements are the tensor representing the columns of the input tensor """
+        return tf.squeeze(tf.stack(tensor_list, axis=-1), axis=-2)
+
+    @staticmethod
+    def tf_trace(lt):
+        """ Computes the trace (in the algebrical sense), but for an input which is a list of column tensors """
+        return tf.expand_dims(sum([v[:,i] for i, v in enumerate(lt)]), axis=-1)
+
+
     @staticmethod
     def gradient_scalar(tape, s, x):
         """
         input  shape: (n_sample x 1)
-        output shape: (n_sample x 1 x dim_input)
+        output shape: (n_sample x dim_inp)
         """
-        return tf.expand_dims(tape.gradient(s, x), axis=1)
-
-    @staticmethod
-    def gradient_vector(tape, v, x, d):
-        """
-        input  shape: (n_sample x dim_output)
-        output shape: (n_sample x dim_output x dim_input)
-        """
-        return tf.stack([tape.gradient(v[:,i], x) for i in range(d)], axis=-2)
+        return tape.gradient(s, x)
     
-
+    @staticmethod    
+    def divergence_vector(tape, r, x):
+        """
+        input  shape: (n_sample x dim_inp)
+        output shape: (n_sample x 1)
+        """
+        c = Operators.tf_unpack(r)
+        return Operators.tf_trace(Operators.gradient_vector(tape, c, x))
+    
     @staticmethod
-    def derivate_scalar(tape, s, x):
+    def laplacian_scalar(tape, s, x):
         """
         input  shape: (n_sample x 1)
         output shape: (n_sample x 1)
         """
-        return tf.squeeze(Operators.gradient_scalar(tape, s, x), axis=-1)
-
+        gs = Operators.gradient_scalar(tape,s,x) 
+        return Operators.divergence_vector(tape, gs, x)
+        
+    @staticmethod    
+    def gradient_vector(tape, c, x):
+        """
+        input  shape: (n_sample x 1      ) x dim_out
+        output shape: (n_sample x dim_inp) x dim_out
+        """
+        return  [Operators.gradient_scalar(tape, gs, x) for gs in c]
+        
     @staticmethod
-    def derivate_vector(tape, s, x, d):
+    def divergence_tensor(tape, t, x):
         """
-        input  shape: (n_sample x dim_output)
-        output shape: (n_sample x dim_output)
+        input  shape: (n_sample x dim_inp) x dim_out
+        output shape: (n_sample x 1      ) x dim_out
         """
-        return tf.squeeze(Operators.gradient_vector(tape, s, x, d), axis=-1)
-
-
+        return [Operators.divergence_vector(tape, dv, x) for dv in t]
+    
     @staticmethod
-    def divergence_vector(tape, v, x, d):
+    def laplacian_vector(tape, c, x):
         """
-        input  shape: (n_sample x dim_output) or
-        input  shape: (n_sample x 1 x dim_input)
-        output shape: (n_sample x 1)
+        input  shape: (n_sample x 1) x dim_out
+        output shape: (n_sample x 1) x dim_out 
         """
-        if len(v.shape) == 3: v = tf.squeeze(v, axis = -2)
-        return tf.expand_dims(tf.linalg.trace(Operators.gradient_vector(tape, v, x, d)), axis=-1)
-
-    @staticmethod
-    def divergence_tensor(tape, A, x, d):
-        """
-        input  shape: (n_sample x dim_output x dim_input)
-        output shape: (n_sample x dim_output)
-        """
-        divergences = [Operators.divergence_vector(tape, A[:,i,:], x, d) for i in range(d)]
-        return tf.squeeze(tf.stack(divergences, axis = -1), axis=-2)
-
-
-    @staticmethod
-    def laplacian_scalar(tape, s, x, d):
-        """
-        input  shape: (n_sample x 1)
-        output shape: (n_sample x 1)
-        """
-        return Operators.divergence_vector(tape, Operators.gradient_scalar(tape, s, x), x, d)
-
-    @staticmethod
-    def laplacian_vector(tape, v, x, d):
-        """
-        input  shape: (n_sample x dim_output)
-        output shape: (n_sample x dim_output)
-        """
-        return Operators.divergence_tensor(tape, Operators.gradient_vector(tape, v, x, d), x, d)
+        return [Operators.laplacian_scalar(tape, ls, x) for ls in c]

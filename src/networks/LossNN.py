@@ -20,7 +20,7 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.keys = ("Total", "data_f") # Total is mandatory
+        self.keys = ("Total", "data_u") # Total is mandatory
 
     @staticmethod
     def __mse(vect):
@@ -72,11 +72,14 @@ class LossNN(PhysNN):
             tape.watch(self.model.trainable_variables)
             tape.watch(self.sg_params)
             _, loglike = self.loss_total(dataset)
+            loglike = loglike["Total"]
         
-        grad_thetas = tape.gradient(loglike["Total"], self.model.trainable_variables)
-        grad_sigmas = tape.gradient(loglike["Total"], self.sg_params)
+        grad_thetas = tape.gradient(loglike, self.model.trainable_variables)
+        grad_sigmas = tape.gradient(loglike, self.sg_params)
         
         if not self.sg_flags[0]: grad_sigmas[0] *= [0.0] # if data prior noise not trainable
+
+        import pdb; pdb.set_trace()
 
         return grad_thetas, grad_sigmas
 
