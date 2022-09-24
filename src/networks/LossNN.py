@@ -23,6 +23,10 @@ class LossNN(PhysNN):
         self.keys = ("Total", "data_u") # Total is mandatory
 
     @staticmethod
+    def __sse_theta(theta):
+        return sum([tf.norm(t)**2 for t in theta])
+
+    @staticmethod
     def __mse(vect):
         """ Mean Squared Error """
         norm = tf.norm(vect, axis = -1)
@@ -31,7 +35,7 @@ class LossNN(PhysNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        return 0.5 * n * mse * tf.math.exp(log_var) - 0.5 * n * log_var
+        return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var)
 
     def __loss_data(self, outputs, targets):
         # Normal(output | target, 1 / betaD * I)
@@ -46,15 +50,16 @@ class LossNN(PhysNN):
 
     def __loss_data_f(self, dataset):
         outputs = self.forward(dataset.noise_data[0])
-        return self.__loss_data(outputs[1], dataset.noise_data[1])
+        return self.__loss_data(outputs[1], dataset.noise_data[2])
 
     def __loss_data_b(self):
         return 0.0, 0.0
 
     def __loss_prior(self):
-        posterior_prior = 0.
-        loglike_prior   = 0.
-        return posterior_prior, loglike_prior
+        # Normal(theta | 0, I)
+        prior   = self.__sse_theta(self.model.trainable_variables) / self.dim_theta
+        loglike = self.__normal_loglikelihood(prior, self.dim_theta, 0.)
+        return prior, loglike
 
     def loss_total(self, dataset):
         """ Creation of the dictionary containing all posteriors and log-likelihoods """
@@ -78,8 +83,6 @@ class LossNN(PhysNN):
         grad_sigmas = tape.gradient(loglike, self.sg_params)
         
         if not self.sg_flags[0]: grad_sigmas[0] *= [0.0] # if data prior noise not trainable
-
-        import pdb; pdb.set_trace()
 
         return grad_thetas, grad_sigmas
 

@@ -1,7 +1,7 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"case_name": "sin",
 		"method"   : "HMC"
 	},
 
@@ -14,7 +14,7 @@
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 4
+		"n_neurons" : 16
 	},
 
 
@@ -31,8 +31,8 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 2,
+		"epochs" : 500,
+		"burn_in": 100,
 		"skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,

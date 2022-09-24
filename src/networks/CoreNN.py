@@ -32,6 +32,7 @@ class CoreNN():
 
         # Build the Neural network architecture
         self.model = self.__build_NN(par.utils["random_seed"])
+        self.dim_theta = self.__compute_dim_theta()
         
     @property
     def nn_params(self):
@@ -75,6 +76,8 @@ class CoreNN():
         """ Initialization of the Neural Network with given random seed """
         self.model = self.__build_NN(seed)
         
+    def __compute_dim_theta(self):
+        return sum([tf.size(wb).numpy() for wb in self.nn_params])
 
     def forward(self, inputs):
         """ 
