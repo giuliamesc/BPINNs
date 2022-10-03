@@ -26,7 +26,7 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "True"
+		"gen_flag"   : "False"
 	},
 
 	"HMC":{

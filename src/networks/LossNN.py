@@ -79,6 +79,7 @@ class LossNN(PhysNN):
             loglike = loglike["Total"]
         
         grad_thetas = tape.gradient(loglike, self.model.trainable_variables)
+        ## ADD GRAD LAMBDA
 
         return grad_thetas
 

@@ -45,7 +45,7 @@ class Algorithm(ABC):
         loss, logloss = self.model.loss_total(self.data)
         self.model.loss_step((loss,logloss))
         
-        return new_theta, self.model.sg_params
+        return new_theta
 
     def __train_loop(self, epochs):
         epochs_loop = range(epochs)
@@ -65,7 +65,7 @@ class Algorithm(ABC):
         for i in self.epochs_loop:
             if self.debug_flag: print(f'  START EPOCH {i+1}')
             step = self.__train_step(i)
-            thetas_train.append(step[0])
+            thetas_train.append(step)
     
         # Select which thetas must be saved
         thetas_train = self.select_thetas(thetas_train)
