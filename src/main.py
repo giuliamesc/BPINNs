@@ -97,9 +97,6 @@ save_storage.data = (dataset.dom_data, dataset.noise_data)
 # Saving Training
 save_storage.history  = bayes_nn.history
 save_storage.thetas   = bayes_nn.thetas
-# Saving Sigmas
-save_storage.sg_flags = bayes_nn.sg_flags
-save_storage.sigmas   = bayes_nn.sigmas
 # Saving Predictions
 save_storage.confidence = functions_confidence
 save_storage.nn_samples = functions_nn_samples
@@ -112,7 +109,6 @@ plotter = Plotter(path_plot)
 load_storage = Storage(path_folder)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)
-plotter.plot_sigmas(load_storage.sigmas)
 print("Plotting the results...")
 loaded_data  = load_storage.data
 plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)

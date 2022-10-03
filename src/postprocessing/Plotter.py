@@ -116,17 +116,6 @@ class Plotter():
         self.__plot_train(losses[0], "Loss.png"   , "Mean Squared Error")
         self.__plot_train(losses[1], "LogLoss.png", "Loss (Log-Likelihood)")
 
-    def plot_sigmas(self, sigmas):
-        if sigmas is None : return  
-        plt.figure()
-        x = list(range(1,len(sigmas)+1))
-        plt.plot(x, 1/np.exp(sigmas), 'b', lw=1.0, alpha=1.0, label = "Variance Data")
-        plt.title(f"History of Sigmas")
-        plt.xlabel('Epochs')
-        plt.ylabel('Sigmas')
-        plt.legend(prop={'size': 9})
-        self.__save_plot(self.path_plot, "sigmas")
-
     def __wait_input(self, key):
         """ Start a loop that will run until the user enters key """
         key_input = ''

@@ -48,7 +48,6 @@ class Param:
 
     def __change_string_to_bool(self):
         """ Change "True" and "False" string to boolean for each bool parameter """
-        self.sigmas["data_pn_flag"] = self.__string_to_bool(self.sigmas["data_pn_flag"])
         self.utils["save_flag"]  = self.__string_to_bool(self.utils["save_flag"])
         self.utils["debug_flag"] = self.__string_to_bool(self.utils["debug_flag"])
         self.utils["gen_flag"]   = self.__string_to_bool(self.utils["gen_flag"])

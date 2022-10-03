@@ -19,7 +19,7 @@ def set_warning():
     logging.basicConfig(level=logging.ERROR)
 
 def compute_gui_len():
-    return max(75,int(os.get_terminal_size().columns/2))
+    return max(80,int(os.get_terminal_size().columns/2))
 
 def starred_print(message):
     gui_len = compute_gui_len()

@@ -34,19 +34,18 @@ class Algorithm(ABC):
 
         # Sampling new theta
         match type(self).__name__:
-            case "TEST": new_theta, new_sigma = self.sample_theta(epoch)
-            case "HMC" : new_theta, new_sigma = self.sample_theta(self.model.nn_params, self.model.sg_params)
-            case "SVGD": new_theta, new_sigma = self.sample_theta()
-            case "VI"  : new_theta, new_sigma = self.sample_theta()
+            case "TEST": new_theta = self.sample_theta(epoch)
+            case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
+            case "SVGD": new_theta = self.sample_theta()
+            case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
         # Saving new Theta
         self.model.nn_params = new_theta
-        self.model.sg_params = new_sigma
         # Computing History
         loss, logloss = self.model.loss_total(self.data)
         self.model.loss_step((loss,logloss))
         
-        return new_theta, new_sigma
+        return new_theta, self.model.sg_params
 
     def __train_loop(self, epochs):
         epochs_loop = range(epochs)
@@ -60,20 +59,19 @@ class Algorithm(ABC):
 
         # Store thetas in this round of training
         thetas_train = list()
-        sigmas_train = list()
+
         # Sampling new thetas
         self.epochs_loop = self.__train_loop(self.epochs) 
         for i in self.epochs_loop:
             if self.debug_flag: print(f'  START EPOCH {i+1}')
             step = self.__train_step(i)
             thetas_train.append(step[0])
-            sigmas_train.append(step[1])
     
         # Select which thetas must be saved
-        thetas_train, sigmas_train = self.select_thetas(thetas_train, sigmas_train)
+        thetas_train = self.select_thetas(thetas_train)
         # Save thetas in the bnn
         self.model.thetas += thetas_train
-        self.model.sigmas += sigmas_train
+
         # Report training information
         self.train_log()
 

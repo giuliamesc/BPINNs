@@ -11,9 +11,7 @@ class PhysNN(CoreNN):
         self.inv_flag  = par.inv_flag
 
         # Sigmas Operations -> Lambda
-        self.sg_params = [self.tf_convert([par.sigmas["data_pn"]])]
-        self.sg_flags  = [par.sigmas["data_pn_flag"]]
-        self.sigmas = list()
+        self.sg_params = [par.sigmas["data_pn"]]
 
     @staticmethod
     def tf_convert(tensor): 

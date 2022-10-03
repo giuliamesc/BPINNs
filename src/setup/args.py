@@ -42,9 +42,6 @@ class Parser(ArgumentParser):
 
         # Sigmas (prior noise)
         self.add_argument('--data_pn', type=float, help='Noise in data prior (sigma_D)^2')
-        self.add_argument( '--pde_pn', type=float, help='Noise in  pde prior (sigma_R)^2')
-        self.add_argument('--data_pn_flag', type=bool, help='Train on (sigma_D)^2 as a hyperparameter')
-        self.add_argument( '--pde_pn_flag', type=bool, help='Train on (sigma_R)^2 as a hyperparameter')
 
         # Utils
         self.add_argument('--random_seed', type=int,  help='Random seed for np and tf random generator')

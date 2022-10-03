@@ -20,7 +20,7 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.keys = ("Total", "data_u") # Total is mandatory
+        self.keys = ("Total", "data_f") # Total is mandatory
 
     @staticmethod
     def __sse_theta(theta):
@@ -40,7 +40,7 @@ class LossNN(PhysNN):
     def __loss_data(self, outputs, targets):
         # Normal(output | target, 1 / betaD * I)
         post_data = self.__mse(outputs-targets)
-        log_var  = self.sg_params[0][0] # log(1/betaD)
+        log_var  = self.sg_params[0] # log(1/betaD)
         log_data = self.__normal_loglikelihood(post_data, outputs.shape[0], log_var)
         return self.tf_convert(post_data), self.tf_convert(log_data)
 
@@ -75,14 +75,10 @@ class LossNN(PhysNN):
 
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
-            tape.watch(self.sg_params)
             _, loglike = self.loss_total(dataset)
             loglike = loglike["Total"]
         
         grad_thetas = tape.gradient(loglike, self.model.trainable_variables)
-        grad_sigmas = tape.gradient(loglike, self.sg_params)
-        
-        if not self.sg_flags[0]: grad_sigmas[0] *= [0.0] # if data prior noise not trainable
 
-        return grad_thetas, grad_sigmas
+        return grad_thetas
 

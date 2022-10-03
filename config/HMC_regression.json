@@ -19,8 +19,7 @@
 
 
 	"sigmas":{
-		"data_pn" : 1e-2,
-		"data_pn_flag": "False"
+		"data_pn" : 1e-2
 	},
 
 	"utils":{

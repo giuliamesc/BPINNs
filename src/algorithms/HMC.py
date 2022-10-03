@@ -25,27 +25,18 @@ class HMC(Algorithm):
         self.HMC_eta = param_method["HMC_eta"]
         self.selected = list()
 
-    def __check_trainable(self, s):
-        """ If the sigmas are not trainable, sets sigma vector to zero """
-        if not self.model.sg_flags[0]: s[0] *= [0.0]
-        return s
-
-    def __leapfrog_step(self, old_theta, old_sigma, r, s, dt): # SI potrebbe cancellare old_theta
+    def __leapfrog_step(self, old_theta, r, dt): # SI potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
-        ds = dt/10
 
-        grad_theta, grad_sigma = self.model.grad_loss(self.data)
+        grad_theta = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * ds/2 for x,y in zip(s, grad_sigma)]
 
-        self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)]
-        self.model.sg_params = [ x + y * ds for x,y in zip(old_sigma, s)] 
+        self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)] 
 
-        grad_theta, grad_sigma = self.model.grad_loss(self.data)
+        grad_theta = self.model.grad_loss(self.data)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        s = [ x - y * ds/2 for x,y in zip(s, grad_sigma)]
         
-        return self.model.nn_params, self.model.sg_params, r, s
+        return self.model.nn_params, r
 
     def __compute_alpha(self, h0, h1):
         """ Computation of acceptance probabilities alpha and sampling of p (logarithm of both quantities) """
@@ -54,15 +45,15 @@ class HMC(Algorithm):
         if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
         return alpha, p
 
-    def __accept_reject(self, theta, sigma, r, s):
+    def __accept_reject(self, theta, r):
         """ 
         Acceptance-Rejection step:
         - Evaluation of current and previous value of the Hamiltonian function
         - Update or repetition of thetas depending on the acceptance-rejection step
         - Computation of the overall acceptance rate
         """
-        h0 = self.__hamiltonian(theta[0], sigma[0], r[0], s[0])
-        h1 = self.__hamiltonian(theta[1], sigma[1], r[1], s[1])
+        h0 = self.__hamiltonian(theta[0], r[0])
+        h1 = self.__hamiltonian(theta[1], r[1])
         
         alpha, p = self.__compute_alpha(h0, h1)
         accept = alpha >= p
@@ -76,12 +67,10 @@ class HMC(Algorithm):
         if accept:
             if self.debug_flag: print("\tACCEPT")
             theta = theta[1]
-            sigma = sigma[1]
             self.selected.append(True)
         else:
             if self.debug_flag: print("\tREJECT")
             theta = theta[0]
-            sigma = sigma[1]
             self.selected.append(False)
 
         acc_rate = f"{100*sum(self.selected)/len(self.selected):1.2f}%"
@@ -89,36 +78,30 @@ class HMC(Algorithm):
             print(f"\tAR: {acc_rate}")
         if not self.debug_flag:
             self.epochs_loop.set_postfix({"Acc.Rate": acc_rate})
-        
-        return theta, sigma
 
-    def __hamiltonian(self, theta, sigma, r, s):
+        return theta
+
+    def __hamiltonian(self, theta, r):
         """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
-        self.model.sg_params = sigma
         u = self.model.loss_total(self.data)[1]["Total"].numpy()
         v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
-        v_s = sum([tf.norm(t).numpy()**2 for t in s]) * self.HMC_eta**2/2
-        return u + v_r + v_s
+        return u + v_r
     
-    def sample_theta(self, theta_0, sigma_0):
+    def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
         r_0 = [tf.random.normal(x.shape, stddev=self.HMC_eta) for x in theta_0] 
-        s_0 = [tf.random.normal((1,), stddev=self.HMC_eta)]
-        s_0 = self.__check_trainable(s_0)
-        r, s = r_0.copy(), s_0.copy()
+        r   = r_0.copy()
         theta = theta_0.copy()
-        sigma = sigma_0.copy()
         for _ in range(self.HMC_L):
-            theta, sigma, r, s = self.__leapfrog_step(theta, sigma, r, s, self.HMC_dt)
-        return self.__accept_reject((theta_0,theta), (sigma_0,sigma), (r_0,r), (s_0,s))
+            theta, r = self.__leapfrog_step(theta, r, self.HMC_dt)
+        return self.__accept_reject((theta_0,theta), (r_0,r))
 
-    def select_thetas(self, thetas_train, sigmas_train):
+    def select_thetas(self, thetas_train):
         """ Compute burn-in and samples with skip """
         self.selected = self.selected[self.burn_in::self.skip]
         thetas_train = thetas_train[self.burn_in::self.skip]
-        sigmas_train = sigmas_train[self.burn_in::self.skip]
-        return thetas_train, sigmas_train
+        return thetas_train
 
     def train_log(self):
         """ Report log of the training"""
