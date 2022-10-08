@@ -24,8 +24,7 @@ class LossNN(PhysNN):
 
     @staticmethod
     def __sse_theta(theta):
-        #return sum([tf.norm(t)**2 for t in theta])
-        return 3.0
+        return sum([tf.norm(t)**2 for t in theta])
 
     @staticmethod
     def __mse(vect):
@@ -57,8 +56,7 @@ class LossNN(PhysNN):
         return 0.0, 0.0
 
     def __loss_prior(self, coeff = 0.1):
-        # Normal(theta | 0, I)
-        log_var = tf.math.log(self.stddev)
+        log_var = tf.math.log(self.stddev**2)
         prior   = self.__sse_theta(self.nn_params) / self.dim_theta
         loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var)
         return prior, loglike * coeff
