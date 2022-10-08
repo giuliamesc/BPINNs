@@ -20,7 +20,7 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.keys = ("Total", "data_u", "prior") # Total is mandatory
+        self.keys = ("Total", "data_u") # Total is mandatory
 
     @staticmethod
     def __sse_theta(theta):
