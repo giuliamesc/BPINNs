@@ -29,11 +29,12 @@ class CoreNN():
         self.n_layers   = par.architecture["n_layers"]
         self.n_neurons  = par.architecture["n_neurons"]
         self.activation = par.architecture["activation"]
+        self.stddev     = tf.math.sqrt(50/self.n_neurons)
 
         # Build the Neural network architecture
         self.model = self.__build_NN(par.utils["random_seed"])
         self.dim_theta = self.__compute_dim_theta()
-        
+
     @property
     def nn_params(self):
         """ Getter for nn_params property """
@@ -59,16 +60,17 @@ class CoreNN():
         """
         # Set random seed for inizialization
         tf.random.set_seed(seed)
+        initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=self.stddev)
         # Input Layer
         model = tf.keras.Sequential()
         model.add(tf.keras.Input(shape=(self.n_inputs,)))
         # Hidden Layers
         for _ in range(self.n_layers):
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
-                      kernel_initializer='glorot_normal', bias_initializer='zeros'))
+                      kernel_initializer=initializer, bias_initializer='zeros'))
         # Output Layer
         model.add(tf.keras.layers.Dense(self.n_out_sol, 
-                      kernel_initializer='glorot_normal', bias_initializer='zeros'))
+                      kernel_initializer=initializer, bias_initializer='zeros'))
 
         return model
 

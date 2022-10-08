@@ -115,4 +115,4 @@ plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
 plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
 starred_print("END")
 
-plotter.show_plot()
+#plotter.show_plot()
