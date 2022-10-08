@@ -65,10 +65,10 @@ class CoreNN():
         # Hidden Layers
         for _ in range(self.n_layers):
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
-                      kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+                      kernel_initializer='glorot_normal', bias_initializer='zeros'))
         # Output Layer
         model.add(tf.keras.layers.Dense(self.n_out_sol, 
-                      kernel_initializer='glorot_uniform', bias_initializer='zeros'))
+                      kernel_initializer='glorot_normal', bias_initializer='zeros'))
 
         return model
 
