@@ -68,7 +68,6 @@ class LossNN(PhysNN):
         if "data_f" in self.keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
         diff_llk = sum(llk.values())
         if "prior"  in self.keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
-        #if "prior"  in self.keys: pst["prior"],  llk["prior"]  = 0.0, 0.0
         pst["Total"] = sum(pst.values())
         llk["Total"] = sum(llk.values())
         return pst, llk, diff_llk
