@@ -84,7 +84,7 @@ class HMC(Algorithm):
     def __hamiltonian(self, theta, r):
         """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
-        u = self.model.loss_total(self.data)[2].numpy()
+        u = self.model.loss_total(self.data).numpy()
         v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
         return u + v_r
     

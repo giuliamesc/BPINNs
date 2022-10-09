@@ -42,8 +42,8 @@ class Algorithm(ABC):
         # Saving new Theta
         self.model.nn_params = new_theta
         # Computing History
-        loss, logloss, _ = self.model.loss_total(self.data)
-        self.model.loss_step((loss,logloss))
+        pst, llk = self.model.metric_total(self.data)
+        self.model.loss_step((pst,llk))
         
         return new_theta
 

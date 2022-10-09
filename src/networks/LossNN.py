@@ -20,7 +20,8 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.keys = ("Total", "data_u", "prior") # Total is mandatory
+        self.metric = ["data_u"]
+        self.keys   = ["data_u"]
 
     @staticmethod
     def __sse_theta(theta):
@@ -61,26 +62,30 @@ class LossNN(PhysNN):
         loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var)
         return prior, loglike * coeff
 
-    def loss_total(self, dataset):
-        """ Creation of the dictionary containing all posteriors and log-likelihoods """
+    def __compute_loss(self, dataset, keys):
         pst, llk = dict(), dict()
-        if "data_u" in self.keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
-        if "data_f" in self.keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
-        diff_llk = sum(llk.values())
-        if "prior"  in self.keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
+        if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
+        if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
+        if "prior"  in keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
+        return pst, llk
+
+    def metric_total(self, dataset):
+        pst, llk = self.__compute_loss(dataset, self.metric)
         pst["Total"] = sum(pst.values())
         llk["Total"] = sum(llk.values())
-        return pst, llk, diff_llk
+        return pst, llk
+
+    def loss_total(self, dataset):
+        """ Creation of the dictionary containing all posteriors and log-likelihoods """
+        _, llk = self.__compute_loss(dataset, self.keys)
+        return sum(llk.values())
 
     def grad_loss(self, dataset):
 
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
-            _, _, diff_llk = self.loss_total(dataset)
-        
-        grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)
-        #if "prior" in self.keys: grad_thetas = [x+y for x,y in zip(grad_thetas, self.model.trainable_variables)]
-        ## ADD GRAD LAMBDA
+            diff_llk = self.loss_total(dataset)
+        grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)  ## ADD GRAD LAMBDA
 
         return grad_thetas
 
