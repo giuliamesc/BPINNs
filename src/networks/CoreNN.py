@@ -24,6 +24,7 @@ class CoreNN():
         # Domain dimensions
         self.n_inputs  = par.comp_dim.n_input
         self.n_out_sol = par.comp_dim.n_out_sol
+        self.n_out_par = par.comp_dim.n_out_par
 
         # Architecture parameters
         self.n_layers   = par.architecture["n_layers"]
@@ -69,7 +70,7 @@ class CoreNN():
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
                       kernel_initializer=initializer, bias_initializer='zeros'))
         # Output Layer
-        model.add(tf.keras.layers.Dense(self.n_out_sol, 
+        model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
                       kernel_initializer=initializer, bias_initializer='zeros'))
 
         return model
@@ -85,7 +86,7 @@ class CoreNN():
         """ 
         Simple prediction on draft of Solution
         inputs : np array  (n_samples, n_input)
-        output : tf tensor (n_samples, n_out_sol)
+        output : tf tensor (n_samples, n_out_sol+n_out_par)
         """
         x = tf.convert_to_tensor(inputs)
         return self.model(x)

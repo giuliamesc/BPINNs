@@ -34,7 +34,7 @@ def create_directories(par):
     __create_single_dir(case_folder, "log")
     __create_single_dir(path_values, "samples")
 
-    return case_folder, path_plot
+    return case_folder
 
 def create_data_folders(problem, name, save):
     problem_folder  = __create_single_dir("../data", problem, keep=True)

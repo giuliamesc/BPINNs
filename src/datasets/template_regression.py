@@ -14,12 +14,12 @@ class Regression1D(Regression):
     phys_dom = {
         "n_input"   : 1,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}
     # Dimensions of the computational domain: dimension of inputs, solution and parametric field
     comp_dom = {
         "n_input"   : 1,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}
 
 @dataclass
 class Regression2D(Regression):
@@ -28,9 +28,9 @@ class Regression2D(Regression):
     phys_dom = {
         "n_input"   : 2,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}
     # Dimensions of the computational domain: dimension of inputs, solution and parametric field
     comp_dom = {
         "n_input"   : 2,
         "n_out_sol" : 1,
-        "n_out_par" : 1}
+        "n_out_par" : 0}

@@ -25,7 +25,7 @@ test_path = os.path.join(case_path, test_name)
 
 starred_print("START")
 print("Loading data...")
-plotter = Plotter(os.path.join(test_path,"plot"))
+plotter = Plotter(test_path)
 load_storage = Storage(test_path)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)

@@ -85,7 +85,7 @@ starred_print("DONE")
 # %% Saving
 
 print("Building saving directories...")
-path_folder, path_plot = create_directories(params)
+path_folder  = create_directories(params)
 save_storage = Storage(path_folder)
 
 print("Saving data...")
@@ -105,7 +105,7 @@ starred_print("DONE")
 # %% Plotting
 
 print("Loading data...")
-plotter = Plotter(path_plot)
+plotter = Plotter(path_folder)
 load_storage = Storage(path_folder)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)

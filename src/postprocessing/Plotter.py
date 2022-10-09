@@ -12,9 +12,13 @@ class Plotter():
         - show_plot: enables plot visualization
     """
     
-    def __init__(self, path_plot):
+    def __init__(self, path_folder):
         
-        self.path_plot = path_plot
+        self.path_plot = os.path.join(path_folder,"plot")
+        self.path_log  = os.path.join(path_folder,"log")
+        with open(os.path.join(self.path_log,"parameters.txt"), "r") as file_params:
+            problem = file_params.readlines()[2][10:].strip()
+        self.only_sol = problem == "Regression"
 
     def __order_inputs(self, inputs):
         """ Sorting the input points by label """
@@ -69,10 +73,10 @@ class Plotter():
         plt.figure()
         x = list(range(1,len(losses['Total'])+1))
         if name[:-4] == "LogLoss":
-            plt.plot(x, losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
+            plt.semilogy(x, losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
         for key, value in losses.items():
             if key == "Total": continue
-            plt.plot(x, value, lw=1.0, alpha=0.7, label = key)
+            plt.semilogy(x, value, lw=1.0, alpha=0.7, label = key)
 
         plt.title(f"History of {title}")
         plt.xlabel('Epochs')
@@ -80,7 +84,7 @@ class Plotter():
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, title)
 
-    def plot_confidence(self, dom_data, fit_data, functions, only_sol = False):
+    def plot_confidence(self, dom_data, fit_data, functions):
         """ Plots mean and standard deviation of solution and parametric field samples """
         inputs, u_true, f_true = dom_data
         ex_points, u_values, _  = fit_data
@@ -91,11 +95,11 @@ class Plotter():
 
         self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_confidence.png')
-        if only_sol: return
+        if self.only_sol: return
         self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'))
         self.__save_plot(self.path_plot, 'f_confidence.png')
 
-    def plot_nn_samples(self, dom_data, fit_data, functions, only_sol = False):
+    def plot_nn_samples(self, dom_data, fit_data, functions):
         """ Plots all the samples of solution and parametric field """
         inputs, u_true, f_true = dom_data
         ex_points, u_values, f_values  = fit_data
@@ -107,7 +111,7 @@ class Plotter():
 
         self.__plot_nn_samples_1D(inputs[:,0], u, label = ('x','u'), fit = u_fit)
         self.__save_plot(self.path_plot, 'u_nn_samples.png')
-        if only_sol: return
+        if self.only_sol: return
         self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = f_fit)
         self.__save_plot(self.path_plot, 'f_nn_samples.png')
 

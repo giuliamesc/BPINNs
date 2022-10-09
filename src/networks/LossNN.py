@@ -15,7 +15,7 @@ class LossNN(PhysNN):
     - mse, loglikelihood: dictionaries with keys:
         - res  : evaluated in collocation pts with physical losses
         - data : evaluated in fitting pts with targets value
-        - prior: WIP
+        - prior 
         - Total: sum of the previous
     """
 
