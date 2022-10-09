@@ -6,8 +6,9 @@ class LossNN(PhysNN):
     - Evaluate PDEs residuals (using pde constraint)
     - Compute mean-squared-errors and loglikelihood
         - residual loss (pdes)
+        - boundary loss (boundary conditions)
         - data loss (fitting)
-        - prior loss WIP
+        - prior loss 
 
     Losses structure
     - loss_total: tuple (mse, loglikelihood)
@@ -25,6 +26,7 @@ class LossNN(PhysNN):
 
     @staticmethod
     def __sse_theta(theta):
+        """ Sum of Squared Errors """
         return sum([tf.norm(t)**2 for t in theta])
 
     @staticmethod
@@ -39,6 +41,7 @@ class LossNN(PhysNN):
         return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var)
 
     def __loss_data(self, outputs, targets):
+        """ Auxiliary loss function for the computation of fitting losses """
         # Normal(output | target, 1 / betaD * I)
         post_data = self.__mse(outputs-targets)
         log_var  = self.sg_params[0] # log(1/betaD)
@@ -46,23 +49,32 @@ class LossNN(PhysNN):
         return self.tf_convert(post_data), self.tf_convert(log_data)
 
     def __loss_data_u(self, dataset):
+        """ Fitting loss on u; computation of the residual at points of measurement of u """
         outputs = self.forward(dataset.noise_data[0])
         return self.__loss_data(outputs[0], dataset.noise_data[1])
 
     def __loss_data_f(self, dataset):
+        """ Fitting loss on f; computation of the residual at points of measurement of f """
         outputs = self.forward(dataset.noise_data[0])
         return self.__loss_data(outputs[1], dataset.noise_data[2])
 
     def __loss_data_b(self):
+        """ Boundary loss; computation of the residual on boundary conditions """
         return 0.0, 0.0
 
-    def __loss_prior(self, coeff = 0.1):
+    def __loss_residual(self):
+        """ Physical loss; computation of the residual of the PDE """
+        pass
+
+    def __loss_prior(self):
+        """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
         log_var = tf.math.log(self.stddev**2)
         prior   = self.__sse_theta(self.nn_params) / self.dim_theta
-        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var)
-        return prior, loglike * coeff
+        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var) / self.dim_theta
+        return prior, loglike
 
     def __compute_loss(self, dataset, keys):
+        """ Computation of the losses listed in the input "keys" """
         pst, llk = dict(), dict()
         if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
         if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
@@ -70,6 +82,7 @@ class LossNN(PhysNN):
         return pst, llk
 
     def metric_total(self, dataset):
+        """ Computation of the losses required to be tracked """
         pst, llk = self.__compute_loss(dataset, self.metric)
         pst["Total"] = sum(pst.values())
         llk["Total"] = sum(llk.values())
@@ -81,7 +94,7 @@ class LossNN(PhysNN):
         return sum(llk.values())
 
     def grad_loss(self, dataset):
-
+        """ Computation of the gradient of the loss function with respect to the network trainable parameters """
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
             diff_llk = self.loss_total(dataset)
