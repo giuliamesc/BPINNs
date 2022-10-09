@@ -22,7 +22,7 @@ class LossNN(PhysNN):
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
         self.sigmas = [par.sigmas["data_pn"]]
-        self.metric = ["data_u", "data_f"]
+        self.metric = ["data_u", "data_f", "pde"]
         self.keys   = ["data_u", "data_f"]
 
     @staticmethod
@@ -39,7 +39,7 @@ class LossNN(PhysNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var)
+        return 0.5 * ( mse * tf.math.exp(log_var) - log_var) # deleted * n
 
     def __loss_data(self, outputs, targets):
         """ Auxiliary loss function for the computation of fitting losses """
@@ -65,8 +65,15 @@ class LossNN(PhysNN):
 
     def __loss_residual(self, dataset):
         """ Physical loss; computation of the residual of the PDE """
-        outputs = self.forward(dataset.noise_data[0])
-        pass
+        inputs = self.tf_convert(dataset.coll_data[0])
+        with tf.GradientTape(persistent=True) as tape:
+            tape.watch(inputs)
+            u, f = self.forward(inputs)
+            residuals = self.pinn.comp_residual(inputs, u, f, tape)
+        mse = self.__mse(residuals)
+        log_var  = self.sigmas[0] # log(1/betaD) # DA MODIFICARE
+        log_res = self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
+        return log_var, log_res
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
@@ -81,6 +88,7 @@ class LossNN(PhysNN):
         if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
         if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
         if "prior"  in keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
+        if "pde"    in keys: pst["pde"],    llk["pde"]    = self.__loss_residual(dataset)
         return pst, llk
 
     def metric_total(self, dataset):
