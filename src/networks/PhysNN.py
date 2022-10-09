@@ -9,8 +9,7 @@ class PhysNN(CoreNN):
         self.pinn = equation(par)
         self.inv_flag  = par.inv_flag
 
-        # Sigmas Operations -> Lambda
-        self.sg_params = [par.sigmas["data_pn"]]
+        # Initailize Lambda
 
     @staticmethod
     def tf_convert(tensor): 
@@ -22,16 +21,3 @@ class PhysNN(CoreNN):
         u = u_tilde[:,:self.n_out_sol]
         f = u_tilde[:,self.n_out_sol:]
         return u, f
-
-    """
-    def forward(self, inputs):
-        inputs = self.tf_convert(inputs)
-        with tf.GradientTape(persistent=True) as tape:
-            tape.watch(inputs)
-            u_tilde = super(PhysNN, self).forward(inputs)
-            u = u_tilde[ self.n_out_sol:]
-            f = u_tilde[:-self.n_out_par]
-            #u = self.pinn.solution(u_tilde, inputs)
-            #f = self.pinn.parametric_field(u_tilde, inputs, tape)
-        return u, f
-    """

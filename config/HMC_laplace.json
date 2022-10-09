@@ -1,7 +1,7 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "sin",
+		"case_name": "cos",
 		"method"   : "HMC"
 	},
 
@@ -16,7 +16,6 @@
 		"n_layers"  : 2,
 		"n_neurons" : 16
 	},
-
 
 	"sigmas":{
 		"data_pn" : 1e-2

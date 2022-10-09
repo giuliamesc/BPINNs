@@ -21,8 +21,9 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.metric = ["data_u"]
-        self.keys   = ["data_u"]
+        self.sigmas = [par.sigmas["data_pn"]]
+        self.metric = ["data_u", "data_f"]
+        self.keys   = ["data_u", "data_f"]
 
     @staticmethod
     def __sse_theta(theta):
@@ -44,7 +45,7 @@ class LossNN(PhysNN):
         """ Auxiliary loss function for the computation of fitting losses """
         # Normal(output | target, 1 / betaD * I)
         post_data = self.__mse(outputs-targets)
-        log_var  = self.sg_params[0] # log(1/betaD)
+        log_var  = self.sigmas[0] # log(1/betaD)
         log_data = self.__normal_loglikelihood(post_data, outputs.shape[0], log_var)
         return self.tf_convert(post_data), self.tf_convert(log_data)
 
@@ -62,8 +63,9 @@ class LossNN(PhysNN):
         """ Boundary loss; computation of the residual on boundary conditions """
         return 0.0, 0.0
 
-    def __loss_residual(self):
+    def __loss_residual(self, dataset):
         """ Physical loss; computation of the residual of the PDE """
+        outputs = self.forward(dataset.noise_data[0])
         pass
 
     def __loss_prior(self):
@@ -74,7 +76,7 @@ class LossNN(PhysNN):
         return prior, loglike
 
     def __compute_loss(self, dataset, keys):
-        """ Computation of the losses listed in the input "keys" """
+        """ Computation of the losses listed keys """
         pst, llk = dict(), dict()
         if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
         if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)

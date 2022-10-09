@@ -9,16 +9,12 @@ class Laplace(Equation):
         super().__init__(par)
         self.mu = par.physics["diffusion"]
 
-    def solution(self, u_tilde, *_):
-        return u_tilde
-
-    def parametric_field(self, u_tilde, inputs, tape):
-        u_list = Operators.tf_unpack(u_tilde)
+    def comp_residual(self, inputs, out_sol, out_par, tape):
+        u_list = Operators.tf_unpack(out_sol)
         lap_u  = Operators.laplacian_vector(tape, u_list, inputs)
         lap_u  = Operators.tf_pack(lap_u)
-        par_f = - lap_u * self.mu
-        return par_f
-        
+        return lap_u * self.mu + out_par
+
     def comp_process(self, dataset):
         params = dict()
         return params

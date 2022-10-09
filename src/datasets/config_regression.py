@@ -5,6 +5,7 @@ import numpy as np
 @dataclass
 class Reg1D_cos(Regression1D):
     name = "reg1D_cos"
+    physics = {}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
         "mesh_type" : "uniform",
@@ -18,6 +19,7 @@ class Reg1D_cos(Regression1D):
 @dataclass
 class Reg1D_sin(Regression1D):
     name = "reg1D_sin"
+    physics = {}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
         "mesh_type" : "uniform",
