@@ -10,6 +10,8 @@
 - Variational Inference    
 - SVGD
 
+
+
 ## Idee
 - Salvataggio per vari selezioni
     - epochs, burn-in, skips
@@ -21,8 +23,9 @@
 - Guilen Global - funzione di print center
 - Batch
 
+
+
 ### PROBLEMI
 - Esplosione a 2k epoche (regression) - risolto ?
-- Loss Prior (tutto)
-- Bias non differenziato (NewPiNN branch Laplace)
-- La loss dei residui non fa imparare (main branch)
+- Loss Prior (bisogna davvero dividere per dim_theta?)
+- La loss dei residui non fa imparare

@@ -22,7 +22,7 @@ class LossNN(PhysNN):
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
         self.sigmas = [par.sigmas["data_pn"]]
-        self.metric = ["data_u", "data_f", "pde"]
+        self.metric = ["data_u", "data_f"]
         self.keys   = ["data_u", "data_f"]
 
     @staticmethod

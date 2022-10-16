@@ -1,7 +1,7 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"case_name": "sin",
 		"method"   : "HMC"
 	},
 
