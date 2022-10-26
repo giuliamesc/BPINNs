@@ -14,12 +14,11 @@ class Laplace1D_cos(Laplace1D):
     # Lambda expression of the solution and the parametric field
     analytical_solution = {
         "u": lambda *x: np.cos(x[0]*8),
-        "f": lambda *x: 64*np.cos(x[0]*8)}
-"""
+        "f": lambda *x: np.cos(x[0]*8)}
 @dataclass
 class Laplace1D_sin(Laplace1D):
     name    = "Laplace1D_sin"
-    physics = {"diffusion" : -1e-2}
+    physics = {"diffusion" : 1/64}
     # Specifications on the domain: mesh type, resolution, boundaries
     analytical_domain = {
         "mesh_type" : "uniform",
@@ -43,3 +42,4 @@ class Laplace1D_sin(Laplace1D):
     analytical_solution = {
         "u": lambda *x: 1-x[0]*np.exp(-x[0]),
         "f": lambda *x: 0.5*x[0]*np.exp(-x[0])-np.exp(-x[0])}
+"""

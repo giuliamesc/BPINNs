@@ -22,8 +22,8 @@ class LossNN(PhysNN):
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
         self.sigmas = [par.sigmas["data_pn"]]
-        self.metric = ["data_u", "data_f"]
-        self.keys   = ["data_u", "data_f"]
+        self.metric = ["data_u", "data_f", "pde"]
+        self.keys   = ["data_u", "data_f", "pde"]
 
     @staticmethod
     def __sse_theta(theta):
@@ -39,7 +39,7 @@ class LossNN(PhysNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        return 0.5 * ( mse * tf.math.exp(log_var) - log_var) # deleted * n
+        return 0.5 * ( mse * tf.math.exp(log_var) - log_var) # delete * n in the laplace case?
 
     def __loss_data(self, outputs, targets):
         """ Auxiliary loss function for the computation of fitting losses """
@@ -72,14 +72,14 @@ class LossNN(PhysNN):
             residuals = self.pinn.comp_residual(inputs, u, f, tape)
         mse = self.__mse(residuals)
         log_var  = self.sigmas[0] # log(1/betaD) # DA MODIFICARE
-        log_res = self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
+        log_res = 0.001*self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
         return log_var, log_res
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
         log_var = tf.math.log(self.stddev**2)
-        prior   = self.__sse_theta(self.nn_params) / self.dim_theta
-        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var) / self.dim_theta
+        prior   = self.__sse_theta(self.nn_params) / self.dim_theta # MSE
+        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var) / self.dim_theta # DIVISION BY DIM_THETA
         return prior, loglike
 
     def __compute_loss(self, dataset, keys):

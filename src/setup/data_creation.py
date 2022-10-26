@@ -48,18 +48,42 @@ class Dataset:
     @property
     def dom_data(self):
         return self.inputs_dom, self.U_dom, self.F_dom
+    
+    @dom_data.setter
+    def dom_data(self, *values):
+        self.inputs_dom = values[0]
+        self.U_dom = values[1]
+        self.F_dom = values[2]
 
     @property
     def coll_data(self):
         return self.inputs_coll, self.U_coll, self.F_coll
 
+    @coll_data.setter
+    def coll_data(self, *values):
+        self.inputs_coll = values[0]
+        self.U_coll = values[1]
+        self.F_coll = values[2]
+
     @property
     def exact_data(self):
         return self.inputs_exact, self.U_exact, self.F_exact
+    
+    @exact_data.setter
+    def exact_data(self, *values):
+        self.inputs_exact = values[0]
+        self.U_exact = values[1]
+        self.F_exact = values[2]
 
     @property
     def noise_data(self):
         return self.inputs_exact, self.U_noise, self.F_noise
+
+    @noise_data.setter
+    def noise_data(self, *values):
+        self.inputs_exact = values[0]
+        self.U_noise = values[1]
+        self.F_noise = values[2]
 
     def __load_dataset(self):
         """load data from dataset"""
