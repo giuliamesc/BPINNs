@@ -28,12 +28,12 @@ class HMC(Algorithm):
     def __leapfrog_step(self, old_theta, r, dt): # SI potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
 
-        grad_theta = self.model.grad_loss(self.data)
+        grad_theta = self.model.grad_loss(self.data, self.__full_loss)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
 
         self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)] 
 
-        grad_theta = self.model.grad_loss(self.data)
+        grad_theta = self.model.grad_loss(self.data, self.__full_loss)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
         
         return self.model.nn_params, r
@@ -84,12 +84,14 @@ class HMC(Algorithm):
     def __hamiltonian(self, theta, r):
         """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
-        u = self.model.loss_total(self.data).numpy()
+        u = self.model.loss_total(self.data, self.__full_loss).numpy()
         v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
         return u + v_r
     
     def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
+        self.__full_loss = self.curr_ep > self.burn_in
+
         r_0 = [tf.random.normal(x.shape, stddev=self.HMC_eta) for x in theta_0] 
         r   = r_0.copy()
         theta = theta_0.copy()

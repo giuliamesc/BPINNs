@@ -15,6 +15,7 @@ class Algorithm(ABC):
         self.params = param_method
         self.epochs = self.params["epochs"]
         self.debug_flag = debug_flag
+        self.curr_ep = 0
 
     def compute_time(self):
         training_time  = time.time() - self.t0
@@ -64,6 +65,7 @@ class Algorithm(ABC):
         self.epochs_loop = self.__train_loop(self.epochs) 
         for i in self.epochs_loop:
             if self.debug_flag: print(f'  START EPOCH {i+1}')
+            self.curr_ep = i+1
             step = self.__train_step(i)
             thetas_train.append(step)
     

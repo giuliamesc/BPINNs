@@ -25,13 +25,13 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "True"
+		"gen_flag"   : "False"
 	},
 
 	"HMC":{
-		"epochs" : 100,
-		"burn_in": 10,
-		"skip"   : 10,
+		"epochs" : 250,
+		"burn_in": 100,
+		"skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,
 		"HMC_eta": 5e-1	

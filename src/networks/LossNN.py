@@ -39,7 +39,7 @@ class LossNN(PhysNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        return 0.5 * ( mse * tf.math.exp(log_var) - log_var) # delete * n in the laplace case?
+        return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var) # delete * n in the laplace case?
 
     def __loss_data(self, outputs, targets):
         """ Auxiliary loss function for the computation of fitting losses """
@@ -63,17 +63,17 @@ class LossNN(PhysNN):
         """ Boundary loss; computation of the residual on boundary conditions """
         return 0.0, 0.0
 
-    def __loss_residual(self, dataset):
+    def __loss_residual(self, dataset, coeff = 1e-3):
         """ Physical loss; computation of the residual of the PDE """
         inputs = self.tf_convert(dataset.coll_data[0])
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(inputs)
             u, f = self.forward(inputs)
             residuals = self.pinn.comp_residual(inputs, u, f, tape)
-        mse = self.__mse(residuals)
-        log_var  = self.sigmas[0] # log(1/betaD) # DA MODIFICARE
-        log_res = 0.001*self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
-        return log_var, log_res
+        mse = coeff * self.__mse(residuals)
+        log_var = self.sigmas[0] # log(1/betaD) # DA MODIFICARE
+        log_res = coeff * self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
+        return mse, log_res
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
@@ -82,32 +82,32 @@ class LossNN(PhysNN):
         loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var) / self.dim_theta # DIVISION BY DIM_THETA
         return prior, loglike
 
-    def __compute_loss(self, dataset, keys):
+    def __compute_loss(self, dataset, keys, full_loss = True):
         """ Computation of the losses listed keys """
         pst, llk = dict(), dict()
         if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
         if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
         if "prior"  in keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
-        if "pde"    in keys: pst["pde"],    llk["pde"]    = self.__loss_residual(dataset)
+        if "pde"    in keys: pst["pde"], llk["pde"] = self.__loss_residual(dataset, coeff = 1e-2) if full_loss else (0.0, 0.0)
         return pst, llk
 
-    def metric_total(self, dataset):
+    def metric_total(self, dataset, full_loss = True):
         """ Computation of the losses required to be tracked """
-        pst, llk = self.__compute_loss(dataset, self.metric)
+        pst, llk = self.__compute_loss(dataset, self.metric, full_loss)
         pst["Total"] = sum(pst.values())
         llk["Total"] = sum(llk.values())
         return pst, llk
 
-    def loss_total(self, dataset):
+    def loss_total(self, dataset, full_loss = True):
         """ Creation of the dictionary containing all posteriors and log-likelihoods """
-        _, llk = self.__compute_loss(dataset, self.keys)
+        _, llk = self.__compute_loss(dataset, self.keys, full_loss)
         return sum(llk.values())
 
-    def grad_loss(self, dataset):
+    def grad_loss(self, dataset, full_loss = True):
         """ Computation of the gradient of the loss function with respect to the network trainable parameters """
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
-            diff_llk = self.loss_total(dataset)
+            diff_llk = self.loss_total(dataset, full_loss)
         grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)  ## ADD GRAD LAMBDA
 
         return grad_thetas
