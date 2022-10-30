@@ -37,8 +37,7 @@ class Dataset:
 
         np.random.seed(par.utils["random_seed"])
         self.dom_data = self.__load_dataset()
-        self.dom_data = self.__norm_dataset()
-        self.build_dataset()
+        self.__compute_norm_coeff()
 
 
     @property
@@ -84,10 +83,28 @@ class Dataset:
         self.f_noise = np.random.normal(data[2], noise, data[2].shape).astype("float32")
 
     @property
-    def norm_coeff(self, label):
-        if label == "u": return self.mean_u, self.std_u
-        if label == "f": return self.mean_f, self.std_f
-        raise ValueError("Wrong label, only u or f")
+    def norm_coeff(self):
+        u_coeff = (self.mean_u, self.std_u)
+        f_coeff = (self.mean_f, self.std_f)
+        return u_coeff, f_coeff
+
+    def __select_indexes(self, res, num):
+        # n_domain is simply the length of one of the dataset, x for instance
+        index = list(range(res))
+        match self.mesh_type:
+            case "random"  : return index[:num]
+            case "sobol"   :
+                if not ((num-1) & (num-2)): return index[:num] + [index[-1]]
+                elif not ((num) & (num-1)): return index[:num]
+                elif num < 80: 
+                    warnings.warn("Non optimal choice of resolution for Sobol mesh")
+                    return index[:num]
+            case "uniform" : 
+                delta = (res - res//num * num) // 2 
+                new_index = index[delta::res//num]
+                new_index[0], new_index[-1] = index[0], index[-1]
+                return new_index
+            case _ : Exception("This mesh type doesn't exists")
 
     def __load_dataset(self):
 
@@ -110,28 +127,12 @@ class Dataset:
 
         return x, u, f
 
-    def __select_indexes(self, res, num):
-        # n_domain is simply the length of one of the dataset, x for instance
-        index = list(range(res))
-        match self.mesh_type:
-            case "random"  : return index[:num]
-            case "sobol"   :
-                if not ((num-1) & (num-2)): return index[:num] + [index[-1]]
-                elif not ((num) & (num-1)): return index[:num]
-                elif num < 80: 
-                    warnings.warn("Non optimal choice of resolution for Sobol mesh")
-                    return index[:num]
-            case "uniform" : 
-                delta = (res - res//num * num) // 2 
-                new_index = index[delta::res//num]
-                new_index[0], new_index[-1] = index[0], index[-1]
-                return new_index
-            case _ : Exception("This mesh type doesn't exists")
+    def __compute_norm_coeff(self):
+        data = self.dom_data
+        self.mean_u, self.std_u = np.mean(data[1],axis=0), np.std(data[1],axis=0)
+        self.mean_f, self.std_f = np.mean(data[2],axis=0), np.std(data[2],axis=0)
 
-    def __norm_dataset(self):
-        return self.dom_data
-
-    def build_dataset(self):
+    def __build_dataset(self):
         num_points = self.dom_data[0].shape[0]
         if self.num_collocation > num_points : 
             raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {num_points}')
@@ -143,3 +144,17 @@ class Dataset:
         self.exact_data = self.__select_indexes(num_points, self.num_fitting)
         # build noise dataset from domain dataset 
         self.noise_data = self.noise_lv
+
+    def normalize_dataset(self):
+        data = self.dom_data
+        u_star = (data[1]-self.norm_coeff[0][0])/self.norm_coeff[0][1]
+        f_star = (data[2]-self.norm_coeff[1][0])/self.norm_coeff[1][1]
+        self.dom_data = data[0], u_star, f_star
+        self.__build_dataset()
+
+    def denormalize_dataset(self):
+        data = self.dom_data
+        u = data[1] * self.norm_coeff[0][1] + self.norm_coeff[0][0]
+        f = data[2] * self.norm_coeff[1][1] + self.norm_coeff[1][0]
+        self.dom_data = data[0], u, f
+        self.__build_dataset()

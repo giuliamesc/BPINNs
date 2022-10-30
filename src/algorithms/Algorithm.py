@@ -28,8 +28,9 @@ class Algorithm(ABC):
 
     @data_train.setter
     def data_train(self, dataset):
-        self.model.process_params = self.model.pinn.comp_process(dataset)
-        self.data = self.model.pinn.data_process(dataset, self.model.process_params)
+        self.model.u_coeff = dataset.norm_coeff[0]
+        self.model.f_coeff = dataset.norm_coeff[1]
+        self.data = dataset
 
     def __train_step(self, epoch):
 
@@ -60,6 +61,8 @@ class Algorithm(ABC):
 
         # Store thetas in this round of training
         thetas_train = list()
+        # Normalizing dataset
+        self.data.normalize_dataset()
 
         # Sampling new thetas
         self.epochs_loop = self.__train_loop(self.epochs) 
@@ -69,6 +72,8 @@ class Algorithm(ABC):
             step = self.__train_step(i)
             thetas_train.append(step)
     
+        # Denormalizing dataset
+        self.data.denormalize_dataset()
         # Select which thetas must be saved
         thetas_train = self.select_thetas(thetas_train)
         # Save thetas in the bnn

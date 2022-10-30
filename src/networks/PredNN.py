@@ -14,16 +14,15 @@ class PredNN(PhysNN):
     def __init__(self, **kw):
         
         super(PredNN, self).__init__(**kw)
-        # Functions for pre and post processing of inputs and outputs of the network
-        self.process_params = dict()
-        # Empty list where samples of network parameters will be stored
-        self.thetas = list() 
+        self.thetas = list() # Empty list where samples of network parameters will be stored
 
     def __compute_sample(self, theta, inputs):
         """ Computes output sampling with one given theta """
         self.nn_params = theta
-        sample = self.forward(inputs)
-        return self.pinn.post_process(sample, self.process_params)
+        u, f = self.forward(inputs)
+        u_denorm = u * self.u_coeff[1] + self.u_coeff[0]
+        f_denorm = f * self.f_coeff[1] + self.f_coeff[0] 
+        return u_denorm, f_denorm
     
     def __predict(self, inputs, n_thetas = None):
         """ 
@@ -31,7 +30,6 @@ class PredNN(PhysNN):
         out_sol: list with len n_thetas, of tf tensor (n_sample, n_out_sol)
         out_par: list with len n_thetas, of tf tensor (n_sample, n_out_par)
         """
-        inputs = self.pinn.pre_process(inputs, self.process_params)
         out_sol = list()
         out_par = list()
 
