@@ -29,8 +29,8 @@
 	},
 
 	"HMC":{
-		"epochs" : 250,
-		"burn_in": 100,
+		"epochs" : 500,
+		"burn_in": 200,
 		"skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-2,

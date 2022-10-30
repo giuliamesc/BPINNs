@@ -23,9 +23,6 @@
 - Guilen Global - funzione di print center
 - Batch
 
-
-
-### PROBLEMI
+### DUBBI
 - Esplosione a 2k epoche (regression) - risolto ?
 - Loss Prior (bisogna davvero dividere per dim_theta?)
-- La loss dei residui non fa imparare

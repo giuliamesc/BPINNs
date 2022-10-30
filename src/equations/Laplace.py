@@ -7,7 +7,7 @@ class Laplace(Equation):
     """
     def __init__(self, par):
         super().__init__(par)
-        self.mu = par.physics["diffusion"]
+        self.mu = Operators.tf_convert(par.physics["diffusion"])
 
     def comp_residual(self, inputs, out_sol, out_par, tape):
         u_list = Operators.tf_unpack(out_sol)
@@ -29,9 +29,9 @@ class Laplace(Equation):
         """ Normalization of u and f """
         new_dataset = dataset
         """
-        new_dataset.dom_data = self._normalize_data(dataset.dom_data)
+        new_dataset.dom_data   = self._normalize_data(dataset.dom_data)
         new_dataset.exact_data = self._normalize_data(dataset.exact_data)
-        new_dataset.coll_data = self._normalize_data(dataset.coll_data)
+        new_dataset.coll_data  = self._normalize_data(dataset.coll_data)
         new_dataset.noise_data = self._normalize_data(dataset.noise_data)
         """
         return new_dataset

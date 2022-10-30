@@ -14,6 +14,11 @@ class Operators:
     """
 
     @staticmethod
+    def tf_convert(tensor): 
+        """ Conversion of a numpy array to tensor """
+        return tf.cast(tensor, dtype=tf.float32)
+
+    @staticmethod
     def tf_unpack(tensor):
         """ Returns a list whose elements are the tensor representing the columns of the input tensor """
         return tf.unstack(tf.expand_dims(tensor, axis=-2), axis=-1) 
@@ -27,7 +32,6 @@ class Operators:
     def tf_trace(lt):
         """ Computes the trace (in the algebrical sense), but for an input which is a list of column tensors """
         return tf.expand_dims(sum([v[:,i] for i, v in enumerate(lt)]), axis=-1)
-
 
     @staticmethod
     def gradient_scalar(tape, s, x):

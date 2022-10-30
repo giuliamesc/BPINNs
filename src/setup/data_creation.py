@@ -17,10 +17,6 @@ class Dataset:
         - prop_collocation = proportion of domain data to use as collocation data
         - n_input = 1,2 or 3 (1D, 2D or 3D experiment)
         - noise_lv = noise level in exact data
-
-    Private:
-        - __flag_dataset_build = flag to build/load the dataset just one time
-        - __flag_dataset_noise = flag to add the noise to exact data just one time
     """
 
     def __init__(self, par):
@@ -32,71 +28,79 @@ class Dataset:
 
         self.num_fitting     = par.experiment["num_fitting"]
         self.num_collocation = par.experiment["num_collocation"]
+        self.num_boundary    = 1 # To be generalized in 2D case
         self.noise_lv = par.experiment["noise_lv"]
         
         self.n_input   = par.phys_dim.n_input
         self.n_out_par = par.phys_dim.n_out_par
         self.n_out_sol = par.phys_dim.n_out_sol
 
-        self.__flag_dataset_build = False
-        self.__flag_dataset_noise = False
         np.random.seed(par.utils["random_seed"])
-
+        self.dom_data = self.__load_dataset()
+        self.dom_data = self.__norm_dataset()
         self.build_dataset()
-        self.build_noisy_dataset()
+
 
     @property
     def dom_data(self):
-        return self.inputs_dom, self.U_dom, self.F_dom
+        return self.x_dom, self.u_dom, self.f_dom
     
     @dom_data.setter
-    def dom_data(self, *values):
-        self.inputs_dom = values[0]
-        self.U_dom = values[1]
-        self.F_dom = values[2]
+    def dom_data(self, values):
+        self.x_dom = values[0]
+        self.u_dom = values[1]
+        self.f_dom = values[2]
 
     @property
     def coll_data(self):
-        return self.inputs_coll, self.U_coll, self.F_coll
+        return self.x_coll, self.u_coll, self.f_coll
 
     @coll_data.setter
-    def coll_data(self, *values):
-        self.inputs_coll = values[0]
-        self.U_coll = values[1]
-        self.F_coll = values[2]
+    def coll_data(self, indexes):
+        dom_val = self.dom_data
+        self.x_coll = dom_val[0][indexes,:]
+        self.u_coll = dom_val[1][indexes,:]
+        self.f_coll = dom_val[2][indexes,:]
 
     @property
     def exact_data(self):
-        return self.inputs_exact, self.U_exact, self.F_exact
+        return self.x_exact, self.u_exact, self.f_exact
     
     @exact_data.setter
-    def exact_data(self, *values):
-        self.inputs_exact = values[0]
-        self.U_exact = values[1]
-        self.F_exact = values[2]
+    def exact_data(self, indexes):
+        dom_val = self.dom_data
+        self.x_exact = dom_val[0][indexes,:]
+        self.u_exact = dom_val[1][indexes,:]
+        self.f_exact = dom_val[2][indexes,:]
 
     @property
     def noise_data(self):
-        return self.inputs_exact, self.U_noise, self.F_noise
+        return self.x_exact, self.u_noise, self.f_noise
 
     @noise_data.setter
-    def noise_data(self, *values):
-        self.inputs_exact = values[0]
-        self.U_noise = values[1]
-        self.F_noise = values[2]
+    def noise_data(self, noise):
+        data = self.exact_data
+        self.u_noise = np.random.normal(data[1], noise, data[1].shape).astype("float32")
+        self.f_noise = np.random.normal(data[2], noise, data[2].shape).astype("float32")
+
+    @property
+    def norm_coeff(self, label):
+        if label == "u": return self.mean_u, self.std_u
+        if label == "f": return self.mean_f, self.std_f
+        raise ValueError("Wrong label, only u or f")
 
     def __load_dataset(self):
-        """load data from dataset"""
+
         path = os.path.join("../data", self.problem)
         path = os.path.join(path, self.name_example)
 
-        inputs = list()
+        x = list()
         for var_file in os.listdir(path):
             if not var_file[-4:] == ".npy": continue
             if var_file[:-4] in ["x","y","z"]:
-                inputs.append(np.load(os.path.join(path,var_file))[...,None])
-        inputs = np.concatenate(inputs, axis=-1)
-        inputs = inputs.astype(np.float32)
+                x.append(np.load(os.path.join(path,var_file))[...,None])
+        x = np.concatenate(x, axis=-1)
+        x = x.astype(np.float32)
 
         u = np.load(os.path.join(path,"u.npy")).astype(np.float32)
         f = np.load(os.path.join(path,"f.npy")).astype(np.float32)
@@ -104,26 +108,7 @@ class Dataset:
         if(len(u.shape)==1): u = u[...,None] # from shape (n_coll, ) -> (n_coll, 1)
         if(len(f.shape)==1): f = f[...,None] # add the last dimension only if we are in 1D case
 
-        # store domain datasets
-        self.inputs_dom = inputs
-        self.U_dom = u
-        self.F_dom = f
-
-        # build collocation dataset from domain dataset
-        if self.num_collocation > inputs.shape[0] : 
-            raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {inputs.shape[0]}')
-        index_coll = self.__select_indexes(inputs.shape[0], self.num_collocation)
-        self.inputs_coll = inputs[index_coll,:]
-        self.U_coll = u[index_coll,:]
-        self.F_coll = f[index_coll,:]
-
-        # build exact dataset from domain dataset
-        if self.num_fitting > inputs.shape[0] : 
-            raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {inputs.shape[0]}')
-        index_exac = self.__select_indexes(inputs.shape[0], self.num_fitting)
-        self.inputs_exact = inputs[index_exac,:]
-        self.U_exact = u[index_exac,:]
-        self.F_exact = f[index_exac,:]
+        return x, u, f
 
     def __select_indexes(self, res, num):
         # n_domain is simply the length of one of the dataset, x for instance
@@ -143,22 +128,18 @@ class Dataset:
                 return new_index
             case _ : Exception("This mesh type doesn't exists")
 
+    def __norm_dataset(self):
+        return self.dom_data
 
     def build_dataset(self):
-        """ call the functions to build the dataset """
-        if not self.__flag_dataset_build:
-            self.__load_dataset()
-            self.__flag_dataset_build = True
-
-    def build_noisy_dataset(self):
-        """ Add noise to exact data """
-        self.build_dataset()
-        if self.__flag_dataset_noise: return
-        
-        u_error = np.random.normal(0, self.noise_lv, self.U_exact.shape).astype("float32")
-        self.U_noise = self.U_exact + u_error
-
-        f_error = np.random.normal(0, self.noise_lv, self.F_exact.shape).astype("float32")
-        self.F_noise = self.F_exact + f_error
-
-        self.__flag_dataset_noise = True
+        num_points = self.dom_data[0].shape[0]
+        if self.num_collocation > num_points : 
+            raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {num_points}')
+        if self.num_fitting     > num_points : 
+            raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {num_points}')
+        # build collocation dataset from domain dataset
+        self.coll_data  = self.__select_indexes(num_points, self.num_collocation)
+        # build exact dataset from domain dataset 
+        self.exact_data = self.__select_indexes(num_points, self.num_fitting)
+        # build noise dataset from domain dataset 
+        self.noise_data = self.noise_lv
