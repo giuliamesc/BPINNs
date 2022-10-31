@@ -5,17 +5,16 @@ class PhysNN(CoreNN):
 
     def __init__(self, par, equation, **kw):
         super(PhysNN, self).__init__(par, **kw)
-        self.norm = None # Store coefficients for denormalizing u, f in prediction
         self.pinn = equation(par)
         self.inv_flag = par.inv_flag
+        self.u_coeff, self.f_coeff = None, None
 
     @property
-    def norm_coeff(self): 
-        return self.norm
+    def norm_coeff(self):
+        return self.pinn.norm_coeff
 
     @norm_coeff.setter
     def norm_coeff(self, norm):
-        self.norm = norm
         self.pinn.norm_coeff = norm
 
     @staticmethod

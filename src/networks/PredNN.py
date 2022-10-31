@@ -59,10 +59,10 @@ class PredNN(PhysNN):
         - Max standard deviation on solution and paramteric field
         """
         u_q = {
-            "uq_sol_mean" : np.mean(function_confidence["sol_std"], axis = 0),
-            "uq_par_mean" : np.mean(function_confidence["par_std"], axis = 0),
-            "uq_sol_max"  : np.max(function_confidence["sol_std"], axis = 0),
-            "uq_par_max"  : np.max(function_confidence["par_std"], axis = 0)}
+            "uq_sol_mean" : np.mean(function_confidence["sol_std"], axis = 0) / self.u_coeff[1],
+            "uq_par_mean" : np.mean(function_confidence["par_std"], axis = 0) / self.f_coeff[1],
+            "uq_sol_max"  : np.max(function_confidence["sol_std"], axis = 0)  / self.u_coeff[1],
+            "uq_par_max"  : np.max(function_confidence["par_std"], axis = 0)  / self.f_coeff[1]}
         return u_q
 
     def __metric(self, x, y):

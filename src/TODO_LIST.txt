@@ -10,6 +10,10 @@
 - Variational Inference    
 - SVGD
 
+## Normalization
+- abstract property x Equazioni
+- sistemare meglio nomi e simili 
+- documenatre
 
 
 ## Idee
