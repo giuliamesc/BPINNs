@@ -16,6 +16,8 @@ class Equation(ABC):
         self.physics  = par.physics
         self.phys_dim = par.phys_dim
         self.comp_dim = par.comp_dim
+        self.phys = dict()
+        self.norm = dict()
 
     @abstractmethod
     def comp_residual(self, inputs, out_sol, out_par, tape):

@@ -63,6 +63,7 @@ class Algorithm(ABC):
         thetas_train = list()
         # Normalizing dataset
         self.data.normalize_dataset()
+        self.model.norm_coeff = self.data.norm_coeff
 
         # Sampling new thetas
         self.epochs_loop = self.__train_loop(self.epochs) 
