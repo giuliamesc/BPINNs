@@ -16,7 +16,10 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        self.sigmas = [par.sigmas["data_pn"]]
+        sigma_d = 1e-2 # log(1/sigma_d)
+        sigma_r = 1e-2 # log(1/sigma_r)
+        #self.sigmas = [par.sigmas["data_pn"], par.sigmas["data_pn"]]
+        self.sigmas = [sigma_d, sigma_r]
         self.metric = ["data_u", "data_f", "pde"] # Must be added in config ??
         self.keys   = ["data_u", "data_f", "pde"] # Must be added in config ??
 
@@ -57,16 +60,16 @@ class LossNN(PhysNN):
         """ Boundary loss; computation of the residual on boundary conditions """
         return 0.0, 0.0
 
-    def __loss_residual(self, dataset, coeff = 1e-3):
+    def __loss_residual(self, dataset):
         """ Physical loss; computation of the residual of the PDE """
         inputs = self.tf_convert(dataset.coll_data[0])
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(inputs)
             u, f = self.forward(inputs)
             residuals = self.pinn.comp_residual(inputs, u, f, tape)
-        mse = coeff * self.__mse(residuals)
-        log_var = self.sigmas[0]
-        log_res = coeff * self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
+        mse = self.__mse(residuals)
+        log_var = self.sigmas[1]
+        log_res = self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
         return mse, log_res
 
     def __loss_prior(self):
@@ -83,7 +86,7 @@ class LossNN(PhysNN):
         if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
         if "data_b" in keys: pst["data_b"], llk["data_b"] = self.__loss_data_b(dataset)
         if "prior"  in keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
-        if "pde"    in keys: pst["pde"], llk["pde"] = self.__loss_residual(dataset, coeff = 1e-3) if full_loss else (0.0, 0.0)
+        if "pde"    in keys: pst["pde"], llk["pde"] = self.__loss_residual(dataset) if full_loss else (0.0, 0.0)
         return pst, llk
 
     def metric_total(self, dataset, full_loss = True):
@@ -103,7 +106,7 @@ class LossNN(PhysNN):
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
             diff_llk = self.loss_total(dataset, full_loss)
-        grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)  ## ADD GRAD LAMBDA
+        grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)
 
         return grad_thetas
 
