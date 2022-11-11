@@ -20,17 +20,17 @@
 
 	"utils":{
 		"random_seed": 28,
-		"debug_flag" : "False",
+		"debug_flag" : "True",
 		"save_flag"  : "False",
-		"gen_flag"   : "True"
+		"gen_flag"   : "False"
 	},
 
 	"HMC":{
-		"epochs" : 20,
-		"burn_in": 5,
+		"epochs" : 500,
+		"burn_in": 100,
 		"skip"   : 10,
-		"HMC_L"  : 5,
-		"HMC_dt" : 1e-1,
+		"HMC_L"  : 20,
+		"HMC_dt" : 1e-2,
 		"HMC_eta": 5e-1	
 	}
 }

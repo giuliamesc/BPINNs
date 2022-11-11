@@ -5,8 +5,8 @@ from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Manual configuration
 #configuration_file = None
-#configuration_file = "HMC_regression"
-configuration_file = "HMC_laplace"
+configuration_file = "HMC_regression"
+#configuration_file = "HMC_laplace"
 
 # Setup utilities
 set_directory()

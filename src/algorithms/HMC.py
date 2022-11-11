@@ -35,7 +35,7 @@ class HMC(Algorithm):
 
         grad_theta = self.model.grad_loss(self.data, self.__full_loss)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-        
+
         return self.model.nn_params, r
 
     def __compute_alpha(self, h0, h1):
