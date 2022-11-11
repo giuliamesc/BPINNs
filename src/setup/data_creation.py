@@ -29,7 +29,7 @@ class Dataset:
         self.num_fitting     = par.experiment["num_fitting"]
         self.num_collocation = par.experiment["num_collocation"]
         self.num_boundary    = 1 # To be generalized in 2D case
-        self.noise_lv = par.experiment["noise_lv"]
+        self.noise_lv = par.experiment["var_data"]
         
         self.n_input   = par.phys_dim.n_input
         self.n_out_par = par.phys_dim.n_out_par

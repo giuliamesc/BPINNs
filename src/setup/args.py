@@ -33,15 +33,13 @@ class Parser(ArgumentParser):
         # Experiment
         self.add_argument('--num_collocation', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation data")
         self.add_argument('--num_fitting',     type=int,   help="Needs to be integer. Number of Domain Data to use as sparse exact data")
-        self.add_argument('--noise_lv',        type=float, help="Artificial noise in exact dataset")
+        self.add_argument('--var_data',        type=float, help="Artificial noise in exact dataset")
+        self.add_argument('--var_pde' ,        type=float, help="Artificial noise in exact dataset")
         
         # Architecture
         self.add_argument('--activation', type=str, help='Activation function for hidden layers')
         self.add_argument('--n_layers'  , type=int, help='Number of hidden layers in the NN')
         self.add_argument('--n_neurons' , type=int, help='Number of neurons in each hidden layer in the NN')
-
-        # Sigmas (prior noise)
-        self.add_argument('--data_pn', type=float, help='Noise in data prior (sigma_D)^2')
 
         # Utils
         self.add_argument('--random_seed', type=int,  help='Random seed for np and tf random generator')

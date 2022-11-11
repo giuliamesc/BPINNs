@@ -9,8 +9,6 @@ class Param:
 
         self.experiment   = hp["experiment"]   # experiment param
         self.architecture = hp["architecture"] # NN architecture param
-        
-        self.sigmas = hp["sigmas"] # sigmas param
         self.utils  = hp["utils"]  # utilities param
 
         # if we have some additional parameters from the command-line
@@ -59,7 +57,7 @@ class Param:
             if key == "problem"   : self.problem   = args_dict[key]
             if key == "case_name" : self.case_name = args_dict[key]
             if key == "method"    : self.method    = args_dict[key]
-            for jdict in [self.experiment, self.architecture, self.sigmas, self.utils]:
+            for jdict in [self.experiment, self.architecture, self.utils]:
                 if key in jdict: jdict[key] = args_dict[key]
 
     def __command_line_update_method(self, args_dict):

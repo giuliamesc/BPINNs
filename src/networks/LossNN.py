@@ -16,12 +16,12 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        sigma_d = 1e-2 # log(1/sigma_d)
-        sigma_r = 1e-2 # log(1/sigma_r)
-        #self.sigmas = [par.sigmas["data_pn"], par.sigmas["data_pn"]]
-        self.sigmas = [sigma_d, sigma_r]
-        self.metric = ["data_u", "data_f", "pde"] # Must be added in config ??
-        self.keys   = ["data_u", "data_f", "pde"] # Must be added in config ??
+        logvar = lambda x: tf.math.log(1/x)
+        sigma_d2 = par.experiment["var_data"] # log(1/sigma_d^2)
+        sigma_r2 = par.experiment["var_pde" ] # log(1/sigma_r^2)
+        self.sigmas = [logvar(sigma_d2), logvar(sigma_r2)]
+        self.metric = ["data_u", "data_f"]#, "pde"] # Must be added in config ??
+        self.keys   = ["data_u", "data_f"]#, "pde"] # Must be added in config ??
 
     @staticmethod
     def __sse_theta(theta):
