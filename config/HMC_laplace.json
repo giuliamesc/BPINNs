@@ -8,43 +8,43 @@
 	"experiment":{
 		"num_collocation": 100,
 		"num_fitting"    : 16,
-		"var_data" : 0.05,
-		"var_pde"  : 0.05
+		"var_data" : 0.1,
+		"var_pde"  : 0.1
 	},
 
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 16
+		"n_neurons" : 50
 	},
 
 	"losses":{
 		"data_u": "True",
-		"data_f": "False",
-		"pde":    "False",
+		"data_f": "True",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
 	"metrics":{
 		"data_u": "True",
-		"data_f": "False",
-		"pde":    "False",
+		"data_f": "True",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
 	"utils":{
 		"random_seed": 28,
-		"debug_flag" : "True",
+		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "False"
+		"gen_flag"   : "True"
 	},
 
 	"HMC":{
-		"epochs" : 500,
+		"epochs" : 300,
 		"burn_in": 100,
 		"skip"   : 10,
 		"HMC_L"  : 20,
-		"HMC_dt" : 1e-2,
+		"HMC_dt" : 1e-3,
 		"HMC_eta": 5e-1	
 	}
 }
