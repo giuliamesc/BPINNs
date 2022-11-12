@@ -24,9 +24,9 @@ class LossNN(PhysNN):
         self.keys   = ["data_u", "prior"]#, "pde"] # Must be added in config ??
 
     @staticmethod
-    def __sse_theta(theta):
+    def __mse_theta(theta, dim):
         """ Sum of Squared Errors """
-        return sum([tf.norm(t)**2 for t in theta])
+        return sum([tf.norm(t)**2 for t in theta]) / dim
 
     @staticmethod
     def __mse(vect):
@@ -74,9 +74,10 @@ class LossNN(PhysNN):
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
-        log_var = tf.math.log(self.stddev**2)
-        prior   = self.__sse_theta(self.nn_params) / self.dim_theta
-        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var) / self.dim_theta
+        log_var = tf.math.log(1/self.stddev**2)
+        #import pdb; pdb.set_trace()
+        prior   = self.__mse_theta(self.model.trainable_variables, self.dim_theta)
+        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var)
         return prior, loglike
 
     def __compute_loss(self, dataset, keys, full_loss = True):

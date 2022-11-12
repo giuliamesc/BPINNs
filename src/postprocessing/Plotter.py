@@ -73,11 +73,10 @@ class Plotter():
         plt.figure()
         x = list(range(1,len(losses['Total'])+1))
         if name[:-4] == "LogLoss":
-            plt.semilogy(x, losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
+            plt.semilogx(x, losses['Total'], 'k--', lw=2.0, alpha=1.0, label = 'Total')
         for key, value in losses.items():
             if key == "Total": continue
-            plt.semilogy(x, value, lw=1.0, alpha=0.7, label = key)
-
+            plt.semilogx(x, value, lw=1.0, alpha=0.7, label = key)
         plt.title(f"History of {title}")
         plt.xlabel('Epochs')
         plt.ylabel(title)

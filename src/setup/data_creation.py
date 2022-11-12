@@ -147,7 +147,6 @@ class Dataset:
 
     def normalize_dataset(self):
         data = self.dom_data
-        import pdb; pdb.set_trace()
         u_star = (data[1]-self.norm_coeff[0][0])/self.norm_coeff[0][1]
         f_star = (data[2]-self.norm_coeff[1][0])/self.norm_coeff[1][1]
         self.dom_data = data[0], u_star, f_star

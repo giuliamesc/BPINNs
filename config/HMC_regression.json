@@ -1,13 +1,13 @@
 {
 	"general":{
 		"problem"  : "Regression",
-		"case_name": "sin",
+		"case_name": "cos",
 		"method"   : "HMC"
 	},
 
 	"experiment":{
 		"num_collocation": 100,
-		"num_fitting"    : 32,
+		"num_fitting"    : 16,
 		"var_data" : 0.1,
 		"var_pde"  : 0.1
 	},
@@ -28,7 +28,7 @@
 	"HMC":{
 		"epochs" : 500,
 		"burn_in": 100,
-		"skip"   : 5,
+		"skip"   : 10,
 		"HMC_L"  : 5,
 		"HMC_dt" : 1e-3,
 		"HMC_eta": 1e0

@@ -31,7 +31,7 @@ class CoreNN():
         self.n_neurons  = par.architecture["n_neurons"]
         self.activation = par.architecture["activation"]
         self.stddev     = tf.math.sqrt(50/self.n_neurons)
-
+        
         # Build the Neural network architecture
         self.model = self.__build_NN(par.utils["random_seed"])
         self.dim_theta = self.__compute_dim_theta()
