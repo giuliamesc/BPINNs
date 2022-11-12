@@ -1,21 +1,21 @@
 {
 	"general":{
 		"problem"  : "Regression",
-		"case_name": "sin",
-		"method"   : "TEST"
+		"case_name": "cos",
+		"method"   : "HMC"
 	},
 
 	"experiment":{
 		"num_collocation": 100,
 		"num_fitting"    : 16,
-		"var_data" : 0.05,
-		"var_pde"  : 0.05
+		"var_data" : 0.1,
+		"var_pde"  : 0.1
 	},
 
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 16
+		"n_neurons" : 50
 	},
 
 	"losses":{
@@ -40,23 +40,11 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
+		"epochs" : 100,
+		"burn_in": 50,
 		"skip"   : 5,
 		"HMC_L"  : 20,
-		"HMC_dt" : 1e-2,
-		"HMC_eta": 1.0
-	},
-
-	"SVGD":{
-		"epochs" : 10
-	},
-
-	"VI":{
-		"epochs" : 10
-	},
-
-	"TEST":{
-		"epochs" : 5
+		"HMC_dt" : 1e-3,
+		"HMC_eta": 1e0
 	}
 }

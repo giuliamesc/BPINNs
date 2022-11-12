@@ -16,12 +16,15 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
+        # Choice of loss to be used
+        self.metric = [k for k,v in par.metrics.items() if v]
+        self.keys   = [k for k,v in  par.losses.items() if v]
+        
+        # Definition of Variance
         logvar = lambda x: tf.math.log(1/x**2)
         sigma_d = par.experiment["var_data"] # log(1/sigma_d^2)
         sigma_r = par.experiment["var_pde" ] # log(1/sigma_r^2)
         self.sigmas = [logvar(sigma_d), logvar(sigma_r)]
-        self.metric = ["data_u", "prior"]#, "pde"] # Must be added in config ??
-        self.keys   = ["data_u", "prior"]#, "pde"] # Must be added in config ??
 
     @staticmethod
     def __mse_theta(theta, dim):

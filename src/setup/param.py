@@ -9,15 +9,15 @@ class Param:
 
         self.experiment   = hp["experiment"]   # experiment param
         self.architecture = hp["architecture"] # NN architecture param
+        self.losses  = hp["losses"]
+        self.metrics = hp["metrics"] 
         self.utils  = hp["utils"]  # utilities param
 
         # if we have some additional parameters from the command-line
         self.__command_line_update_params(vars(args))
-
         # specific param for the selected method
         self.param_method = hp[self.method]
         self.__command_line_update_method(vars(args))
-
         # Convert string of boolean in boolean
         self.__change_string_to_bool()
 
@@ -49,6 +49,8 @@ class Param:
         self.utils["save_flag"]  = self.__string_to_bool(self.utils["save_flag"])
         self.utils["debug_flag"] = self.__string_to_bool(self.utils["debug_flag"])
         self.utils["gen_flag"]   = self.__string_to_bool(self.utils["gen_flag"])
+        self.losses  = {k: self.__string_to_bool(v) for k,v in  self.losses.items()}
+        self.metrics = {k: self.__string_to_bool(v) for k,v in self.metrics.items()}
 
     def __command_line_update_params(self, args_dict):
         """ Update the parameter given by json file using args (overspecification by command-line) """
@@ -57,7 +59,7 @@ class Param:
             if key == "problem"   : self.problem   = args_dict[key]
             if key == "case_name" : self.case_name = args_dict[key]
             if key == "method"    : self.method    = args_dict[key]
-            for jdict in [self.experiment, self.architecture, self.utils]:
+            for jdict in [self.experiment, self.architecture, self.losses, self.metrics, self.utils]:
                 if key in jdict: jdict[key] = args_dict[key]
 
     def __command_line_update_method(self, args_dict):

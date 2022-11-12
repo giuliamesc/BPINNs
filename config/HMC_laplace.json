@@ -18,6 +18,20 @@
 		"n_neurons" : 16
 	},
 
+	"losses":{
+		"data_u": "True",
+		"data_f": "False",
+		"pde":    "False",
+		"prior":  "True"
+	},
+
+	"metrics":{
+		"data_u": "True",
+		"data_f": "False",
+		"pde":    "False",
+		"prior":  "True"
+	},
+
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "True",
