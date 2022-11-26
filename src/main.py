@@ -4,9 +4,8 @@ from utility import load_json, check_dataset, create_directories
 from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Manual configuration
-#configuration_file = None
-#configuration_file = "HMC_regression"
-configuration_file = "HMC_laplace"
+test_cases = [None, "ADAM_regression", "HMC_regression", "HMC_laplace"]
+configuration_file = test_cases[1]
 
 # Setup utilities
 set_directory()

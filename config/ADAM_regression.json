@@ -2,7 +2,7 @@
 	"general":{
 		"problem"  : "Regression",
 		"case_name": "sin",
-		"method"   : "TEST"
+		"method"   : "ADAM"
 	},
 
 	"experiment":{
@@ -22,14 +22,14 @@
 		"data_u": "True",
 		"data_f": "False",
 		"pde":    "False",
-		"prior":  "True"
+		"prior":  "False"
 	},
 
 	"metrics":{
 		"data_u": "True",
 		"data_f": "False",
 		"pde":    "False",
-		"prior":  "True"
+		"prior":  "False"
 	},
 
 	"utils":{
@@ -40,27 +40,11 @@
 	},
 
 	"ADAM":{
-		"epochs" : 10
-	},
-
-	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
-		"skip"   : 5,
-		"HMC_L"  : 20,
-		"HMC_dt" : 1e-2,
-		"HMC_eta": 1.0
-	},
-
-	"SVGD":{
-		"epochs" : 10
-	},
-
-	"VI":{
-		"epochs" : 10
-	},
-
-	"TEST":{
-		"epochs" : 5
+		"epochs" : 2000,
+		"beta_1" : 0.9,
+        "beta_2" : 0.999,
+        "eps"    : 1e-8,
+        "lr"     : 1e-3
 	}
+
 }

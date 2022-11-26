@@ -1,32 +1,21 @@
-### Rete Neurale
-- Loss Prior - sistemare/tunare
-- Problema inverso
+### IMPLEMENTAZIONI
+- Algoritmo: SVGD
+- Algoritmo: Variational Inference
+- Loss: Boundary Conditions
 
-### Equazioni
-- Pre processing data
-- Pre-post processing vector
+### MIGLIORIE
+- Algoritmo: PINN Base
+- Dubbi: Loss Prior
+- Idee: Salvataggio Multiplo
 
-### Nuovi Algoritmi  
-- Variational Inference    
-- SVGD
+### TEST CASES
+- Loss: Problema Inverso
+- Test Case: Problema 2D
+- Plotter: Plot 2D
 
-## Normalization
-- abstract property x Equazioni
-- sistemare meglio nomi e simili 
-- documenatre
-
-
-## Idee
-- Salvataggio per vari selezioni
-    - epochs, burn-in, skips
-
-### PROPOSTE VARIE
-- Warning per diagnostica tuning
-- Decoratori per Error management ???
-- Usare Logging
-- Guilen Global - funzione di print center
-- Batch
-
-### DUBBI
-- Esplosione a 2k epoche (regression) - risolto ?
-- Loss Prior (bisogna davvero dividere per dim_theta?)
+## RISULTATI
+- Validazione differenziazione automatica
+- Tentativi con i diversi sigma prior
+- BNN  vs BPINN (Laplace ?D - oscillatore armonico?) # Comportamento nelle zone in cui mancano i punti di collocation
+- PINN vs BPINN (Laplace ?D) # 
+- Confronto Algoritmi Bayesiani

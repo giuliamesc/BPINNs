@@ -2,7 +2,6 @@ from utility import compute_gui_len
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 import time, datetime
-import os
 
 class Algorithm(ABC):
     """
@@ -37,6 +36,7 @@ class Algorithm(ABC):
         # Sampling new theta
         match type(self).__name__:
             case "TEST": new_theta = self.sample_theta(epoch)
+            case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
             case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
             case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
