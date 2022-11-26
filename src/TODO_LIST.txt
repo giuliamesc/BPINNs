@@ -1,7 +1,12 @@
 ### IMPLEMENTAZIONI
-- Algoritmo: SVGD
+- Algoritmo: SVGD (thetas=[[theta1,theta2,...],[theta1,theta2,...]]), select thetas[-1]
 - Algoritmo: Variational Inference
 - Loss: Boundary Conditions
+
+### REFACTORING
+- Data: inserire collocation e boundary in generation
+- Data: migliorare il caricamento in data creation
+- Data: creazione dei batch
 
 ### MIGLIORIE
 - Algoritmo: PINN Base

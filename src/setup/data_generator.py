@@ -25,19 +25,17 @@ class AnalyticalData:
 
     def __creating_loop(self):
         """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
-        if self.is_main:
-            starred_print(f"Generating dataset: {self.test_case}")
+        if self.is_main: starred_print(f"Generating dataset: {self.test_case}")
         self.save_path = create_data_folders(self.problem , self.test_case, not self.test_only)
         self.__create_domain()
         self.__create_solutions()
-        if self.do_plots:
-            self.__plotter()
+        if self.do_plots: self.__plotter()
         print(f"Dataset {self.test_case} generated")
 
     # %% Build Solution
     def __create_solutions(self):
         """ Creates solution and parametric field files """
-        for key,_ in self.solution.items():
+        for key, _ in self.solution.items():
             self.__create_sol(key)
 
     def __create_sol(self, name):
@@ -62,8 +60,9 @@ class AnalyticalData:
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
-            x[:,i] = np.random.uniform(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1],
-                                 self.domain_data["resolution"])              
+            x[:,i] = np.random.uniform(self.domain_data["domain"][i][0], 
+                                       self.domain_data["domain"][i][1],
+                                       self.domain_data["resolution"])              
         if self.dimension == 2:
             raise Exception("Not Implemented for d=2!")
         if self.dimension == 3:
@@ -79,7 +78,8 @@ class AnalyticalData:
         x = np.zeros([self.domain_data["resolution"], self.dimension])
 
         for i in range(self.dimension):
-            x[:,i] = np.linspace(self.domain_data["domain"][i][0], self.domain_data["domain"][i][1],
+            x[:,i] = np.linspace(self.domain_data["domain"][i][0], 
+                                 self.domain_data["domain"][i][1],
                                  self.domain_data["resolution"])
         if self.dimension == 2:
             x = np.meshgrid(x[:,0],x[:,1])
