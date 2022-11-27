@@ -20,20 +20,18 @@ class Reg1D_cos(Regression1D):
 class Reg1D_sin(Regression1D):
     name = "reg1D_sin"
     physics = {}
-    # Specifications on the domain: mesh type, resolution, boundaries
-    analytical_domain = {
-        "mesh_type" : "uniform",
-        "resolution": 200,
-        "domain": [(-1,1)]}
+    
+    mesh = {
+        "mesh_type" : "sobol",
+        "inner_res": 50,
+        "outer_res": 2
+    }
+    domains = {
+        "sol": [((0,1),(0,1)),((4,6),(0,3)),((0,2),(2,3))],
+        "par": [[(0,6),(0,3)]],
+        "full" : [(0,6),(0,3)]
+    }
     # Lambda expression of the solution and the parametric field
-    analytical_solution = {
+    values = {
         "u": lambda *x: np.sin(x[0]*6)**3,
         "f": lambda *x: np.sin(x[0]*6)**3}
-    domains = {
-        "mesh_type" : "uniform",
-        "inner_res": 32,
-        "outer_res": 2,
-        "sol": list(list()),
-        "par": list(list()),
-        "full" : [(0,2),(0,3)]
-    }
