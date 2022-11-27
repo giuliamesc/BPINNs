@@ -22,8 +22,8 @@ class LossNN(PhysNN):
         
         # Definition of Variance
         logvar = lambda x: tf.math.log(1/x**2)
-        sigma_d = par.experiment["var_data"] # log(1/sigma_d^2)
-        sigma_r = par.experiment["var_pde" ] # log(1/sigma_r^2)
+        sigma_d = par.uncertainty["sol"] # log(1/sigma_d^2)
+        sigma_r = par.uncertainty["pde" ] # log(1/sigma_r^2)
         self.sigmas = [logvar(sigma_d), logvar(sigma_r)]
 
     @staticmethod

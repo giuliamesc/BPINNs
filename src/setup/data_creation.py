@@ -26,10 +26,12 @@ class Dataset:
         self.name_example = par.folder_name
         self.mesh_type = par.config.analytical_domain["mesh_type"]
 
-        self.num_fitting     = par.experiment["num_fitting"]
-        self.num_collocation = par.experiment["num_collocation"]
-        self.num_boundary    = 1 # To be generalized in 2D case
-        self.noise_lv = par.experiment["var_data"]
+        self.num_points  = par.num_points
+        self.uncertainty = par.uncertainty
+        #self.num_fitting     = par.experiment["num_fitting"]
+        #self.num_collocation = par.experiment["num_collocation"]
+        #self.num_boundary    = 1 # To be generalized in 2D case
+        #self.noise_lv = par.experiment["var_data"]
         
         self.n_input   = par.phys_dim.n_input
         self.n_out_par = par.phys_dim.n_out_par
@@ -134,10 +136,7 @@ class Dataset:
 
     def __build_dataset(self):
         num_points = self.dom_data[0].shape[0]
-        if self.num_collocation > num_points : 
-            raise Exception(f'Num collocation cannot be bigger than dataset size: {self.num_collocation} > {num_points}')
-        if self.num_fitting     > num_points : 
-            raise Exception(f'Num fitting cannot be bigger than dataset size: {self.num_fitting} > {num_points}')
+        # INSERIRE CHECK DIMENSIONI MASSIME DATASET
         # build collocation dataset from domain dataset
         self.coll_data  = self.__select_indexes(num_points, self.num_collocation)
         # build exact dataset from domain dataset 

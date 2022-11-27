@@ -7,7 +7,8 @@ class Param:
         self.method    = hp["general"]["method"]    # method used: SVGD, HMC, VI, ...
         if self.case_name == "": self.case_name = "default"
 
-        self.experiment   = hp["experiment"]   # experiment param
+        self.num_points   = hp["num_points"]   # num_points param
+        self.uncertainty  = hp["uncertainty"]  # uncertainty param
         self.architecture = hp["architecture"] # NN architecture param
         self.losses  = hp["losses"]
         self.metrics = hp["metrics"] 
@@ -59,7 +60,7 @@ class Param:
             if key == "problem"   : self.problem   = args_dict[key]
             if key == "case_name" : self.case_name = args_dict[key]
             if key == "method"    : self.method    = args_dict[key]
-            for jdict in [self.experiment, self.architecture, self.losses, self.metrics, self.utils]:
+            for jdict in [self.architecture, self.num_points, self.uncertainty, self.losses, self.metrics, self.utils]:
                 if key in jdict: jdict[key] = args_dict[key]
 
     def __command_line_update_method(self, args_dict):

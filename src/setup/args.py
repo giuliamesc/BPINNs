@@ -30,7 +30,7 @@ class Parser(ArgumentParser):
                                 - TEST (use for debug purpouses)
                             """)
 
-        # Experiment
+        # Experiment ???
         self.add_argument('--num_collocation', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation data")
         self.add_argument('--num_fitting',     type=int,   help="Needs to be integer. Number of Domain Data to use as sparse exact data")
         self.add_argument('--var_data',        type=float, help="Artificial noise in exact dataset")

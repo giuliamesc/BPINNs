@@ -179,8 +179,9 @@ class Storage():
         with open(os.path.join(self.path_log, "parameters.txt"), 'w') as outfile:
             general = dict(method = par.method, problem = par.problem, case_name = par.case_name)
             self.__write_par_line(outfile, "GENERAL\n", general)
-            self.__write_par_line(outfile, "EXPERIMENT\n", par.experiment)
             self.__write_par_line(outfile, "ARCHITECTURE\n", par.architecture)
+            self.__write_par_line(outfile, "NUM_POINTS\n", par.num_points)
+            self.__write_par_line(outfile, "UNCERTAINTY\n", par.uncertainty)
             self.__write_par_line(outfile, "UTILS\n", par.utils)
             self.__write_par_line(outfile, str(par.method).upper() +"\n", par.param_method)
 

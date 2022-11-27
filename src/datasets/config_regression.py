@@ -29,3 +29,11 @@ class Reg1D_sin(Regression1D):
     analytical_solution = {
         "u": lambda *x: np.sin(x[0]*6)**3,
         "f": lambda *x: np.sin(x[0]*6)**3}
+    domains = {
+        "mesh_type" : "uniform",
+        "inner_res": 32,
+        "outer_res": 2,
+        "sol": list(list()),
+        "par": list(list()),
+        "full" : [(0,2),(0,3)]
+    }
