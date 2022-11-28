@@ -24,6 +24,8 @@ class DataGenerator:
         print(f"Dataset {self.test_case} generated")
         
         if self.main: return ## PLOT AND TEST ZONE
+        plt.show()
+        #self.create_dom_bnd()
         #self.__plotter()
         #self.plot(self.__create_multidomain(self.domains["par"], self.mesh["inner_res"]))
 
@@ -33,30 +35,40 @@ class DataGenerator:
         return (l_bounds, u_bounds)
 
     def create_domains(self):
-        #self.create_dom_pde()
+        self.create_dom_pde()
         self.create_dom_sol()
-        #self.create_dom_par()
-        #self.create_dom_bnd()
-        #self.create_test()
+        self.create_dom_par()
+        self.create_dom_bnd()
+        self.create_test()
         
     def create_dom_sol(self):
         X = self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"])
         self.__save_data("dom_sol",X)
         self.__save_data("sol_train", self.values["u"](X))
-        self.plot(X)
+        self.plot(X, c="g")
 
     def create_dom_par(self):
         X = self.__create_multidomain(self.domains["par"], self.mesh["inner_res"])
         self.__save_data("dom_par",X)
         self.__save_data("par_train", self.values["f"](X))
+        self.plot(X, c="b")
 
     def create_dom_pde(self):
         X = self.__create_domain(self.domains["full"], self.mesh["inner_res"])
         self.__save_data("dom_pde",X)
 
-    def create_dom_bnd(self): # bnd
-        # ?X, project, merge edges, U(X), Save
-        pass
+    def create_dom_bnd(self):
+        lu_bnd, d = self.compute_bnd(self.domains["full"]), self.dim
+        points = self.__create_domain(self.domains["full"], self.mesh["outer_res"], "sobol")
+        X_list = [points.copy() for _ in range(2*d)]
+        for i in range(d):
+            X_list[i  ][i,:] = lu_bnd[0][i]
+            X_list[i+d][i,:] = lu_bnd[1][i]
+        X = np.zeros([d, self.mesh["outer_res"]*2*d])
+        for i in range(2*d): X[:,i+0::2*d] = X_list[i+0]
+        self.__save_data("dom_bnd",X)
+        self.__save_data("sol_bnd", self.values["u"](X))
+        self.plot(X, c="r")
 
     def create_test(self):
         X = self.__create_domain(self.domains["full"], self.mesh["test_res"], "uniform")
@@ -120,20 +132,16 @@ class DataGenerator:
 
     ### TEMP FILES
 
-    def plot(self, points):
+    def plot(self, points, c="b"):
         if self.dim == 1: plotter = self.plot1D
         if self.dim == 2: plotter = self.plot2D
-        plotter(self.compute_bnd(self.domains["full"]), points)
+        plotter(self.compute_bnd(self.domains["full"]), points, c)
 
-    def plot1D(self, bnd, points):
-        plt.figure()
+    def plot1D(self, bnd, points, c="b"):
         plt.xlim([bnd[0][0], bnd[1][0]])
-        plt.plot(points[0,:], [0]*points[0,:], "*")
-        plt.show()
+        plt.plot(points[0,:], [0]*points[0,:], f"{c}*")
 
-    def plot2D(self, bnd, points):
-        plt.figure()
+    def plot2D(self, bnd, points, c="b"):
         plt.xlim([bnd[0][0], bnd[1][0]]) 
         plt.ylim([bnd[0][1], bnd[1][1]])
-        plt.plot(points[0,:], points[1,:], "*")
-        plt.show()
+        plt.plot(points[0,:], points[1,:], f"{c}*")

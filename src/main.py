@@ -14,7 +14,7 @@ set_warning()
 # %% Import Local Classes
 
 from setup import Parser, Param             # Setup
-from setup import AnalyticalData, Dataset   # Dataset Creation
+from setup import AnalyticalData, DataGenerator, Dataset  # Dataset Creation
 from networks import BayesNN                # Models
 from postprocessing import Storage, Plotter # Postprocessing
 
@@ -40,7 +40,8 @@ starred_print("DONE")
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(data_config) ### METTERE DATA GENERATOR
+    AnalyticalData(data_config) ### DEPRECARE
+    #DataGenerator(data_config) ### METTERE DATA GENERATOR
 else:
     check_dataset(data_config)
     print(f"\tStored dataset used: {data_config.name}")
