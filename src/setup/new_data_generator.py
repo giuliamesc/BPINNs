@@ -1,23 +1,31 @@
-import numpy as np
+from utility import create_data_folders, starred_print
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
+import numpy as np
+import warnings
+import os
 
-class AnalyticalData:
-    def __init__(self, data_config):
+class DataGenerator:
+    def __init__(self, data_config, main=True):
         
         self.test_case = data_config.name
         self.problem   = data_config.problem
         self.save_folder = '../data'
+        self.main = main
 
-        self.mesh      = data_config.mesh
-        self.domains   = data_config.domains
-        self.values    = data_config.values
-        self.dimension = len(self.domains["full"])
+        self.mesh    = data_config.mesh
+        self.domains = data_config.domains
+        self.values  = data_config.values
+        self.dim     = len(self.domains["full"])
 
+        if self.main: starred_print(f"Generating dataset: {self.test_case}")
+        self.save_path = create_data_folders(self.problem , self.test_case, self.main)
         self.create_domains()
-
-        ### TEST ZONE
-        self.plot(self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"]))
+        print(f"Dataset {self.test_case} generated")
+        
+        if self.main: return ## PLOT AND TEST ZONE
+        #self.__plotter()
+        #self.plot(self.__create_multidomain(self.domains["par"], self.mesh["inner_res"]))
 
     def compute_bnd(self, bnd):
         l_bounds = [i[0] for i in bnd]
@@ -25,44 +33,53 @@ class AnalyticalData:
         return (l_bounds, u_bounds)
 
     def create_domains(self):
-        self.create_dom_pde()
+        #self.create_dom_pde()
         self.create_dom_sol()
-        self.create_dom_par()
-        self.create_dom_bnd()
+        #self.create_dom_par()
+        #self.create_dom_bnd()
+        #self.create_test()
         
-    def create_dom_sol(self): # u_train
-        # multiX, U(X), Save
-        pass
-    def create_dom_par(self): # f_train
-        # multiX, F(X), Save
-        pass
-    def create_dom_pde(self): # pde
-        # singleX, Save 
-        pass
+    def create_dom_sol(self):
+        X = self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"])
+        self.__save_data("dom_sol",X)
+        self.__save_data("sol_train", self.values["u"](X))
+        self.plot(X)
+
+    def create_dom_par(self):
+        X = self.__create_multidomain(self.domains["par"], self.mesh["inner_res"])
+        self.__save_data("dom_par",X)
+        self.__save_data("par_train", self.values["f"](X))
+
+    def create_dom_pde(self):
+        X = self.__create_domain(self.domains["full"], self.mesh["inner_res"])
+        self.__save_data("dom_pde",X)
+
     def create_dom_bnd(self): # bnd
         # ?X, project, merge edges, U(X), Save
         pass
-    def create_test(self): # u_test, f_test
-        # singleX+uniform, U(X), F(X), Save U, F
-        pass
+
+    def create_test(self):
+        X = self.__create_domain(self.domains["full"], self.mesh["test_res"], "uniform")
+        self.__save_data("dom_test",X)
+        self.__save_data("sol_test", self.values["u"](X))
+        self.__save_data("par_test", self.values["f"](X))
 
     def __merge_2points(self, p1, p2, n1, n2): 
         if n1 < n2: p1, p2, n1, n2 = p2, p1, n2, n1
-        i, j = 0, 0
-        r = n1 / n2
-        points = np.zeros([self.dimension, n1+n2])
+        i, j, r = 0, 0, n1/n2
+        points = np.zeros([self.dim, n1+n2])
         for k in range(n1+n2):
             choice = i/(j+1e-8) < r
             points[:,k], i, j = (p1[:,i], i+1, j) if choice else (p2[:,j], i, j+1)
         return points, n1+n2
 
-    def __create_multidomain(self, bnd, num):
+    def __create_multidomain(self, bnd, num, mesh=None):
+        if mesh is None: mesh = self.mesh["mesh_type"]
         dim_dom   = [np.prod([d[1]-d[0] for d in d_bnd]) for d_bnd in bnd] 
-        num_dom   = [(dd*num)//sum(dim_dom) for dd in dim_dom]
-        multi_pts = [self.__create_domain(d_bnd, d_num) for d_bnd, d_num in zip(bnd, num_dom)]
+        num_dom   = [int((dd*num)//sum(dim_dom)) for dd in dim_dom]
+        multi_pts = [self.__create_domain(d_bnd, d_num, mesh) for d_bnd, d_num in zip(bnd, num_dom)]
         pts, num = multi_pts[0], num_dom[0]
-        for p,n in zip(multi_pts[1:], num_dom[1:]):
-            pts, num = self.__merge_2points(p, pts, n, num)
+        for p,n in zip(multi_pts[1:], num_dom[1:]): pts, num = self.__merge_2points(p, pts, n, num)
         return pts
 
     def __create_domain(self, bnd, num, mesh=None):
@@ -74,32 +91,38 @@ class AnalyticalData:
             case "sobol"  : return self.__create_sobol_domain(bnd, num)
             case _ : Exception("This mesh type doesn't exists")
 
-    ### DA RISCRIVERE PER DATASET DI TEST
     def __create_uniform_domain(self, bnd, num):
-        x_pts = list()
-        for i in range(self.dimension): 
-            a, b, n = bnd[i][0], bnd[i][1], num[i]
-            x_pts.append(np.linspace(a, b, n+1)[:-1] + (b-a)/(2*n))
-        if self.dimension == 2: x = np.meshgrid(x_pts[0],x_pts[1])
-        if self.dimension == 3: x = np.meshgrid(x_pts[0],x_pts[1],x_pts[2])
-        points = np.zeros([self.dimension, np.prod(num)])
-        for i, v in enumerate(x): points[i,:] = np.reshape(v,[np.prod(num)])
-        return points
+        x_line = np.linspace(0,1,num+1)[:-1] + 1/(2*num)
+        if self.dim == 1: x = np.meshgrid(x_line)
+        if self.dim == 2: x = np.meshgrid(x_line,x_line)
+        if self.dim == 3: x = np.meshgrid(x_line,x_line,x_line)
+        x_square = np.zeros([num**self.dim, self.dim])
+        for i, v in enumerate(x): x_square[:,i] = np.reshape(v,[num**self.dim])
+        return qmc.scale(x_square, bnd[0], bnd[1]).T
 
     def __create_random_domain(self, bnd, num):
-        x_square = np.random.rand(num, self.dimension)
+        x_square = np.random.rand(num, self.dim)
         return qmc.scale(x_square, bnd[0], bnd[1]).T
 
     def __create_sobol_domain(self, bnd, num): 
+        if ((num) & (num-1)): warnings.warn("Non optimal choice of resolution for Sobol mesh")
         sobolexp = int(np.ceil(np.log(num)/np.log(2)))
-        sampler = qmc.Sobol(d=self.dimension, scramble=False)
+        sampler = qmc.Sobol(d=self.dim, scramble=False)
         sample = sampler.random_base2(m=sobolexp)
         sample += (1./float(2**sobolexp))/2.
         return qmc.scale(sample, bnd[0], bnd[1]).T
 
+    def __save_data(self, name, data):
+        """ Saves the data generated """
+        filename = os.path.join(self.save_path, name)
+        np.save(filename, data)
+        if self.main: print(f'\tSaved {name}')
+
+    ### TEMP FILES
+
     def plot(self, points):
-        if self.dimension == 1: plotter = self.plot1D
-        if self.dimension == 2: plotter = self.plot2D
+        if self.dim == 1: plotter = self.plot1D
+        if self.dim == 2: plotter = self.plot2D
         plotter(self.compute_bnd(self.domains["full"]), points)
 
     def plot1D(self, bnd, points):
@@ -114,6 +137,3 @@ class AnalyticalData:
         plt.ylim([bnd[0][1], bnd[1][1]])
         plt.plot(points[0,:], points[1,:], "*")
         plt.show()
-
-    def __save_data(self, name, data):
-        pass

@@ -40,7 +40,7 @@ starred_print("DONE")
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(data_config)
+    AnalyticalData(data_config) ### METTERE DATA GENERATOR
 else:
     check_dataset(data_config)
     print(f"\tStored dataset used: {data_config.name}")
