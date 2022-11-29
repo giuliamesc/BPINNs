@@ -23,8 +23,7 @@ class DataGenerator:
         self.__create_domains() # Main Creation Loop
         print(f"Dataset {self.test_case} generated")
         
-        if self.main: return ## PLOT AND TEST ZONE
-        plt.show()
+        if not self.main: return plt.show()
 
     def __compute_bnd(self, bnd):
         " Separate lower and upper bounds of a domain "
