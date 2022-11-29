@@ -20,45 +20,48 @@ class DataGenerator:
 
         if self.main: starred_print(f"Generating dataset: {self.test_case}")
         self.save_path = create_data_folders(self.problem , self.test_case, self.main)
-        self.create_domains()
+        self.__create_domains() # Main Creation Loop
         print(f"Dataset {self.test_case} generated")
         
         if self.main: return ## PLOT AND TEST ZONE
         plt.show()
-        #self.create_dom_bnd()
-        #self.__plotter()
-        #self.plot(self.__create_multidomain(self.domains["par"], self.mesh["inner_res"]))
 
-    def compute_bnd(self, bnd):
+    def __compute_bnd(self, bnd):
+        " Separate lower and upper bounds of a domain "
         l_bounds = [i[0] for i in bnd]
         u_bounds = [i[1] for i in bnd]
         return (l_bounds, u_bounds)
 
-    def create_domains(self):
-        self.create_dom_pde()
-        self.create_dom_sol()
-        self.create_dom_par()
-        self.create_dom_bnd()
-        self.create_test()
+    def __create_domains(self):
+        " call all the creating functions "
+        self.__create_dom_pde()
+        self.__create_dom_sol()
+        self.__create_dom_par()
+        self.__create_dom_bnd()
+        self.__create_test()
         
-    def create_dom_sol(self):
+    def __create_dom_sol(self):
+        " Create and save: dom_sol, sol_train "
         X = self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"])
         self.__save_data("dom_sol",X)
         self.__save_data("sol_train", self.values["u"](X))
         self.plot(X, c="g")
 
-    def create_dom_par(self):
+    def __create_dom_par(self):
+        " Create and save: dom_par, par_train "
         X = self.__create_multidomain(self.domains["par"], self.mesh["inner_res"])
         self.__save_data("dom_par",X)
         self.__save_data("par_train", self.values["f"](X))
         self.plot(X, c="b")
 
-    def create_dom_pde(self):
+    def __create_dom_pde(self):
+        " Create and save: dom_pde "
         X = self.__create_domain(self.domains["full"], self.mesh["inner_res"])
         self.__save_data("dom_pde",X)
 
-    def create_dom_bnd(self):
-        lu_bnd, d = self.compute_bnd(self.domains["full"]), self.dim
+    def __create_dom_bnd(self):
+        " Create and save: dom_bnd, sol_bnd "
+        lu_bnd, d = self.__compute_bnd(self.domains["full"]), self.dim
         points = self.__create_domain(self.domains["full"], self.mesh["outer_res"], "sobol")
         X_list = [points.copy() for _ in range(2*d)]
         for i in range(d):
@@ -70,13 +73,15 @@ class DataGenerator:
         self.__save_data("sol_bnd", self.values["u"](X))
         self.plot(X, c="r")
 
-    def create_test(self):
+    def __create_test(self):
+        " Create and save: dom_test, sol_test, par_test"
         X = self.__create_domain(self.domains["full"], self.mesh["test_res"], "uniform")
         self.__save_data("dom_test",X)
         self.__save_data("sol_test", self.values["u"](X))
         self.__save_data("par_test", self.values["f"](X))
 
     def __merge_2points(self, p1, p2, n1, n2): 
+        " Merge two sequences of points altrernating the points"
         if n1 < n2: p1, p2, n1, n2 = p2, p1, n2, n1
         i, j, r = 0, 0, n1/n2
         points = np.zeros([self.dim, n1+n2])
@@ -86,6 +91,7 @@ class DataGenerator:
         return points, n1+n2
 
     def __create_multidomain(self, bnd, num, mesh=None):
+        " Split multi-domain bnd and call single domain creator "
         if mesh is None: mesh = self.mesh["mesh_type"]
         dim_dom   = [np.prod([d[1]-d[0] for d in d_bnd]) for d_bnd in bnd] 
         num_dom   = [int((dd*num)//sum(dim_dom)) for dd in dim_dom]
@@ -95,8 +101,9 @@ class DataGenerator:
         return pts
 
     def __create_domain(self, bnd, num, mesh=None):
+        " Caller of specific mesh creator in bnd domain with num elements "
         if mesh is None: mesh = self.mesh["mesh_type"]
-        bnd = self.compute_bnd(bnd)
+        bnd = self.__compute_bnd(bnd)
         match mesh:
             case "uniform": return self.__create_uniform_domain(bnd, num)
             case "random" : return self.__create_random_domain(bnd, num)
@@ -104,6 +111,7 @@ class DataGenerator:
             case _ : Exception("This mesh type doesn't exists")
 
     def __create_uniform_domain(self, bnd, num):
+        " Create a uniform mesh in bnd domain with num elements "
         x_line = np.linspace(0,1,num+1)[:-1] + 1/(2*num)
         if self.dim == 1: x = np.meshgrid(x_line)
         if self.dim == 2: x = np.meshgrid(x_line,x_line)
@@ -113,10 +121,12 @@ class DataGenerator:
         return qmc.scale(x_square, bnd[0], bnd[1]).T
 
     def __create_random_domain(self, bnd, num):
+        " Create a random mesh in bnd domain with num elements "
         x_square = np.random.rand(num, self.dim)
         return qmc.scale(x_square, bnd[0], bnd[1]).T
 
-    def __create_sobol_domain(self, bnd, num): 
+    def __create_sobol_domain(self, bnd, num):
+        " Create a sobol mesh in bnd domain with num elements "
         if ((num) & (num-1)): warnings.warn("Non optimal choice of resolution for Sobol mesh")
         sobolexp = int(np.ceil(np.log(num)/np.log(2)))
         sampler = qmc.Sobol(d=self.dim, scramble=False)
@@ -135,7 +145,7 @@ class DataGenerator:
     def plot(self, points, c="b"):
         if self.dim == 1: plotter = self.plot1D
         if self.dim == 2: plotter = self.plot2D
-        plotter(self.compute_bnd(self.domains["full"]), points, c)
+        plotter(self.__compute_bnd(self.domains["full"]), points, c)
 
     def plot1D(self, bnd, points, c="b"):
         plt.xlim([bnd[0][0], bnd[1][0]])
