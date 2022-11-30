@@ -18,7 +18,7 @@ class DataGenerator:
         self.values  = data_config.values
         self.dim     = len(self.domains["full"])
 
-        if self.main: starred_print(f"Generating dataset: {self.test_case}")
+        starred_print(f"Generating dataset: {self.test_case}")
         self.save_path = create_data_folders(self.problem , self.test_case, self.main)
         self.__create_domains() # Main Creation Loop
         print(f"Dataset {self.test_case} generated")
@@ -42,16 +42,18 @@ class DataGenerator:
     def __create_dom_sol(self):
         " Create and save: dom_sol, sol_train "
         X = self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"])
-        self.__save_data("dom_sol",X)
+        self.__save_data("dom_sol", X)
         self.__save_data("sol_train", self.values["u"](X))
-        self.plot(X, c="g")
+        if not self.main: self.plot(X, c="g")
 
     def __create_dom_par(self):
         " Create and save: dom_par, par_train "
         X = self.__create_multidomain(self.domains["par"], self.mesh["inner_res"])
-        self.__save_data("dom_par",X)
+        self.__save_data("dom_par", X)
+        F = self.values["f"](X)
+        print(X, F)
         self.__save_data("par_train", self.values["f"](X))
-        self.plot(X, c="b")
+        if not self.main: self.plot(X, c="b")
 
     def __create_dom_pde(self):
         " Create and save: dom_pde "
@@ -70,12 +72,12 @@ class DataGenerator:
         for i in range(2*d): X[:,i+0::2*d] = X_list[i+0]
         self.__save_data("dom_bnd",X)
         self.__save_data("sol_bnd", self.values["u"](X))
-        self.plot(X, c="r")
+        if not self.main: self.plot(X, c="r")
 
     def __create_test(self):
         " Create and save: dom_test, sol_test, par_test"
         X = self.__create_domain(self.domains["full"], self.mesh["test_res"], "uniform")
-        self.__save_data("dom_test",X)
+        self.__save_data("dom_test", X)
         self.__save_data("sol_test", self.values["u"](X))
         self.__save_data("par_test", self.values["f"](X))
 

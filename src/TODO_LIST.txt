@@ -4,7 +4,7 @@
 - Loss: Boundary Conditions
 
 ### REFACTORING
-- Data: inserire collocation e boundary in generation
+- Data: Plotter for datacreator
 - Data: migliorare il caricamento in data creation
 - Data: creazione dei batch
 
