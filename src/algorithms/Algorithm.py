@@ -23,13 +23,13 @@ class Algorithm(ABC):
         
     @property
     def data_train(self):
-        return self.data
+        return self.__data
 
     @data_train.setter
     def data_train(self, dataset):
         self.model.u_coeff = dataset.norm_coeff[0]
         self.model.f_coeff = dataset.norm_coeff[1]
-        self.data = dataset
+        self.__data = dataset
 
     def __train_step(self, epoch):
 
@@ -44,7 +44,7 @@ class Algorithm(ABC):
         # Saving new Theta
         self.model.nn_params = new_theta
         # Computing History
-        pst, llk = self.model.metric_total(self.data)
+        pst, llk = self.model.metric_total(self.data_train)
         self.model.loss_step((pst,llk))
         
         return new_theta
@@ -62,8 +62,8 @@ class Algorithm(ABC):
         # Store thetas in this round of training
         thetas_train = list()
         # Normalizing dataset
-        self.data.normalize_dataset()
-        self.model.norm_coeff = self.data.norm_coeff
+        self.data_train.normalize_dataset()
+        self.model.norm_coeff = self.data_train.norm_coeff
 
         # Sampling new thetas
         self.epochs_loop = self.__train_loop(self.epochs) 
@@ -74,7 +74,7 @@ class Algorithm(ABC):
             thetas_train.append(step)
     
         # Denormalizing dataset
-        self.data.denormalize_dataset()
+        self.data_train.denormalize_dataset()
         # Select which thetas must be saved
         thetas_train = self.select_thetas(thetas_train)
         # Save thetas in the bnn

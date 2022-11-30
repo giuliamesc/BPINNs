@@ -21,7 +21,7 @@ class ADAM(Algorithm):
 
     def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
-        grad_theta = self.model.grad_loss(self.data)
+        grad_theta = self.model.grad_loss(self.data_train)
         theta = theta_0.copy()
         for i in range(self.num_2layers):
             self.m[i] = self.beta_1*self.m[i] + (1-self.beta_1)*grad_theta[i]
