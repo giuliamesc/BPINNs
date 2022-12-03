@@ -14,7 +14,7 @@ set_warning()
 # %% Import Local Classes
 
 from setup import Parser, Param             # Setup
-from setup import AnalyticalData, DataGenerator, Dataset  # Dataset Creation
+from setup import DataGenerator, Dataset    # Dataset Creation
 from networks import BayesNN                # Models
 from postprocessing import Storage, Plotter # Postprocessing
 
@@ -40,15 +40,12 @@ starred_print("DONE")
 print("Dataset Creation")
 if params.utils["gen_flag"]:
     print("\tGenerating new dataset...")
-    AnalyticalData(data_config) ### DEPRECARE
-    #DataGenerator(data_config) ### METTERE DATA GENERATOR
+    DataGenerator(data_config) 
 else:
     check_dataset(data_config)
     print(f"\tStored dataset used: {data_config.name}")
 
 dataset = Dataset(params)
-print(f"\tNumber of fitting data: {dataset.num_fitting}")
-print(f"\tNumber of collocation data: {dataset.num_collocation}")
 starred_print("DONE")
 
 # %% Model Building
@@ -73,11 +70,12 @@ starred_print("DONE")
 
 # %% Model Evaluation
 
+test_data = dataset.data_test
 print("Computing solutions...")
-functions_confidence = bayes_nn.mean_and_std(dataset.dom_data[0])
-functions_nn_samples = bayes_nn.draw_samples(dataset.dom_data[0])
+functions_confidence = bayes_nn.mean_and_std(test_data["dom"])
+functions_nn_samples = bayes_nn.draw_samples(test_data["dom"])
 print("Computing errors...")
-errors = bayes_nn.test_errors(functions_confidence, dataset)
+errors = bayes_nn.test_errors(functions_confidence, test_data)
 print("Showing errors...")
 bayes_nn.show_errors(errors)
 starred_print("DONE")

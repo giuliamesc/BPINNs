@@ -30,11 +30,17 @@ class Parser(ArgumentParser):
                                 - TEST (use for debug purpouses)
                             """)
 
-        # Experiment ???
-        self.add_argument('--num_collocation', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation data")
-        self.add_argument('--num_fitting',     type=int,   help="Needs to be integer. Number of Domain Data to use as sparse exact data")
-        self.add_argument('--var_data',        type=float, help="Artificial noise in exact dataset")
-        self.add_argument('--var_pde' ,        type=float, help="Artificial noise in exact dataset")
+        # Experiment ??? SISTEMARE COMMENTI
+        self.add_argument('--num_sol', type=int,   help="Needs to be integer. Number of Domain Data to use as fitting data for solution")
+        self.add_argument('--num_par', type=int,   help="Needs to be integer. Number of Domain Data to use as fitting data for parametric field")
+        self.add_argument('--num_bnd', type=int,   help="Needs to be integer. Number of Domain Data to use as boundary data")
+        self.add_argument('--num_pde', type=int,   help="Needs to be integer. Number of Domain Data to use as collocation points")
+
+
+        self.add_argument('--var_sol', type=float, help="Artificial noise in exact dataset for solution")
+        self.add_argument('--var_par', type=float, help="Artificial noise in exact dataset for parametric field")
+        self.add_argument('--var_bnd', type=float, help="Artificial noise in exact dataset for boundary data")
+        self.add_argument('--var_pde' ,type=float, help="Artific")
         
         # Architecture
         self.add_argument('--activation', type=str, help='Activation function for hidden layers')

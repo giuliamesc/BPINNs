@@ -5,11 +5,18 @@
 		"method"   : "ADAM"
 	},
 
-	"experiment":{
-		"num_collocation": 100,
-		"num_fitting"    : 16,
-		"var_data" : 0.05,
-		"var_pde"  : 0.05
+	"num_points":{
+		"sol" : 16,
+		"par" : 16,
+		"bnd" : 2,
+		"pde" : 100
+	},
+	
+	"uncertainty":{
+		"sol" : 0.05,
+		"par" : 0.05,
+		"bnd" : 0.05,
+		"pde" : 0.05
 	},
 
 	"architecture":{
@@ -40,7 +47,7 @@
 	},
 
 	"ADAM":{
-		"epochs" : 2000,
+		"epochs" : 200,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,

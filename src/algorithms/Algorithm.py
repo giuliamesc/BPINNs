@@ -27,8 +27,8 @@ class Algorithm(ABC):
 
     @data_train.setter
     def data_train(self, dataset):
-        self.model.u_coeff = dataset.norm_coeff[0]
-        self.model.f_coeff = dataset.norm_coeff[1]
+        self.model.u_coeff = dataset.norm_coeff["sol_mean"], dataset.norm_coeff["sol_std"]
+        self.model.f_coeff = dataset.norm_coeff["par_mean"], dataset.norm_coeff["par_std"]
         self.__data = dataset
 
     def __train_step(self, epoch):

@@ -70,9 +70,9 @@ class PredNN(PhysNN):
         metric = tf.keras.losses.MSE 
         return [metric(x[:,i],y[:,i]).numpy() for i in range(x.shape[1])]
 
-    def __compute_errors(self, function_confidence, dataset):
+    def __compute_errors(self, function_confidence, data_test):
         """ Computes errors on the solution and parametric field """
-        sol_true, par_true = dataset.dom_data[1], dataset.dom_data[2]
+        sol_true, par_true = data_test["sol"], data_test["par"]
         sol_NN, par_NN = function_confidence["sol_NN"], function_confidence["par_NN"]
 
         error_sol = self.__metric(sol_NN, sol_true)
@@ -81,8 +81,8 @@ class PredNN(PhysNN):
         norm_par  = self.__metric(par_true, tf.zeros_like(par_true))
 
         err = {
-            "error_sol" : np.divide(error_sol,norm_sol),
-            "error_par" : np.divide(error_par,norm_par)
+            "error_sol" : np.divide(error_sol, norm_sol),
+            "error_par" : np.divide(error_par, norm_par)
             }
 
         return err
@@ -107,9 +107,9 @@ class PredNN(PhysNN):
         functions_nn_samples = {"sol_samples": out_sol, "par_samples": out_par}
         return functions_nn_samples
 
-    def test_errors(self, function_confidence, dataset):
+    def test_errors(self, function_confidence, data_test):
         """ Creation of a dictionary containing errors and UQ """
-        err = self.__compute_errors(function_confidence, dataset)
+        err = self.__compute_errors(function_confidence, data_test)
         u_q = self.__compute_UQ(function_confidence)
         return err | u_q
 

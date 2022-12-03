@@ -19,12 +19,7 @@ class LossNN(PhysNN):
         # Choice of loss to be used
         self.metric = [k for k,v in par.metrics.items() if v]
         self.keys   = [k for k,v in  par.losses.items() if v]
-        
-        # Definition of Variance
-        logvar = lambda x: tf.math.log(1/x**2)
-        sigma_d = par.uncertainty["sol"] # log(1/sigma_d^2)
-        sigma_r = par.uncertainty["pde" ] # log(1/sigma_r^2)
-        self.sigmas = [logvar(sigma_d), logvar(sigma_r)]
+        self.vars   = par.uncertainty 
 
     @staticmethod
     def __mse_theta(theta, dim):
@@ -42,36 +37,39 @@ class LossNN(PhysNN):
         """ Negative log-likelihood """
         return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var) # delete * n in the laplace case?
 
-    def __loss_data(self, outputs, targets):
+    def __loss_data(self, outputs, targets, log_var):
         """ Auxiliary loss function for the computation of Normal(output | target, 1 / beta * I) """
         post_data = self.__mse(outputs-targets)
-        log_var  = self.sigmas[0]
         log_data = self.__normal_loglikelihood(post_data, outputs.shape[0], log_var)
         return self.tf_convert(post_data), self.tf_convert(log_data)
 
-    def __loss_data_u(self, dataset):
+    def __loss_data_u(self, data):
         """ Fitting loss on u; computation of the residual at points of measurement of u """
-        outputs = self.forward(dataset.noise_data[0])
-        return self.__loss_data(outputs[0], dataset.noise_data[1])
+        outputs = self.forward(data["dom"])
+        log_var = tf.math.log(1/self.vars["sol"]**2)
+        return self.__loss_data(outputs[0], data["sol"], log_var)
 
-    def __loss_data_f(self, dataset):
+    def __loss_data_f(self, data):
         """ Fitting loss on f; computation of the residual at points of measurement of f """
-        outputs = self.forward(dataset.noise_data[0])
-        return self.__loss_data(outputs[1], dataset.noise_data[2])
+        outputs = self.forward(data["dom"])
+        log_var = tf.math.log(1/self.vars["par"]**2)
+        return self.__loss_data(outputs[1], data["par"], log_var)
 
-    def __loss_data_b(self):
+    def __loss_data_b(self, data):
         """ Boundary loss; computation of the residual on boundary conditions """
-        return 0.0, 0.0
+        outputs = self.forward(data["bnd"])
+        log_var = tf.math.log(1/self.vars["bnd"]**2)
+        return self.__loss_data(outputs[0], data["bnd"], log_var)
 
-    def __loss_residual(self, dataset):
+    def __loss_residual(self, data):
         """ Physical loss; computation of the residual of the PDE """
-        inputs = self.tf_convert(dataset.coll_data[0])
+        inputs = self.tf_convert(data["dom"])
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(inputs)
             u, f = self.forward(inputs)
             residuals = self.pinn.comp_residual(inputs, u, f, tape)
         mse = self.__mse(residuals)
-        log_var = self.sigmas[1]
+        log_var =  tf.math.log(1/self.vars["pde"]**2)
         log_res = self.__normal_loglikelihood(mse, inputs.shape[0], log_var)
         return mse, log_res
 
@@ -86,11 +84,11 @@ class LossNN(PhysNN):
     def __compute_loss(self, dataset, keys, full_loss = True):
         """ Computation of the losses listed keys """
         pst, llk = dict(), dict()
-        if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset)
-        if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset)
-        if "data_b" in keys: pst["data_b"], llk["data_b"] = self.__loss_data_b(dataset)
+        if "data_u" in keys: pst["data_u"], llk["data_u"] = self.__loss_data_u(dataset.data_sol)
+        if "data_f" in keys: pst["data_f"], llk["data_f"] = self.__loss_data_f(dataset.data_par)
+        if "data_b" in keys: pst["data_b"], llk["data_b"] = self.__loss_data_b(dataset.data_bnd)
         if "prior"  in keys: pst["prior"],  llk["prior"]  = self.__loss_prior()
-        if "pde"    in keys: pst["pde"], llk["pde"] = self.__loss_residual(dataset) if full_loss else (0.0, 0.0)
+        if "pde"    in keys: pst["pde"], llk["pde"] = self.__loss_residual(dataset.data_pde) if full_loss else (0.0, 0.0)
         return pst, llk
 
     def metric_total(self, dataset, full_loss = True):

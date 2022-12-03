@@ -4,8 +4,7 @@
 - Loss: Boundary Conditions
 
 ### REFACTORING
-- Data: Plotter for datacreator
-- Data: migliorare il caricamento in data creation
+- Print: sistemare salvataggio config
 - Data: creazione dei batch
 
 ### MIGLIORIE

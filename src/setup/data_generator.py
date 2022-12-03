@@ -2,153 +2,154 @@ from utility import create_data_folders, starred_print
 import matplotlib.pyplot as plt
 from scipy.stats import qmc
 import numpy as np
+import warnings
 import os
 
-
-class AnalyticalData:
-
-    def __init__(self, data_config, do_plots=False, test_only=False, is_main=False):
-      
+class DataGenerator:
+    def __init__(self, data_config, main=True):
+        
         self.test_case = data_config.name
         self.problem   = data_config.problem
-
-        self.do_plots  = do_plots
-        self.test_only = test_only
-        self.is_main   = is_main
-        
-        self.solution    = data_config.analytical_solution
-        self.domain_data = data_config.analytical_domain
-        self.dimension = len(self.domain_data["domain"])
         self.save_folder = '../data'
+        self.main = main
 
-        self.__creating_loop()
+        self.mesh    = data_config.mesh
+        self.domains = data_config.domains
+        self.values  = data_config.values
+        self.dim     = len(self.domains["full"])
 
-    def __creating_loop(self):
-        """ Function for dataset generation; creation of folder, domain and solution .npy files, plot generation """
-        if self.is_main: starred_print(f"Generating dataset: {self.test_case}")
-        self.save_path = create_data_folders(self.problem , self.test_case, not self.test_only)
-        self.__create_domain()
-        self.__create_solutions()
-        if self.do_plots: self.__plotter()
-        print(f"Dataset {self.test_case} generated")
+        print(f"\tGenerating dataset: {self.test_case}")
+        self.save_path = create_data_folders(self.problem , self.test_case, self.main)
+        self.__create_domains() # Main Creation Loop
+        print(f"\tDataset {self.test_case} generated")
+        
+        if not self.main: return plt.show()
 
-    # %% Build Solution
-    def __create_solutions(self):
-        """ Creates solution and parametric field files """
-        for key, _ in self.solution.items():
-            self.__create_sol(key)
+    def __compute_bnd(self, bnd):
+        " Separate lower and upper bounds of a domain "
+        l_bounds = [i[0] for i in bnd]
+        u_bounds = [i[1] for i in bnd]
+        return (l_bounds, u_bounds)
 
-    def __create_sol(self, name):
-        """ Generates name vector and saves it """
-        func = self.solution[name]
-        grid_list = np.split(self.grid, self.dimension, axis = 0)
-        grid = [x.squeeze() for x in grid_list]
-        sol = func(*grid)
-        self.__save_data(name, sol)
+    def __create_domains(self):
+        " call all the creating functions "
+        self.__create_dom_pde()
+        self.__create_dom_sol()
+        self.__create_dom_par()
+        self.__create_dom_bnd()
+        self.__create_test()
+        
+    def __create_dom_sol(self):
+        " Create and save: dom_sol, sol_train "
+        X = self.__create_multidomain(self.domains["sol"], self.mesh["inner_res"])
+        self.__save_data("dom_sol", X)
+        self.__save_data("sol_train", np.array(self.values["u"](X.T)).T)
+        if not self.main: self.plot(X, c="g")
 
-    # %% Build Domain
-    def __create_domain(self):
-        """ Creates the spatial domain with the random points generation technique chosen """
-        match self.domain_data["mesh_type"]:
-            case "uniform": self.__create_uniform_domain()
-            case "sobol"  : self.__create_sobol_domain()
-            case "random" : self.__create_random_domain()
+    def __create_dom_par(self):
+        " Create and save: dom_par, par_train "
+        X = self.__create_multidomain(self.domains["par"], self.mesh["inner_res"])
+        self.__save_data("dom_par", X)
+        self.__save_data("par_train", np.array(self.values["f"](X.T)).T)
+        if not self.main: self.plot(X, c="b")
+
+    def __create_dom_pde(self):
+        " Create and save: dom_pde "
+        X = self.__create_domain(self.domains["full"], self.mesh["inner_res"])
+        self.__save_data("dom_pde",X)
+
+    def __create_dom_bnd(self):
+        " Create and save: dom_bnd, sol_bnd "
+        lu_bnd, d = self.__compute_bnd(self.domains["full"]), self.dim
+        points = self.__create_domain(self.domains["full"], self.mesh["outer_res"], "sobol")
+        X_list = [points.copy() for _ in range(2*d)]
+        for i in range(d):
+            X_list[i  ][i,:] = lu_bnd[0][i]
+            X_list[i+d][i,:] = lu_bnd[1][i]
+        X = np.zeros([d, self.mesh["outer_res"]*2*d])
+        for i in range(2*d): X[:,i+0::2*d] = X_list[i+0]
+        self.__save_data("dom_bnd",X)
+        self.__save_data("sol_bnd", np.array(self.values["u"](X.T)).T)
+        if not self.main: self.plot(X, c="r")
+
+    def __create_test(self):
+        " Create and save: dom_test, sol_test, par_test"
+        X = self.__create_domain(self.domains["full"], self.mesh["test_res"], "uniform")
+        self.__save_data("dom_test", X)
+        self.__save_data("sol_test", np.array(self.values["u"](X.T)).T)
+        self.__save_data("par_test", np.array(self.values["f"](X.T)).T)
+
+    def __merge_2points(self, p1, p2, n1, n2): 
+        " Merge two sequences of points altrernating the points"
+        if n1 < n2: p1, p2, n1, n2 = p2, p1, n2, n1
+        i, j, r = 0, 0, n1/n2
+        points = np.zeros([n1+n2, self.dim])
+        for k in range(n1+n2):
+            choice = i/(j+1e-8) < r
+            points[k,:], i, j = (p1[i,:], i+1, j) if choice else (p2[j,:], i, j+1)
+        return points, n1+n2
+
+    def __create_multidomain(self, bnd, num, mesh=None):
+        " Split multi-domain bnd and call single domain creator "
+        if mesh is None: mesh = self.mesh["mesh_type"]
+        dim_dom   = [np.prod([d[1]-d[0] for d in d_bnd]) for d_bnd in bnd] 
+        num_dom   = [int((dd*num)//sum(dim_dom)) for dd in dim_dom]
+        multi_pts = [self.__create_domain(d_bnd, d_num, mesh) for d_bnd, d_num in zip(bnd, num_dom)]
+        pts, num = multi_pts[0], num_dom[0]
+        for p,n in zip(multi_pts[1:], num_dom[1:]): pts, num = self.__merge_2points(p, pts, n, num)
+        return pts
+
+    def __create_domain(self, bnd, num, mesh=None):
+        " Caller of specific mesh creator in bnd domain with num elements "
+        if mesh is None: mesh = self.mesh["mesh_type"]
+        bnd = self.__compute_bnd(bnd)
+        match mesh:
+            case "uniform": return self.__create_uniform_domain(bnd, num)
+            case "random" : return self.__create_random_domain(bnd, num)
+            case "sobol"  : return self.__create_sobol_domain(bnd, num)
             case _ : Exception("This mesh type doesn't exists")
-    
-    def __create_random_domain(self):
-        """ Used in __create_domain; generation of a random uniform spatial mesh """
-        x = np.zeros([self.domain_data["resolution"], self.dimension])
 
-        for i in range(self.dimension):
-            x[:,i] = np.random.uniform(self.domain_data["domain"][i][0], 
-                                       self.domain_data["domain"][i][1],
-                                       self.domain_data["resolution"])              
-        if self.dimension == 2:
-            raise Exception("Not Implemented for d=2!")
-        if self.dimension == 3:
-            raise Exception("Not Implemented for d=3!")
+    def __create_uniform_domain(self, bnd, num):
+        " Create a uniform mesh in bnd domain with num elements "
+        x_line = np.linspace(0,1,num+1)[:-1] + 1/(2*num)
+        if self.dim == 1: x = np.meshgrid(x_line)
+        if self.dim == 2: x = np.meshgrid(x_line,x_line)
+        if self.dim == 3: x = np.meshgrid(x_line,x_line,x_line)
+        x_square = np.zeros([num**self.dim, self.dim])
+        for i, v in enumerate(x): x_square[:,i] = np.reshape(v,[num**self.dim])
+        return qmc.scale(x_square, bnd[0], bnd[1])
 
-        self.grid = np.reshape(x,[self.dimension, self.domain_data["resolution"]**self.dimension])
-        names = ["x","y","z"]
-        for i in range(self.dimension):
-            self.__save_data(names[i], self.grid[i])
+    def __create_random_domain(self, bnd, num):
+        " Create a random mesh in bnd domain with num elements "
+        x_square = np.random.rand(num, self.dim)
+        return qmc.scale(x_square, bnd[0], bnd[1])
 
-    def __create_uniform_domain(self):
-        """ Used in __create_domain; generation of a uniform spatial mesh """
-        x = np.zeros([self.domain_data["resolution"], self.dimension])
-
-        for i in range(self.dimension):
-            x[:,i] = np.linspace(self.domain_data["domain"][i][0], 
-                                 self.domain_data["domain"][i][1],
-                                 self.domain_data["resolution"])
-        if self.dimension == 2:
-            x = np.meshgrid(x[:,0],x[:,1])
-        if self.dimension == 3:
-            x = np.meshgrid(x[:,0],x[:,1],x[:,2])
-
-        self.grid = np.reshape(x,[self.dimension, self.domain_data["resolution"]**self.dimension])
-        names = ["x","y","z"]
-        for i in range(self.dimension):
-            self.__save_data(names[i], self.grid[i])
-
-    def __create_sobol_domain(self):
-        """ Used in __create_domain; generation of a spatial mesh using Sobol points"""
-        l_bounds = [i[0] for i in self.domain_data["domain"]]
-        u_bounds = [i[1] for i in self.domain_data["domain"]]
-        sobolexp = int(np.ceil(np.log(self.domain_data["resolution"])/np.log(2)))
-        sampler = qmc.Sobol(d=self.dimension, scramble=False)
+    def __create_sobol_domain(self, bnd, num):
+        " Create a sobol mesh in bnd domain with num elements "
+        if ((num) & (num-1)): warnings.warn("Non optimal choice of resolution for Sobol mesh")
+        sobolexp = int(np.ceil(np.log(num)/np.log(2)))
+        sampler = qmc.Sobol(d=self.dim, scramble=False)
         sample = sampler.random_base2(m=sobolexp)
-        sample = np.concatenate((sample, np.array([[1.]*self.dimension])))
-        self.grid = qmc.scale(sample, l_bounds, u_bounds).T
+        sample += (1./float(2**sobolexp))/2.
+        return qmc.scale(sample, bnd[0], bnd[1])
 
-        names = ["x","y","z"]
-        for i in range(self.dimension):
-            self.__save_data(names[i], self.grid[i])
-
-
-    # %% Loading and Saving
     def __save_data(self, name, data):
         """ Saves the data generated """
         filename = os.path.join(self.save_path, name)
-        np.save(filename,data)
-        if self.is_main:
-            print(f'\tSaved {name}')
+        np.save(filename, data)
 
-    def __load(self,name):
-        """ Loader of .npy files """
-        return np.load(os.path.join(self.save_path, f'{name}.npy'))
+    ### TEMP FILES
 
-    # %% Postprocess
-    def __plot(self, var_name):
-        """ Used in __plotter; plots var_name profile (distinguishing 1D, 2D, 3D case) """
-        var = self.__load(var_name)
-        plt.figure()
-        if self.dimension == 1:
-            var_dim = "(x)"
-            plt.scatter(self.__load('x'), var, c = 'b', s = 0.1)
-        elif self.dimension == 2:
-            var_dim = "(x,y)"
-            plt.scatter(self.__load('x'), self.__load('y'), c = var, cmap = 'coolwarm',
-                        vmin = min(var), vmax = max(var))
-            plt.colorbar()
-        else:
-            print("Plotter non available")
-        plt.title(f'{var_name}{var_dim}')
-        plt.savefig(os.path.join(self.save_path,f"{var_name}.png"))
+    def plot(self, points, c="b"):
+        if self.dim == 1: plotter = self.plot1D
+        if self.dim == 2: plotter = self.plot2D
+        plotter(self.__compute_bnd(self.domains["full"]), points, c)
 
-    def __plotter(self):
-        """ Plotter """
-        if self.dimension == 2:
-            plt.figure()
-            plt.scatter(self.__load("x"),self.__load("y"), s=1)
-            plt.title("{} mesh".format(self.domain_data["mesh_type"]))
-        for var_file in os.listdir(self.save_path):
-            if var_file[-4:] == ".npy":
-                var_name = var_file[:-4]
-                if var_name not in ["x","y","z"]:
-                    self.__plot(var_name)
+    def plot1D(self, bnd, points, c="b"):
+        plt.xlim([bnd[0][0], bnd[1][0]])
+        plt.plot(points[0,:], [0]*points[0,:], f"{c}*")
 
-    def show_plot(self):
-        """ Shows the plots """
-        starred_print("END")
-        plt.show(block = True)
+    def plot2D(self, bnd, points, c="b"):
+        plt.xlim([bnd[0][0], bnd[1][0]]) 
+        plt.ylim([bnd[0][1], bnd[1][1]])
+        plt.plot(points[0,:], points[1,:], f"{c}*")
