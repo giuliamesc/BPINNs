@@ -1,16 +1,16 @@
 ### IMPLEMENTAZIONI
 - Algoritmo: SVGD (thetas=[[theta1,theta2,...],[theta1,theta2,...]]), select thetas[-1]
 - Algoritmo: Variational Inference
-- Loss: Boundary Conditions
+- Equazione: oscillatore armonico?
 
 ### REFACTORING
 - Print: sistemare salvataggio config
 - Data: creazione dei batch
 
 ### MIGLIORIE
-- Algoritmo: PINN Base
 - Dubbi: Loss Prior
 - Idee: Salvataggio Multiplo
+- Loss: testare boundary
 
 ### TEST CASES
 - Loss: Problema Inverso
