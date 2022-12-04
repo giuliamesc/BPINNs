@@ -83,36 +83,30 @@ class Plotter():
         plt.legend(prop={'size': 9})
         self.__save_plot(self.path_plot, title)
 
-    def plot_confidence(self, dom_data, fit_data, functions):
+    def plot_confidence(self, data, functions):
         """ Plots mean and standard deviation of solution and parametric field samples """
-        inputs, u_true, f_true = dom_data
-        ex_points, u_values, f_values = fit_data
 
-        u = (u_true, functions['sol_NN'], functions['sol_std'])
-        u_fit = (ex_points, u_values)
-        f = (f_true, functions['par_NN'], functions['par_std'])
-        f_fit = (ex_points, f_values)
+        x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
+        u = (data["sol_ex"][1], functions['sol_NN'], functions['sol_std'])
+        f = (data["par_ex"][1], functions['par_NN'], functions['par_std'])
 
-        self.__plot_confidence_1D(inputs[:,0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = u_fit)
+        self.__plot_confidence_1D(x[0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = data["sol_ns"])
         self.__save_plot(self.path_plot, 'u_confidence.png')
         if self.only_sol: return
-        self.__plot_confidence_1D(inputs[:,0], f, 'Confidence interval for f(x)', label = ('x','f'), fit = f_fit)
+        self.__plot_confidence_1D(x[1], f, 'Confidence interval for f(x)', label = ('x','f'), fit = data["par_ns"])
         self.__save_plot(self.path_plot, 'f_confidence.png')
 
-    def plot_nn_samples(self, dom_data, fit_data, functions):
+    def plot_nn_samples(self, data, functions):
         """ Plots all the samples of solution and parametric field """
-        inputs, u_true, f_true = dom_data
-        ex_points, u_values, f_values = fit_data
 
-        u = (u_true, functions['sol_samples'])
-        u_fit = (ex_points, u_values)
-        f = (f_true, functions['par_samples'])
-        f_fit = (ex_points, f_values)
+        x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
+        u = (data["sol_ex"][1], functions['sol_samples'])
+        f = (data["par_ex"][1], functions['par_samples'])
 
-        self.__plot_nn_samples_1D(inputs[:,0], u, label = ('x','u'), fit = u_fit)
+        self.__plot_nn_samples_1D(x[0], u, label = ('x','u'), fit = data["sol_ns"])
         self.__save_plot(self.path_plot, 'u_nn_samples.png')
         if self.only_sol: return
-        self.__plot_nn_samples_1D(inputs[:,0], f, label = ('x','f'), fit = f_fit)
+        self.__plot_nn_samples_1D(x[1], f, label = ('x','f'), fit = data["par_ns"])
         self.__save_plot(self.path_plot, 'f_nn_samples.png')
 
     def plot_losses(self, losses):

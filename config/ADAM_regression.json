@@ -1,15 +1,15 @@
 {
 	"general":{
 		"problem"  : "Regression",
-		"case_name": "sin",
+		"case_name": "cos",
 		"method"   : "ADAM"
 	},
 
 	"num_points":{
-		"sol" : 16,
-		"par" : 16,
+		"sol" : 32,
+		"par" : 0,
 		"bnd" : 2,
-		"pde" : 100
+		"pde" : 0
 	},
 	
 	"uncertainty":{
@@ -22,7 +22,7 @@
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 16
+		"n_neurons" : 32
 	},
 
 	"losses":{
@@ -47,11 +47,10 @@
 	},
 
 	"ADAM":{
-		"epochs" : 200,
+		"epochs" : 2000,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
         "lr"     : 1e-3
 	}
-
 }

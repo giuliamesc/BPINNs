@@ -65,24 +65,20 @@ class Storage():
 
     @property
     def data(self):
-        dom_data, fit_data = [None, None, None], [None, None, None]
-        dom_data[0] = np.load(os.path.join(self.path_data, "dom_inp.npy"))
-        dom_data[1] = np.load(os.path.join(self.path_data, "dom_sol.npy"))
-        dom_data[2] = np.load(os.path.join(self.path_data, "dom_par.npy"))
-        fit_data[0] = np.load(os.path.join(self.path_data, "fit_inp.npy"))
-        fit_data[1] = np.load(os.path.join(self.path_data, "fit_sol.npy"))
-        fit_data[2] = np.load(os.path.join(self.path_data, "fit_par.npy"))
-        return (dom_data, fit_data)
+        load_dom = lambda x: np.load(os.path.join(self.path_data, f"{x}_dom.npy"))
+        load_val = lambda x: np.load(os.path.join(self.path_data, f"{x}_val.npy"))
+        names = ["sol_ex", "par_ex", "sol_ns", "par_ns", "bnd_ns"]    
+        plots = {k: (load_dom(k),load_val(k)) for k in names}
+        return plots
 
     @data.setter
-    def data(self, dataset):
-        dom_data, fit_data = dataset[0], dataset[1]
-        np.save(os.path.join(self.path_data, "dom_inp.npy"), dom_data[0])
-        np.save(os.path.join(self.path_data, "dom_sol.npy"), dom_data[1])
-        np.save(os.path.join(self.path_data, "dom_par.npy"), dom_data[2])
-        np.save(os.path.join(self.path_data, "fit_inp.npy"), fit_data[0])
-        np.save(os.path.join(self.path_data, "fit_sol.npy"), fit_data[1])
-        np.save(os.path.join(self.path_data, "fit_par.npy"), fit_data[2])
+    def data(self, data_plot):
+        save_dom = lambda x: np.save(os.path.join(self.path_data, f"{x}_dom.npy"), data_plot[x][0])
+        save_val = lambda x: np.save(os.path.join(self.path_data, f"{x}_val.npy"), data_plot[x][1])
+        names = ["sol_ex", "par_ex", "sol_ns", "par_ns", "bnd_ns"] 
+        for k in names: 
+            save_dom(k) 
+            save_val(k)
 
     @property
     def confidence(self):

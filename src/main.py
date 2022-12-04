@@ -34,7 +34,6 @@ print(f"Bayesian PINN using {params.method}")
 print(f"Solve the {params.inverse} problem of {params.pde} {params.phys_dim.n_input}D ")
 starred_print("DONE")
 
-
 # %% Datasets Creation
 
 print("Dataset Creation")
@@ -91,7 +90,7 @@ print("Saving data...")
 save_storage.save_parameter(params)
 save_storage.save_errors(errors)
 # Saving Dataset
-save_storage.data = (dataset.dom_data, dataset.noise_data) 
+save_storage.data = dataset.data_plot
 # Saving Training
 save_storage.history  = bayes_nn.history
 save_storage.thetas   = bayes_nn.thetas
@@ -108,9 +107,8 @@ load_storage = Storage(path_folder)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)
 print("Plotting the results...")
-loaded_data  = load_storage.data
-plotter.plot_confidence(loaded_data[0], loaded_data[1], load_storage.confidence)
-plotter.plot_nn_samples(loaded_data[0], loaded_data[1], load_storage.nn_samples)
+plotter.plot_confidence(load_storage.data, load_storage.confidence)
+plotter.plot_nn_samples(load_storage.data, load_storage.nn_samples)
 starred_print("END")
 
 plotter.show_plot()

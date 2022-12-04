@@ -64,10 +64,10 @@ class DataGenerator:
         points = self.__create_domain(self.domains["full"], self.mesh["outer_res"], "sobol")
         X_list = [points.copy() for _ in range(2*d)]
         for i in range(d):
-            X_list[i  ][i,:] = lu_bnd[0][i]
-            X_list[i+d][i,:] = lu_bnd[1][i]
-        X = np.zeros([d, self.mesh["outer_res"]*2*d])
-        for i in range(2*d): X[:,i+0::2*d] = X_list[i+0]
+            X_list[i  ][:,i] = lu_bnd[0][i]
+            X_list[i+d][:,i] = lu_bnd[1][i]
+        X = np.zeros([self.mesh["outer_res"]*2*d, d])
+        for i in range(2*d): X[i::2*d,:] = X_list[i]
         self.__save_data("dom_bnd",X)
         self.__save_data("sol_bnd", np.array(self.values["u"](X.T)).T)
         if not self.main: self.plot(X, c="r")

@@ -5,11 +5,18 @@
 		"method"   : "HMC"
 	},
 
-	"experiment":{
-		"num_collocation": 100,
-		"num_fitting"    : 16,
-		"var_data" : 0.1,
-		"var_pde"  : 0.1
+	"num_points":{
+		"sol" : 16,
+		"par" : 16,
+		"bnd" : 2,
+		"pde" : 100
+	},
+	
+	"uncertainty":{
+		"sol" : 0.1,
+		"par" : 0.1,
+		"bnd" : 0.1,
+		"pde" : 0.1
 	},
 
 	"architecture":{

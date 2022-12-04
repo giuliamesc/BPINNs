@@ -57,19 +57,29 @@ class Dataset:
         self.__data_all[name] = values
 
     @data_sol.setter
-    def data_sol(self, items): self.data_all(items)
+    def data_sol(self, items): self.data_all = items
     
     @data_par.setter
-    def data_par(self, items): self.data_all(items)
+    def data_par(self, items): self.data_all = items
     
     @data_bnd.setter
-    def data_bnd(self, items): self.data_all(items)
+    def data_bnd(self, items): self.data_all = items
     
-    @data_pde.setter
-    def data_pde(self, items): self.data_all(items)
+    @data_pde.setter # Unused
+    def data_pde(self, items): self.data_all = items
     
-    @data_test.setter
-    def data_test(self, items): self.data_all(items)
+    @data_test.setter # Unused
+    def data_test(self, items): self.data_all = items
+
+    @property
+    def data_plot(self):
+        plots = dict()
+        plots["sol_ex"] = (self.data_test["dom"], self.data_test["sol"])
+        plots["sol_ns"] = ( self.data_sol["dom"],  self.data_sol["sol"])
+        plots["par_ex"] = (self.data_test["dom"], self.data_test["par"])
+        plots["par_ns"] = ( self.data_par["dom"],  self.data_par["par"])
+        plots["bnd_ns"] = ( self.data_bnd["dom"],  self.data_bnd["sol"])
+        return plots
 
     def normalize_dataset(self):
         for key in self.data_all:
@@ -85,11 +95,13 @@ class Dataset:
 
     def __compute_norm_coeff(self):
         self.norm_coeff = dict()
-        #import pdb; pdb.set_trace()
         self.norm_coeff["sol_mean"] = np.mean(self.data_test["sol"], axis=0)
         self.norm_coeff["sol_std" ] =  np.std(self.data_test["sol"], axis=0)
         self.norm_coeff["par_mean"] = np.mean(self.data_test["par"], axis=0)
         self.norm_coeff["par_std" ] =  np.std(self.data_test["par"], axis=0)
 
     def __add_noise(self):
-        pass
+        noise_values = lambda x,y: np.random.normal(x, y, x.shape).astype("float32") 
+        self.data_sol = ("sol_train", noise_values(self.data_sol["sol"], self.uncertainty["sol"]))
+        self.data_par = ("par_train", noise_values(self.data_par["par"], self.uncertainty["par"]))
+        self.data_bnd = ("sol_bnd"  , noise_values(self.data_bnd["sol"], self.uncertainty["bnd"]))

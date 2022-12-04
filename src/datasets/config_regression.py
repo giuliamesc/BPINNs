@@ -10,19 +10,19 @@ class Reg1D_cos(Regression1D):
     mesh = {
         "mesh_type": "sobol",
          "test_res": 128,
-        "inner_res": 16,
-        "outer_res": 8
+        "inner_res": 64,
+        "outer_res": 1
     }
     # Boundaries of the domains
     domains = {
-        "sol": [[(0,2),(1,3)],[(4,6),(1,3)]],
-        "par": [[(2,5),(0,1)]],
-        "full" : [(0,6),(0,3)]
+        "sol": [[(0.,1.)]],
+        "par": [[(0.,1.)]],
+        "full" : [(0.,1.)]
     }
     # Lambda expression of the solution and the parametric field
     values = {
         "u": lambda x: [np.cos(x[0]*8)],
-        "f": lambda x: [np.cos(x[0]*x[1]*8)]}
+        "f": lambda x: [np.cos(x[0]*8)]}
 
 @dataclass
 class Reg1D_sin(Regression1D):
@@ -31,8 +31,8 @@ class Reg1D_sin(Regression1D):
     # Specifications on the mesh: mesh type and resolutions
     mesh = {
         "mesh_type": "sobol",
-         "test_res": 6,
-        "inner_res": 8,
+         "test_res": 128,
+        "inner_res": 64,
         "outer_res": 1
     }
     # Boundaries of the domains
