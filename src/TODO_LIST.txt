@@ -4,13 +4,12 @@
 - Equazione: oscillatore armonico?
 
 ### REFACTORING
-- Print: sistemare salvataggio config
 - Data: creazione dei batch
+- Plot: Boundary!
 
 ### MIGLIORIE
 - Dubbi: Loss Prior
 - Idee: Salvataggio Multiplo
-- Loss: testare boundary
 
 ### TEST CASES
 - Loss: Problema Inverso

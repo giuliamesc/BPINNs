@@ -57,9 +57,9 @@ class LossNN(PhysNN):
 
     def __loss_data_b(self, data):
         """ Boundary loss; computation of the residual on boundary conditions """
-        outputs = self.forward(data["bnd"])
+        outputs = self.forward(data["dom"])
         log_var = tf.math.log(1/self.vars["bnd"]**2)
-        return self.__loss_data(outputs[0], data["bnd"], log_var)
+        return self.__loss_data(outputs[0], data["sol"], log_var)
 
     def __loss_residual(self, data):
         """ Physical loss; computation of the residual of the PDE """

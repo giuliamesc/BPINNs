@@ -1,0 +1,36 @@
+GENERAL
+	method:     HMC 
+	problem:    Regression 
+	case_name:  sin 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   16 
+
+NUM_POINTS
+	sol:  16 
+	par:  0 
+	bnd:  2 
+	pde:  0 
+
+UNCERTAINTY
+	sol:  0.1 
+	par:  0 
+	bnd:  0.1 
+	pde:  0 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    True 
+	gen_flag:     True 
+
+HMC
+	epochs:   500 
+	burn_in:  100 
+	skip:     10 
+	HMC_L:    20 
+	HMC_dt:   0.001 
+	HMC_eta:  1.0 
+
