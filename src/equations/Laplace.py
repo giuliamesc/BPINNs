@@ -23,10 +23,10 @@ class Laplace(Equation):
 
     @norm_coeff.setter
     def norm_coeff(self, norm):
-        self.norm["u_std"]   = norm[0][1]
-        self.norm["f_std"]   = norm[1][1]
-        self.norm["u_mean"]  = norm[0][0]
-        self.norm["f_mean"]  = norm[1][0]
+        self.norm["u_std"]   = norm["sol_std"]
+        self.norm["f_std"]   = norm["par_std"]
+        self.norm["u_mean"]  = norm["sol_mean"]
+        self.norm["f_mean"]  = norm["par_mean"]
         self.norm["mu_norm"] = self.norm["u_std"]/self.norm["f_std"]
 
     def comp_residual(self, inputs, out_sol, out_par, tape):

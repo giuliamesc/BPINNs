@@ -8,10 +8,11 @@ class ADAM(Algorithm):
     """
     def __init__(self, bayes_nn, param_method, debug_flag):
         super().__init__(bayes_nn, param_method, debug_flag)
-        self.beta_1 = param_method["beta_1"]
-        self.beta_2 = param_method["beta_2"]
-        self.eps    = param_method["eps"]
-        self.lr     = param_method["lr"]
+        self.burn_in = param_method["burn_in"]
+        self.beta_1  = param_method["beta_1"]
+        self.beta_2  = param_method["beta_2"]
+        self.eps     = param_method["eps"]
+        self.lr      = param_method["lr"]
         self.__initialize_momentum()
 
     def __initialize_momentum(self):
@@ -21,7 +22,8 @@ class ADAM(Algorithm):
 
     def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
-        grad_theta = self.model.grad_loss(self.data_train)
+        full_loss = self.curr_ep > self.burn_in
+        grad_theta = self.model.grad_loss(self.data_train, full_loss)
         theta = theta_0.copy()
         for i in range(self.num_2layers):
             self.m[i] = self.beta_1*self.m[i] + (1-self.beta_1)*grad_theta[i]

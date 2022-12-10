@@ -28,27 +28,27 @@ class Dataset:
 
     @property
     def data_sol(self):
-        selected, num = ("dom_sol","sol_train"), self.num_points["sol"]
+        selected, num = ["dom_sol","sol_train"], self.num_points["sol"]
         return {k[:3]: self.data_all[k][:num,:] for k in selected}
 
     @property
     def data_par(self):
-        selected, num = ("dom_par","par_train"), self.num_points["par"]
+        selected, num = ["dom_par","par_train"], self.num_points["par"]
         return {k[:3]: self.data_all[k][:num,:] for k in selected}
 
     @property
     def data_bnd(self):
-        selected, num = ("dom_bnd","sol_bnd"), self.num_points["bnd"]
+        selected, num = ["dom_bnd","sol_bnd"], self.num_points["bnd"]
         return {k[:3]: self.data_all[k][:num,:] for k in selected}
 
     @property
     def data_pde(self):
-        selected, num = ("dom_pde"), self.num_points["pde"]
+        selected, num = ["dom_pde"], self.num_points["pde"]
         return {k[:3]: self.data_all[k][:num,:] for k in selected}
 
     @property
     def data_test(self):
-        selected = ("dom_test","sol_test","par_test")
+        selected = ["dom_test","sol_test","par_test"]
         return {k[:3]: self.data_all[k] for k in selected}
 
     @data_all.setter

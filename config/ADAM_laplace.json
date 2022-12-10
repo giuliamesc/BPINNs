@@ -1,43 +1,43 @@
 {
 	"general":{
-		"problem"  : "Regression",
+		"problem"  : "Laplace1D",
 		"case_name": "cos",
 		"method"   : "ADAM"
 	},
 
 	"num_points":{
 		"sol" : 16,
-		"par" : 0,
+		"par" : 16,
 		"bnd" : 2,
-		"pde" : 0
+		"pde" : 64
 	},
 	
 	"uncertainty":{
 		"sol" : 0.1,
-		"par" : 0,
+		"par" : 0.1,
 		"bnd" : 0.1,
-		"pde" : 0.01
+		"pde" : 1
 	},
 
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 32
+		"n_neurons" : 50
 	},
 
 	"losses":{
 		"data_u": "True",
-		"data_f": "False",
+		"data_f": "True",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "False"
 	},
 
 	"metrics":{
 		"data_u": "True",
-		"data_f": "False",
+		"data_f": "True",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "False"
 	},
 
@@ -45,11 +45,12 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "True"
+		"gen_flag"   : "False"
 	},
 
 	"ADAM":{
 		"epochs" : 2000,
+        "burn_in": 200,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
