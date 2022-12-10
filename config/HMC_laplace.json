@@ -28,6 +28,7 @@
 	"losses":{
 		"data_u": "True",
 		"data_f": "True",
+		"data_b": "True",
 		"pde":    "True",
 		"prior":  "True"
 	},
@@ -35,6 +36,7 @@
 	"metrics":{
 		"data_u": "True",
 		"data_f": "True",
+		"data_b": "True",
 		"pde":    "True",
 		"prior":  "True"
 	},

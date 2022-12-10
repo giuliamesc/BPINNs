@@ -14,9 +14,9 @@
 	
 	"uncertainty":{
 		"sol" : 0.05,
-		"par" : 0.05,
+		"par" : 0,
 		"bnd" : 0.05,
-		"pde" : 0.05
+		"pde" : 0
 	},
 
 	"architecture":{
@@ -28,6 +28,7 @@
 	"losses":{
 		"data_u": "True",
 		"data_f": "False",
+		"data_b": "True",
 		"pde":    "False",
 		"prior":  "False"
 	},
@@ -35,6 +36,7 @@
 	"metrics":{
 		"data_u": "True",
 		"data_f": "False",
+		"data_b": "True",
 		"pde":    "False",
 		"prior":  "False"
 	},
