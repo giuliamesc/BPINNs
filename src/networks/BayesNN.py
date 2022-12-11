@@ -12,6 +12,7 @@ class BayesNN(PredNN, LossNN):
         super(BayesNN, self).__init__(par = par, equation = equation)
         self.seed    = par.utils["random_seed"]
         self.history = self.__initialize_losses()
+        self.constructors = (par, equation)
 
     def __initialize_losses(self):
         """ Initializes empty MSE and log-likelihood dictionaries """

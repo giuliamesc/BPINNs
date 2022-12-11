@@ -22,7 +22,7 @@ class Laplace1D_cos(Laplace1D):
     # Lambda expression of the solution and the parametric field
     values = {
         "u": lambda x: [np.cos(x[0]*8)],
-        "f": lambda x: [np.cos(x[0]*8)]}
+        "f": lambda x: [64*np.cos(x[0]*8)]}
 
 @dataclass
 class Laplace1D_sin(Laplace1D):
@@ -44,4 +44,4 @@ class Laplace1D_sin(Laplace1D):
     # Lambda expression of the solution and the parametric field
     values = {
         "u": lambda x: [np.sin(x[0]*6)**3],
-        "f": lambda x: [np.sin(x[0]*6)**3]}
+        "f": lambda x: [np.sin(x[0]*6)**3]} # -108 sin(6 x) (-2 cos^2(6 x) + sin^2(6 x))

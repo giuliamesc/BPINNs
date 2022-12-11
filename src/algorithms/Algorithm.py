@@ -18,7 +18,7 @@ class Algorithm(ABC):
 
     def compute_time(self):
         training_time  = time.time() - self.t0
-        formatted_time  = str(datetime.timedelta(seconds=int(training_time)))
+        formatted_time   = str(datetime.timedelta(seconds=int(training_time)))
         print(f'\tFinished in {formatted_time}')
         
     @property
@@ -32,21 +32,14 @@ class Algorithm(ABC):
         self.__data = dataset
 
     def __train_step(self, epoch):
-
-        # Sampling new theta
         match type(self).__name__:
             case "TEST": new_theta = self.sample_theta(epoch)
             case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
             case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
-            case "SVGD": new_theta = self.sample_theta()
+            case "SVGD": new_theta = self.sample_theta() # OLD THETA (SPACE LIST)
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
-        # Saving new Theta
-        self.model.nn_params = new_theta
-        # Computing History
-        pst, llk = self.model.metric_total(self.data_train)
-        self.model.loss_step((pst,llk))
-        
+        self.update_history(new_theta) 
         return new_theta
 
     def __train_loop(self, epochs):
@@ -87,6 +80,13 @@ class Algorithm(ABC):
         """ Report log of the training"""
         print('End training:')
         self.compute_time()
+
+    def update_history(self, new_theta):
+        # Saving new Theta
+        self.model.nn_params = new_theta
+        # Computing History
+        pst, llk = self.model.metric_total(self.data_train)
+        self.model.loss_step((pst,llk))
 
     @abstractmethod
     def sample_theta(self):

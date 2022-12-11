@@ -16,7 +16,6 @@ class LossNN(PhysNN):
 
     def __init__(self, par, **kw):
         super(LossNN, self).__init__(par, **kw)
-        # Choice of loss to be used
         self.metric = [k for k,v in par.metrics.items() if v]
         self.keys   = [k for k,v in  par.losses.items() if v]
         self.vars   = par.uncertainty 
@@ -108,6 +107,5 @@ class LossNN(PhysNN):
             tape.watch(self.model.trainable_variables)
             diff_llk = self.loss_total(dataset, full_loss)
         grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)
-
         return grad_thetas
 

@@ -34,5 +34,5 @@ class Laplace(Equation):
         lap_u  = Operators.laplacian_vector(tape, u_list, inputs)
         lap_u  = Operators.tf_pack(lap_u)
         lhs = - lap_u * self.norm["mu_norm"] * self.phys["mu"]
-        rhs = out_par + self.norm["f_mean"]/self.norm["f_std"]
+        rhs = out_par + self.norm["f_mean"]  / self.norm["f_std"]
         return lhs - rhs

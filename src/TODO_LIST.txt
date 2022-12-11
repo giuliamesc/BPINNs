@@ -8,7 +8,6 @@
 - Plot: Boundary!
 
 ### MIGLIORIE
-- Dubbi: Loss Prior
 - Idee: Salvataggio Multiplo
 
 ### TEST CASES
@@ -16,7 +15,9 @@
 - Test Case: Problema 2D
 - Plotter: Plot 2D
 
-## RISULTATI
+
+
+## RISULTATI x Report
 - Validazione differenziazione automatica
 - Tentativi con i diversi sigma prior
 - BNN  vs BPINN (Laplace ?D - oscillatore armonico?) # Comportamento nelle zone in cui mancano i punti di collocation

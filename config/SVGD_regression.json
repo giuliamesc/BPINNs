@@ -1,33 +1,33 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
-		"case_name": "cos",
-		"method"   : "ADAM"
+		"problem"  : "Regression",
+		"case_name": "sin",
+		"method"   : "SVGD"
 	},
 
 	"num_points":{
 		"sol" : 16,
-		"par" : 16,
+		"par" : 0,
 		"bnd" : 2,
-		"pde" : 64
+		"pde" : 0
 	},
 	
 	"uncertainty":{
 		"sol" : 0.1,
-		"par" : 0.1,
-		"bnd" : 0.01,
-		"pde" : 0.1
+		"par" : 0,
+		"bnd" : 0.1,
+		"pde" : 0
 	},
 
 	"architecture":{
 		"activation": "swish", 
 		"n_layers"  : 2,
-		"n_neurons" : 50
+		"n_neurons" : 16
 	},
 
 	"losses":{
 		"data_u": "True",
-		"data_f": "True",
+		"data_f": "False",
 		"data_b": "True",
 		"pde":    "False",
 		"prior":  "True"
@@ -35,7 +35,7 @@
 
 	"metrics":{
 		"data_u": "True",
-		"data_f": "True",
+		"data_f": "False",
 		"data_b": "True",
 		"pde":    "False",
 		"prior":  "True"
@@ -44,16 +44,17 @@
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
+		"save_flag"  : "True",
 		"gen_flag"   : "True"
 	},
 
-	"ADAM":{
-		"epochs" : 10000,
-        "burn_in": 1500,
-		"beta_1" : 0.9,
-        "beta_2" : 0.999,
-        "eps"    : 1e-8,
-        "lr"     : 1e-3
+    "SVGD":{
+		"epochs" : 10,
+        "kernel" : "RBF",
+        "N"      : 30,
+        "h"      : 100,
+        "eps"    : 1e-3,
+        "rep"    : 1.0
 	}
+
 }
