@@ -32,6 +32,7 @@ class Algorithm(ABC):
         self.__data = dataset
 
     def __train_step(self, epoch):
+        self.data_batch = self.data_train
         match type(self).__name__:
             case "TEST": new_theta = self.sample_theta(epoch)
             case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
@@ -85,7 +86,7 @@ class Algorithm(ABC):
         # Saving new Theta
         self.model.nn_params = new_theta
         # Computing History
-        pst, llk = self.model.metric_total(self.data_train)
+        pst, llk = self.model.metric_total(self.data_batch)
         self.model.loss_step((pst,llk))
 
     @abstractmethod
