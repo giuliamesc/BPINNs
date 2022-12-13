@@ -5,7 +5,8 @@ from utility import switch_algorithm, switch_dataset, switch_equation
 
 # Manual configuration
 test_cases = [None, "ADAM_regression", "ADAM_laplace_cos", "HMC_regression", "HMC_laplace", "SVGD_regression"]
-configuration_file = test_cases[4]
+best_cases = [None, "ADAM_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "HMC_lap_cos"]
+configuration_file = "best_models/" + best_cases[1]
 
 # Setup utilities
 set_directory()

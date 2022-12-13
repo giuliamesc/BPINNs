@@ -44,12 +44,12 @@
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "True",
+		"save_flag"  : "False",
 		"gen_flag"   : "True"
 	},
 
 	"ADAM":{
-		"epochs" : 1000,
+		"epochs" : 10000,
         "burn_in": 150,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
