@@ -1,0 +1,59 @@
+{
+	"general":{
+		"problem"  : "Regression",
+		"case_name": "sin",
+		"method"   : "HMC"
+	},
+
+	"num_points":{
+		"sol" : 16,
+		"par" : 0,
+		"bnd" : 2,
+		"pde" : 0
+	},
+	
+	"uncertainty":{
+		"sol" : 0.1,
+		"par" : 0,
+		"bnd" : 0.1,
+		"pde" : 0
+	},
+
+	"architecture":{
+		"activation": "swish", 
+		"n_layers"  : 2,
+		"n_neurons" : 16
+	},
+
+	"losses":{
+		"data_u": "True",
+		"data_f": "False",
+		"data_b": "True",
+		"pde":    "False",
+		"prior":  "True"
+	},
+
+	"metrics":{
+		"data_u": "True",
+		"data_f": "False",
+		"data_b": "True",
+		"pde":    "False",
+		"prior":  "True"
+	},
+
+	"utils":{
+		"random_seed": 28,
+		"debug_flag" : "False",
+		"save_flag"  : "True",
+		"gen_flag"   : "True"
+	},
+
+	"HMC":{
+		"epochs" : 500,
+		"burn_in": 100,
+		"skip"   : 10,
+		"HMC_L"  : 20,
+		"HMC_dt" : 1e-3,
+		"HMC_eta": 1e-0
+	}
+}
