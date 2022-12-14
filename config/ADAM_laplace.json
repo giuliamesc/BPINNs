@@ -34,7 +34,7 @@
 	},
 
 	"metrics":{
-		"data_u": "False",
+		"data_u": "True",
 		"data_f": "True",
 		"data_b": "True",
 		"pde":    "True",
@@ -49,8 +49,8 @@
 	},
 
 	"ADAM":{
-		"epochs" : 1000,
-        "burn_in": 150,
+		"epochs" : 10000,
+        "burn_in": 1500,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
