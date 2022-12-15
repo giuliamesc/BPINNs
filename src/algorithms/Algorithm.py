@@ -1,4 +1,5 @@
 from utility import compute_gui_len
+from setup import BatcherDataset
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 import time, datetime
@@ -32,6 +33,7 @@ class Algorithm(ABC):
         self.__data = dataset
 
     def __train_step(self, epoch):
+        next(self.data_batch) 
         match type(self).__name__:
             case "TEST": new_theta = self.sample_theta(epoch)
             case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
@@ -57,6 +59,7 @@ class Algorithm(ABC):
         # Normalizing dataset
         self.data_train.normalize_dataset()
         self.model.norm_coeff = self.data_train.norm_coeff
+        self.data_batch = BatcherDataset(self.data_train, num_batch=1)
 
         # Sampling new thetas
         self.epochs_loop = self.__train_loop(self.epochs) 
@@ -85,7 +88,7 @@ class Algorithm(ABC):
         # Saving new Theta
         self.model.nn_params = new_theta
         # Computing History
-        pst, llk = self.model.metric_total(self.data_train)
+        pst, llk = self.model.metric_total(self.data_batch)
         self.model.loss_step((pst,llk))
 
     @abstractmethod

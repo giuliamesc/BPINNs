@@ -4,7 +4,6 @@
 - Equazione: oscillatore armonico?
 
 ### REFACTORING
-- Data: creazione dei batch
 - Plot: Boundary!
 
 ### MIGLIORIE

@@ -12,7 +12,6 @@ class SVGD(Algorithm):
         super().__init__(bayes_nn, param_method, debug_flag)
         self.N = param_method["N"]
         self.particles = [self.__build_particle(bayes_nn, i+1) for i in range(self.N)]
-        import pdb; pdb.set_trace()
         # Compute Loss e Grad Loss
         # Compute kernels k
         # Compute update func

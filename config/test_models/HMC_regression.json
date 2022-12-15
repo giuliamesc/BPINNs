@@ -44,7 +44,7 @@
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "True",
+		"save_flag"  : "False",
 		"gen_flag"   : "True"
 	},
 

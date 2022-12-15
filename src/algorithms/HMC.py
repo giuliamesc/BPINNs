@@ -27,14 +27,13 @@ class HMC(Algorithm):
 
     def __leapfrog_step(self, old_theta, r, dt): # Si potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
-        #import pdb; pdb.set_trace()
 
-        grad_theta = self.model.grad_loss(self.data_train, self.__full_loss)
+        grad_theta = self.model.grad_loss(self.data_batch, self.__full_loss)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
 
         self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)] 
 
-        grad_theta = self.model.grad_loss(self.data_train, self.__full_loss)
+        grad_theta = self.model.grad_loss(self.data_batch, self.__full_loss)
         r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
 
         return self.model.nn_params, r
@@ -85,7 +84,7 @@ class HMC(Algorithm):
     def __hamiltonian(self, theta, r):
         """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
-        u = self.model.loss_total(self.data_train, self.__full_loss).numpy()
+        u = self.model.loss_total(self.data_batch, self.__full_loss).numpy()
         v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
         return u + v_r
     
