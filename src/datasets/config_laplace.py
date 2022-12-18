@@ -44,4 +44,4 @@ class Laplace1D_sin(Laplace1D):
     # Lambda expression of the solution and the parametric field
     values = {
         "u": lambda x: [np.sin(x[0]*6)**3],
-        "f": lambda x: [np.sin(x[0]*6)**3]} # -108 sin(6 x) (-2 cos^2(6 x) + sin^2(6 x))
+        "f": lambda x: [108*np.sin(6*x[0])*(-2*np.cos(6*x[0])**2 + np.sin(6*x[0])**2)]} # -108 sin(6 x) (-2 cos^2(6 x) + sin^2(6 x))

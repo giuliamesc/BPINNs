@@ -1,15 +1,15 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"case_name": "sin",
 		"method"   : "HMC"
 	},
 
 	"num_points":{
-		"sol" : 0,
-		"par" : 16,
+		"sol" : 16,
+		"par" : 0,
 		"bnd" : 2,
-		"pde" : 100
+		"pde" : 64
 	},
 	
 	"uncertainty":{
@@ -26,8 +26,8 @@
 	},
 
 	"losses":{
-		"data_u": "False",
-		"data_f": "True",
+		"data_u": "True",
+		"data_f": "False",
 		"data_b": "True",
 		"pde":    "True",
 		"prior":  "True"
@@ -44,7 +44,7 @@
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
+		"save_flag"  : "True",
 		"gen_flag"   : "True"
 	},
 
