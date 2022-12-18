@@ -6,8 +6,8 @@
 	},
 
 	"num_points":{
-		"sol" : 16,
-		"par" : 0,
+		"sol" : 0,
+		"par" : 16,
 		"bnd" : 2,
 		"pde" : 64
 	},
@@ -26,8 +26,8 @@
 	},
 
 	"losses":{
-		"data_u": "True",
-		"data_f": "False",
+		"data_u": "False",
+		"data_f": "True",
 		"data_b": "True",
 		"pde":    "True",
 		"prior":  "True"
