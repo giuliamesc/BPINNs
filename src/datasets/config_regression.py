@@ -20,9 +20,10 @@ class Reg1D_cos(Regression1D):
         "full" : [(0.,1.)]
     }
     # Lambda expression of the solution and the parametric field
-    values = {
-        "u": lambda x: [np.cos(x[0]*8)],
-        "f": lambda x: [np.cos(x[0]*8)]}
+    @property
+    def values(self):
+        return {"u": lambda x: [np.cos(x[0]*8)],
+                "f": lambda x: [np.cos(x[0]*8)]}
 
 @dataclass
 class Reg1D_sin(Regression1D):
@@ -42,6 +43,7 @@ class Reg1D_sin(Regression1D):
         "full" : [(-1.,1)]
     }
     # Lambda expression of the solution and the parametric field
-    values = {
-        "u": lambda x: [np.sin(x[0]*6)**3],
-        "f": lambda x: [np.sin(x[0]*6)**3]}
+    @property
+    def values(self):
+        return {"u": lambda x: [np.sin(x[0]*6)**3],
+                "f": lambda x: [np.sin(x[0]*6)**3]}

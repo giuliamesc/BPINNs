@@ -1,5 +1,4 @@
 from .Equation  import Equation
-import tensorflow as tf
 
 class Regression(Equation):
     """

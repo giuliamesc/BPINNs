@@ -20,9 +20,11 @@ class Laplace1D_cos(Laplace1D):
         "full" : [(0.,1.)]
     }
     # Lambda expression of the solution and the parametric field
-    values = {
-        "u": lambda x: [np.cos(x[0]*8)],
-        "f": lambda x: [64*np.cos(x[0]*8)]}
+    @property
+    def values(self):
+        mu = self.physics["diffusion"]
+        return {"u": lambda x: [np.cos(x[0]*8)],
+                "f": lambda x: [mu*64*np.cos(x[0]*8)]}
 
 @dataclass
 class Laplace1D_sin(Laplace1D):
@@ -42,6 +44,8 @@ class Laplace1D_sin(Laplace1D):
         "full" : [(-1.,1)]
     }
     # Lambda expression of the solution and the parametric field
-    values = {
-        "u": lambda x: [np.sin(x[0]*6)**3],
-        "f": lambda x: [108*np.sin(6*x[0])*(-2*np.cos(6*x[0])**2 + np.sin(6*x[0])**2)]} # -108 sin(6 x) (-2 cos^2(6 x) + sin^2(6 x))
+    @property
+    def values(self):
+        mu = self.physics["diffusion"]
+        return {"u": lambda x: [np.sin(x[0]*6)**3],
+                "f": lambda x: [mu*108*np.sin(6*x[0])*(-2*np.cos(6*x[0])**2 + np.sin(6*x[0])**2)]}

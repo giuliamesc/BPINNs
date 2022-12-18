@@ -6,7 +6,7 @@ class Laplace(Data_Config):
     # Name of the differential equation
     pde = "laplace"
     # Parameters to be set in the equation
-    physics = {"diffusion" : int}
+    physics = {"diffusion" : float}
 
 @dataclass
 class Laplace1D(Laplace):

@@ -1,13 +1,13 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"problem"  : "Oscillator",
+		"case_name": "sin",
 		"method"   : "ADAM"
 	},
 
 	"num_points":{
-		"sol" : 1,
-		"par" : 16,
+		"sol" : 16,
+		"par" : 0,
 		"bnd" : 2,
 		"pde" : 64
 	},
@@ -27,17 +27,17 @@
 
 	"losses":{
 		"data_u": "True",
-		"data_f": "True",
+		"data_f": "False",
 		"data_b": "True",
-		"pde":    "True",
+		"pde":    "False",
 		"prior":  "True"
 	},
 
 	"metrics":{
 		"data_u": "True",
-		"data_f": "True",
+		"data_f": "False",
 		"data_b": "True",
-		"pde":    "True",
+		"pde":    "False",
 		"prior":  "True"
 	},
 
@@ -49,8 +49,8 @@
 	},
 
 	"ADAM":{
-		"epochs" : 50,
-        "burn_in": 10,
+		"epochs" : 1000,
+        "burn_in": 100,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,

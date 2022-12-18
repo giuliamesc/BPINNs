@@ -18,7 +18,7 @@ class Plotter():
         self.path_log  = os.path.join(path_folder,"log")
         with open(os.path.join(self.path_log,"parameters.txt"), "r") as file_params:
             problem = file_params.readlines()[2][10:].strip()
-        self.only_sol = problem == "Regression"
+        self.only_sol = problem == "Regression" or problem == "Oscillator"
 
     def __order_inputs(self, inputs):
         """ Sorting the input points by label """
