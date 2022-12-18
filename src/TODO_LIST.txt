@@ -1,24 +1,14 @@
-### IMPLEMENTAZIONI
-- Algoritmo: SVGD (thetas=[[theta1,theta2,...],[theta1,theta2,...]]), select thetas[-1]
+### NUOVE IMPLEMENTAZIONI
+- Algoritmo: SVGD
 - Algoritmo: Variational Inference
-- Equazione: oscillatore armonico?
-
-### REFACTORING
-- Plot: Boundary!
+- Equazione: oscillatore armonico
+- Plotter  : casi 2D
+- Modello  : problema inverso
 
 ### MIGLIORIE
-- Idee: Salvataggio Multiplo
+- Plot: Boundary Points
+- Save: Salvataggio Tempo
 
-### TEST CASES
-- Loss: Problema Inverso
-- Test Case: Problema 2D
-- Plotter: Plot 2D
+### CONTROLLO
+- Batcher: tempi di esecuzione
 
-
-
-## RISULTATI x Report
-- Validazione differenziazione automatica
-- Tentativi con i diversi sigma prior
-- BNN  vs BPINN (Laplace ?D - oscillatore armonico?) # Comportamento nelle zone in cui mancano i punti di collocation
-- PINN vs BPINN (Laplace ?D) # 
-- Confronto Algoritmi Bayesiani
