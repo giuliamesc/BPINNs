@@ -14,7 +14,7 @@
 	
 	"uncertainty":{
 		"sol" : 0.1,
-		"par" : 0.1,
+		"par" : 0,
 		"bnd" : 0.01,
 		"pde" : 0.1
 	},
@@ -29,7 +29,7 @@
 		"data_u": "True",
 		"data_f": "False",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
@@ -37,7 +37,7 @@
 		"data_u": "True",
 		"data_f": "False",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
@@ -49,8 +49,8 @@
 	},
 
 	"ADAM":{
-		"epochs" : 1000,
-        "burn_in": 100,
+		"epochs" : 20000,
+        "burn_in": 10000,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
