@@ -1,4 +1,4 @@
-from .template_regression import Regression1D, Regression2D
+from ..template import Regression1D
 from dataclasses import dataclass
 import numpy as np
 

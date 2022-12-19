@@ -1,4 +1,4 @@
-from .template_oscillator import Oscillator1D_Base
+from ..template import Oscillator1D_Base
 from dataclasses import dataclass
 import numpy as np
 

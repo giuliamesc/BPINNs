@@ -1,4 +1,4 @@
-from .template_general import Data_Config
+from .template import Data_Config
 from dataclasses import dataclass
 
 @dataclass

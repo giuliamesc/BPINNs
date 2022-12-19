@@ -1,4 +1,4 @@
-from .template_laplace import Laplace1D, Laplace2D
+from ..template import Laplace1D
 from dataclasses import dataclass
 import numpy as np
 
