@@ -7,6 +7,7 @@
 
 ### MIGLIORIE
 - Plot: Boundary Points
+- Plot: Sbarra nel grafico delle loss
 - Save: Salvataggio Tempo
 
 ### CONTROLLO

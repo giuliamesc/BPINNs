@@ -2,6 +2,7 @@
 	"general":{
 		"problem"  : "Regression",
 		"case_name": "sin",
+		"init"     : "",
 		"method"   : "HMC"
 	},
 

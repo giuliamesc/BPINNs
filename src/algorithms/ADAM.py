@@ -7,7 +7,7 @@ class ADAM(Algorithm):
     """
     def __init__(self, bayes_nn, param_method, debug_flag):
         super().__init__(bayes_nn, param_method, debug_flag)
-        self.burn_in = param_method["burn_in"]
+        self.burn_in = param_method.get("burn_in", self.epochs)
         self.beta_1  = param_method["beta_1"]
         self.beta_2  = param_method["beta_2"]
         self.eps     = param_method["eps"]

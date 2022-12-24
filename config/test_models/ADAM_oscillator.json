@@ -2,6 +2,7 @@
 	"general":{
 		"problem"  : "Oscillator",
 		"case_name": "sin",
+		"init"     : "",
 		"method"   : "ADAM"
 	},
 

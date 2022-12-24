@@ -2,6 +2,7 @@
 	"general":{
 		"problem"  : "Laplace1D",
 		"case_name": "sin",
+		"init"     : "",
 		"method"   : "ADAM"
 	},
 

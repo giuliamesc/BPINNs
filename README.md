@@ -60,7 +60,8 @@ In particular, we have:
     - `ADAM`: Adaptive Moment Estimation 
     - `HMC`: Hamiltionian Monte Carlo
     - `SVGD` (WIP): Stein Variational Gradient Descent
-    - `VI` (WIP): Variational Inference
+    - `VI` (WIP): Variational Inference <br />
+    The folder includes as well the class `Trainer`, used to manage the pre-training and training algorithm.
 - :file_folder: `datasets` contains: 
     - :file_folder: `config` contains definitions of functions and domains for generating datasets
     - :file_folder: `template` contains names and definitions of input and output for generating datasets

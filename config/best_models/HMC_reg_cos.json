@@ -2,6 +2,7 @@
 	"general":{
 		"problem"  : "Regression",
 		"case_name": "cos",
+		"init"     : "",
 		"method"   : "HMC"
 	},
 

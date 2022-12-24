@@ -4,8 +4,10 @@ class Param:
 
         self.problem   = hp["general"]["problem"]   # problem used
         self.case_name = hp["general"]["case_name"] # case used
-        self.method    = hp["general"]["method"]    # method used: SVGD, HMC, VI, ...
+        self.init   = hp["general"]["init"]      # method used in pre-training (ADAM)
+        self.method = hp["general"]["method"]    # method used: SVGD, HMC, VI, ...
         if self.case_name == "": self.case_name = "default"
+        if self.init      == "": self.init = None
 
         self.num_points   = hp["num_points"]   # num_points param
         self.uncertainty  = hp["uncertainty"]  # uncertainty param
@@ -17,6 +19,7 @@ class Param:
         # if we have some additional parameters from the command-line
         self.__command_line_update_params(vars(args))
         # specific param for the selected method
+        self.param_init = hp[self.init+"_0"] if self.init is not None else dict()
         self.param_method = hp[self.method]
         self.__command_line_update_method(vars(args))
         # Convert string of boolean in boolean
@@ -67,8 +70,8 @@ class Param:
         """ Update the parameter given by json file using args (overspecification by command-line) """
         for key in args_dict:
             if args_dict[key] is None: continue
-            if key in self.param_method:
-                self.param_method[key] = args_dict[key]
+            if key in self.param_method: self.param_method[key] = args_dict[key]
+            ### DA AGGIUNGERE INIT !!!
 
 
 class Dimension():
