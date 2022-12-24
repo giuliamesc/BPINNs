@@ -2,7 +2,7 @@
 	"general":{
 		"problem"  : "Regression",
 		"case_name": "sin",
-		"method"   : "TEST"
+		"method"   : "ADAM"
 	},
 
 	"num_points":{
@@ -67,9 +67,5 @@
 
 	"VI":{
 		"epochs" : 10
-	},
-
-	"TEST":{
-		"epochs" : 5
 	}
 }

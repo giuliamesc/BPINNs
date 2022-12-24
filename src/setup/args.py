@@ -27,7 +27,6 @@ class Parser(ArgumentParser):
         		                - HMC  (Hamiltonian Monte Carlo)
         			            - SVGD (Stein Variational Gradient Descent)
                                 - VI   (variational inference)
-                                - TEST (use for debug purpouses)
                             """)
 
         # Experiment ??? SISTEMARE COMMENTI

@@ -35,10 +35,9 @@ class Algorithm(ABC):
     def __train_step(self, epoch):
         next(self.data_batch) 
         match type(self).__name__:
-            case "TEST": new_theta = self.sample_theta(epoch)
             case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
             case "HMC" : new_theta = self.sample_theta(self.model.nn_params)
-            case "SVGD": new_theta = self.sample_theta() # OLD THETA (SPACE LIST)
+            case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
         self.update_history(new_theta) 

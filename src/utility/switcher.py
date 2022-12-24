@@ -5,7 +5,6 @@ import equations  as eq
 def switch_algorithm(method):
     """ Returns an instance of the class corresponding to the selected method """
     match method:
-        case "TEST": return alg.TEST
         case "ADAM": return alg.ADAM
         case "HMC" : return alg.HMC
         case "SVGD": return alg.SVGD

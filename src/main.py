@@ -56,6 +56,9 @@ print(f"\tChosing {params.pde} equation...")
 equation = switch_equation(params.problem)
 print("\tInitializing the Bayesian PINN...")
 bayes_nn = BayesNN(params, equation) # Initialize the Bayesian NN
+
+# %% Algorithm Building
+
 print(f"\tChosing {params.method} algorithm...")
 chosen_algorithm = switch_algorithm(params.method) # Chose the algorithm from config/args
 print(f"\tBuilding {params.method} algorithm...")
