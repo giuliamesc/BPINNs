@@ -1,5 +1,4 @@
 import tensorflow as tf
-
 from algorithms.Algorithm import Algorithm
 
 class ADAM(Algorithm):

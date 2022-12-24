@@ -49,7 +49,12 @@
 	},
 
 	"ADAM":{
-		"epochs" : 10
+		"epochs" : 10,
+		"burn_in": 0,
+		"beta_1" : 0.9,
+        "beta_2" : 0.999,
+        "eps"    : 1e-8,
+        "lr"     : 1e-3
 	},
 
 	"HMC":{

@@ -29,17 +29,18 @@ To exit from the virtual environment, use `deactivate`
 ## :open_file_folder: Repository Structure
 
 - :file_folder: `config` contains `.json` files which encode the options and parameter choices for the test cases proposed.
-- :file_folder: `data` contains the dataset for each test case. In each subfolder, you can find `.npy` files storing: (DEPRECATED)
-    - inputs (`x.npy`, `y.npy`, `z.npy`)
-    - solution (`u.npy`, `v.npy`, `w.npy`) 
-    - parametric field (`f.npy`)
+- :file_folder: `data` contains the dataset for each test case. In each subfolder, you can find `.npy` files storing inputs, solution and parametric field values. They are stored separately, according to the category of data they belong to (such as fitting data, collocation data...). <br /> 
+In particular, we have:
+    - *Boundary data*: `dom_bnd.npy`, `sol_bnd.npy` for the coordinates and solution values of boundaries;
+    - *Collocation data*: `dom_pde.npy` for the coordinates of collocation points;
+    - *Fitting data*: `dom_sol.npy`, `sol_train.npy` and `dom_par.npy`, `par_train.npy` for coordinate and values couples for solution and/or parametric field;
+    - *Test data*: `dom_test.npy`, `sol_test.npy`, `par_test.npy` for coordinate and function values of test points.
 - :file_folder: `outs` contains the results for each test case. In each subfolder, you can find the folders:
     - `log` with loss history and summary of the experiment options and errors in `.txt` files 
     - `plot` with the plots
     - `thetas` with network parameters
     - `values` with the solution computed by the network
 - :file_folder: `src` contains the source code, described in detail in the section below.
-- :file_folder: `temp` contains the deprecated files.
 
 ## :computer: Source Code 
 - `main.py` is the executable script, relying on all the below modules.
@@ -54,7 +55,7 @@ To exit from the virtual environment, use `deactivate`
 - :file_folder: `utility` contains technical auxiliary tasks, in particular: 
     - `switcher.py` switches to the test case under analysis among the files contained in the three folders below
     - `directories.py` generates directories for data generation and results storage
-    - `miscellaneous.py` contains utility function for all th other purpouses 
+    - `miscellaneous.py` contains utility functions for all other purposes 
 - :file_folder: `algorithms` is a module containing classes representing the training algorithms proposed in this project:
     - `ADAM`: Adaptive Moment Estimation 
     - `HMC`: Hamiltionian Monte Carlo

@@ -6,7 +6,7 @@ from utility import switch_algorithm, switch_dataset, switch_equation
 # Manual configuration
 test_cases = [None, "ADAM_oscillator", "ADAM_regression", "ADAM_laplace", "HMC_regression", "HMC_laplace", "SVGD_regression"]
 best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin"]
-test_mode, case_num = True, 1 # True for test_cases, False for best_cases
+test_mode, case_num = True, 2 # True for test_cases, False for best_cases
 configuration_file = "test_models/" + test_cases[case_num] if test_mode else "best_models/" + best_cases[case_num]
 
 # Setup utilities
