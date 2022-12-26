@@ -1,0 +1,36 @@
+GENERAL
+	method:     HMC 
+	problem:    Laplace1D 
+	case_name:  sin 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   50 
+
+NUM_POINTS
+	sol:  1 
+	par:  32 
+	bnd:  2 
+	pde:  64 
+
+UNCERTAINTY
+	sol:  0.1 
+	par:  0.1 
+	bnd:  0.1 
+	pde:  0.1 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    True 
+	gen_flag:     True 
+
+HMC
+	epochs:   100 
+	burn_in:  0 
+	skip:     10 
+	HMC_L:    200 
+	HMC_dt:   0.0001 
+	HMC_eta:  0.5 
+

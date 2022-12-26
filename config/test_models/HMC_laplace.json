@@ -2,13 +2,13 @@
 	"general":{
 		"problem"  : "Laplace1D",
 		"case_name": "sin",
-		"init"     : "",
+		"init"     : "ADAM",
 		"method"   : "HMC"
 	},
 
 	"num_points":{
-		"sol" : 0,
-		"par" : 16,
+		"sol" : 2,
+		"par" : 32,
 		"bnd" : 2,
 		"pde" : 64
 	},
@@ -27,7 +27,7 @@
 	},
 
 	"losses":{
-		"data_u": "False",
+		"data_u": "True",
 		"data_f": "True",
 		"data_b": "True",
 		"pde":    "True",
@@ -49,12 +49,21 @@
 		"gen_flag"   : "True"
 	},
 
+	"ADAM_0":{
+		"epochs" : 11000,
+		"burn_in": 10000,
+		"beta_1" : 0.9,
+        "beta_2" : 0.999,
+        "eps"    : 1e-8,
+        "lr"     : 1e-3
+	},
+
 	"HMC":{
-		"epochs" : 1000,
-		"burn_in": 70,
+		"epochs" : 100,
+		"burn_in": 0,
 		"skip"   : 10,
-		"HMC_L"  : 20,
-		"HMC_dt" : 1e-3,
+		"HMC_L"  : 200,
+		"HMC_dt" : 1e-4,
 		"HMC_eta": 5e-1	
 	}
 }
