@@ -27,22 +27,18 @@ class HMC(Algorithm):
 
     def __leapfrog_step(self, old_theta, r, dt): # Si potrebbe cancellare old_theta
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
-
         grad_theta = self.model.grad_loss(self.data_batch, self.__full_loss)
-        r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-
-        self.model.nn_params = [ x + y * dt for x,y in zip(old_theta, r)] 
-
+        r = r - grad_theta * dt / 2
+        self.model.nn_params = old_theta + r * dt 
         grad_theta = self.model.grad_loss(self.data_batch, self.__full_loss)
-        r = [ x - y * dt/2 for x,y in zip(r, grad_theta)]
-
+        r = r - grad_theta * dt / 2
         return self.model.nn_params, r
 
     def __compute_alpha(self, h0, h1):
         """ Computation of acceptance probabilities alpha and sampling of p (logarithm of both quantities) """
         p     = np.log(np.random.uniform())
-        alpha = min(0, -h1+h0)  #alpha = min(0, +h1-h0) # Alpha value 
-        if np.isnan(h1): alpha = float("-inf") # Avoid NaN values
+        alpha = min(0, -h1+h0) 
+        if np.isnan(h1): alpha = float("-inf")
         return alpha, p
 
     def __accept_reject(self, theta, r):
@@ -85,14 +81,13 @@ class HMC(Algorithm):
         """ Evaluation of the Hamiltonian function """
         self.model.nn_params = theta
         u = self.model.loss_total(self.data_batch, self.__full_loss).numpy()
-        v_r = sum([tf.norm(t).numpy()**2 for t in r]) * self.HMC_eta**2/2
+        v_r = r.ssum() * self.HMC_eta**2/2
         return u + v_r
     
     def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
         self.__full_loss = self.curr_ep > self.burn_in
-
-        r_0 = [tf.random.normal(x.shape, stddev=self.HMC_eta) for x in theta_0] 
+        r_0 = theta_0.normal(self.HMC_eta) 
         r   = r_0.copy()
         theta = theta_0.copy()
         for _ in range(self.HMC_L):

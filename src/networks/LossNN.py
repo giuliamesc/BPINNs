@@ -1,4 +1,5 @@
 from .PhysNN import PhysNN
+from networks.Theta import Theta
 import tensorflow as tf
 
 class LossNN(PhysNN):
@@ -18,12 +19,7 @@ class LossNN(PhysNN):
         super(LossNN, self).__init__(par, **kw)
         self.metric = [k for k,v in par.metrics.items() if v]
         self.keys   = [k for k,v in  par.losses.items() if v]
-        self.vars   = par.uncertainty 
-
-    @staticmethod
-    def __mse_theta(theta, dim):
-        """ Sum of Squared Errors """
-        return sum([tf.norm(t)**2 for t in theta]) / dim
+        self.vars   = par.uncertainty
 
     @staticmethod
     def __mse(vect):
@@ -74,9 +70,10 @@ class LossNN(PhysNN):
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
+        theta = Theta(self.model.trainable_variables) # Valuta come sistemare
         log_var = tf.math.log(1/self.stddev**2)
-        prior   = self.__mse_theta(self.model.trainable_variables, self.dim_theta)
-        loglike = self.__normal_loglikelihood(prior, self.dim_theta, log_var)
+        prior   = theta.ssum()/theta.size()
+        loglike = self.__normal_loglikelihood(prior, theta.size(), log_var)
         return prior, loglike
 
     def __compute_loss(self, dataset, keys, full_loss = True):
@@ -107,5 +104,5 @@ class LossNN(PhysNN):
             tape.watch(self.model.trainable_variables)
             diff_llk = self.loss_total(dataset, full_loss)
         grad_thetas = tape.gradient(diff_llk, self.model.trainable_variables)
-        return grad_thetas
+        return Theta(grad_thetas)
 

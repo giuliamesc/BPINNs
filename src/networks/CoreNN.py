@@ -1,4 +1,5 @@
 import tensorflow as tf
+from networks.Theta import Theta
 
 class CoreNN():
 
@@ -34,7 +35,7 @@ class CoreNN():
         
         # Build the Neural network architecture
         self.model = self.__build_NN(par.utils["random_seed"])
-        self.dim_theta = self.__compute_dim_theta()
+        self.dim_theta = self.nn_params.size()
 
     @property
     def nn_params(self):
@@ -45,12 +46,12 @@ class CoreNN():
         for w, b in zip(weights, biases):
             theta.append(w)
             theta.append(b)
-        return theta
+        return Theta(theta)
 
     @nn_params.setter
     def nn_params(self, theta):
         """ Setter for nn_params property """
-        for layer, weight, bias in zip(self.model.layers, theta[0::2], theta[1::2]):
+        for layer, weight, bias in zip(self.model.layers, theta.weights, theta.biases):
             layer.set_weights((weight,bias))
 
     def __build_NN(self, seed):
@@ -61,15 +62,16 @@ class CoreNN():
         """
         # Set random seed for inizialization
         tf.random.set_seed(seed)
-        initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=self.stddev)
         # Input Layer
         model = tf.keras.Sequential()
         model.add(tf.keras.Input(shape=(self.n_inputs,)))
         # Hidden Layers
         for _ in range(self.n_layers):
+            initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=self.stddev)
             model.add(tf.keras.layers.Dense(self.n_neurons, activation=self.activation, 
                       kernel_initializer=initializer, bias_initializer='zeros'))
         # Output Layer
+        initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=self.stddev)
         model.add(tf.keras.layers.Dense(self.n_out_sol+self.n_out_par, 
                       kernel_initializer=initializer, bias_initializer='zeros'))
 
@@ -78,9 +80,6 @@ class CoreNN():
     def initialize_NN(self, seed):
         """ Initialization of the Neural Network with given random seed """
         self.model = self.__build_NN(seed)
-        
-    def __compute_dim_theta(self):
-        return sum([tf.size(wb).numpy() for wb in self.nn_params])
 
     def forward(self, inputs):
         """ 

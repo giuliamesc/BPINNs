@@ -32,7 +32,7 @@ class Algorithm(ABC):
         self.model.f_coeff = dataset.norm_coeff["par_mean"], dataset.norm_coeff["par_std"]
         self.__data = dataset
 
-    def __train_step(self, epoch):
+    def __train_step(self):
         next(self.data_batch) 
         match type(self).__name__:
             case "ADAM": new_theta = self.sample_theta(self.model.nn_params)
@@ -40,7 +40,7 @@ class Algorithm(ABC):
             case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
-        self.update_history(new_theta) 
+        self.__update_history(new_theta) 
         return new_theta
 
     def __train_loop(self, epochs):
@@ -65,7 +65,7 @@ class Algorithm(ABC):
         for i in self.epochs_loop:
             if self.debug_flag: print(f'  START EPOCH {i+1}')
             self.curr_ep = i+1
-            step = self.__train_step(i)
+            step = self.__train_step()
             thetas_train.append(step)
     
         # Denormalizing dataset
@@ -74,7 +74,6 @@ class Algorithm(ABC):
         thetas_train = self.select_thetas(thetas_train)
         # Save thetas in the bnn
         self.model.thetas += thetas_train
-
         # Report training information
         self.train_log()
 
@@ -83,8 +82,8 @@ class Algorithm(ABC):
         print('End training:')
         self.compute_time()
 
-    def update_history(self, new_theta):
-        # Saving new Theta
+    def __update_history(self, new_theta):
+        # Saving new theta
         self.model.nn_params = new_theta
         # Computing History
         pst, llk = self.model.metric_total(self.data_batch)

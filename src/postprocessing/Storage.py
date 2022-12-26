@@ -60,8 +60,8 @@ class Storage():
         self.__set_thetas_folder(len(values))
         for value, folder in zip(values, os.listdir(self.path_thetas)):
             folder_path = os.path.join(self.path_thetas, folder)
-            self.__save_list(folder_path, "w", value[0::2], 2)
-            self.__save_list(folder_path, "b", value[1::2], 2)
+            self.__save_list(folder_path, "w", value.weights, 2)
+            self.__save_list(folder_path, "b", value.biases,  2)
 
     @property
     def data(self):

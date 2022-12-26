@@ -1,4 +1,3 @@
-import tensorflow as tf
 from algorithms.Algorithm import Algorithm
 
 class ADAM(Algorithm):
@@ -15,19 +14,19 @@ class ADAM(Algorithm):
         self.__initialize_momentum()
 
     def __initialize_momentum(self):
-        self.num_2layers = len(self.model.nn_params)
-        self.m = [0.0 for _ in range(self.num_2layers)]
-        self.v = [0.0 for _ in range(self.num_2layers)]
+        self.m = self.model.nn_params*0
+        self.v = self.model.nn_params*0
 
     def sample_theta(self, theta_0):
         """ Samples one parameter vector given its previous value """
-        full_loss = self.curr_ep > self.burn_in
+        full_loss  = self.curr_ep > self.burn_in
         grad_theta = self.model.grad_loss(self.data_batch, full_loss)
         theta = theta_0.copy()
-        for i in range(self.num_2layers):
-            self.m[i] = self.beta_1*self.m[i] + (1-self.beta_1)*grad_theta[i]
-            self.v[i] = self.beta_2*self.v[i] + (1-self.beta_2)*(grad_theta[i]*grad_theta[i])
-            theta[i] -= self.lr*(self.m[i]/(1-self.beta_1))/(tf.math.sqrt(self.v[i]/(1-self.beta_2))+self.eps)
+        
+        self.m = self.m*self.beta_1 + (grad_theta)*(1-self.beta_1)
+        self.v = self.v*self.beta_2 + (grad_theta**2)*(1-self.beta_2)
+        theta -= (self.m/(1-self.beta_1)*self.lr) / ((self.v/(1-self.beta_2))**0.5+self.eps)
+
         return theta
 
     def select_thetas(self, thetas_train):
