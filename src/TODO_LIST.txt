@@ -1,9 +1,6 @@
 ### NUOVE IMPLEMENTAZIONI
 - Algoritmo: SVGD
 - Algoritmo: Variational Inference
-- Equazione: oscillatore armonico
-- Plotter  : casi 2D
-- Modello  : problema inverso
 
 ### MIGLIORIE
 - Plot: Boundary Points
@@ -12,4 +9,8 @@
 
 ### CONTROLLO
 - Batcher: tempi di esecuzione
+- Equazione: oscillatore armonico
 
+### DA IGNORARE?
+- Plotter  : casi 2D
+- Modello  : problema inverso
