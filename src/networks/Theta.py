@@ -2,18 +2,27 @@ import tensorflow as tf
 import numpy as np
 
 class Theta():
+    """ 
+    Class designed to handle neural network parameters (weights and biases).
+    It contains the overloading of operations for Theta objects and few recurrent methods used in the algorithms.
+    """
     def __init__(self, theta): 
         self.values = theta
     
     def __mul__(self, other): 
+        """ Multiplication of each Theta entry by a scalar (int or float) or elementwise multiplication of Thetas """
         if type(other) == int or type(other) == float: return Theta([a*other for a in self.values])
         return Theta([a*b for a,b in zip(self.values, other.values)])
-    def __rmul__(self, other): self*other
-    def __neg__(self): return self*(-1)
+    def __neg__(self): 
+        """ Opposite of each Theta entry """
+        return self*(-1)
     def __add__(self, other):
+        """ Addition of a scalar (int or float) to each Theta entry or elementwise sum of Thetas """
         if type(other) == int or type(other) == float: return Theta([a+other for a in self.values])
         return Theta([a+b for a,b in zip(self.values, other.values)])
-    def __sub__(self, other): return self+(-other)
+    def __sub__(self, other): 
+        """ Subtraction of a scalar (int or float) to each Theta entry or elementwise subtraction of Thetas """
+        return self+(-other)
     def __truediv__(self, other) : return self*(other**(-1))
     def __rtruediv__(self, other): return (self**(-1))*other
     
