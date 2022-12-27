@@ -40,7 +40,7 @@ class Algorithm(ABC):
             case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
-        self.__update_history(new_theta) 
+        #self.__update_history(new_theta) 
         return new_theta
 
     def __train_loop(self, epochs):
@@ -72,6 +72,7 @@ class Algorithm(ABC):
         self.data_train.denormalize_dataset()
         # Select which thetas must be saved
         thetas_train = self.select_thetas(thetas_train)
+        import pdb; pdb.set_trace()
         # Save thetas in the bnn
         self.model.thetas += thetas_train
         # Report training information

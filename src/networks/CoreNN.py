@@ -80,6 +80,7 @@ class CoreNN():
     def initialize_NN(self, seed):
         """ Initialization of the Neural Network with given random seed """
         self.model = self.__build_NN(seed)
+        return self
 
     def forward(self, inputs):
         """ 

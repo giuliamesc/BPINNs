@@ -46,16 +46,15 @@
 		"random_seed": 28,
 		"debug_flag" : "False",
 		"save_flag"  : "False",
-		"gen_flag"   : "True"
+		"gen_flag"   : "False"
 	},
 
     "SVGD":{
 		"epochs" : 10,
-        "kernel" : "RBF",
-        "N"      : 30,
+		"burn_in": 5,
+        "N"      : 5,
         "h"      : 100,
-        "eps"    : 1e-3,
-        "rep"    : 1.0
+        "eps"    : 1e-3
 	}
 
 }
