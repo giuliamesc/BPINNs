@@ -23,30 +23,54 @@ class Theta():
     def __sub__(self, other): 
         """ Subtraction of a scalar (int or float) to each Theta entry or elementwise subtraction of Thetas """
         return self+(-other)
-    def __truediv__(self, other) : return self*(other**(-1))
-    def __rtruediv__(self, other): return (self**(-1))*other
-    def __rmul__(self, other): return self*other
-    def __radd__(self, other): return self+other
+    def __truediv__(self, other) : 
+        """ Division of a Theta object by a scalar (int or float) or elementwise division of Thetas"""
+        return self*(other**(-1))
+    def __rtruediv__(self, other): 
+        """ Division with the Theta object on the right """
+        return (self**(-1))*other
+    def __rmul__(self, other): 
+        """ Multiplication with the Theta object on the right """
+        return self*other
+    def __radd__(self, other): 
+        """ Addition with the Theta object on the right """
+        return self+other
     
     def __pow__(self, exp): 
+        """ Implementation of elementwise square, sqrt and reciprocal of a Theta object """
         if exp == 2:   return Theta([tf.math.square(t)     for t in self.values])
         if exp == 0.5: return Theta([tf.math.sqrt(t)       for t in self.values])
         if exp == -1:  return Theta([tf.math.reciprocal(t) for t in self.values])
 
-    def __len__(self): return len(self.values)
+    def __len__(self): 
+        """ Returns the number of tensors in the self.values list """
+        return len(self.values)
     
     def __str__(self):
+        """ Formatted print of a Theta object """
         for i, (w,b) in enumerate(zip(self.weights, self.biases)):
             print(f"W{i}:", w)
             print(f"b{i}:", b)
         return ""
     
-    def ssum(self): return sum([tf.norm(t)**2    for t in self.values])
-    def size(self): return sum([np.prod(t.shape) for t in self.values])
-    def copy(self): return Theta(self.values.copy())
-    def normal(self, std): return Theta([tf.random.normal(t.shape, stddev=std) for t in self.values]) 
+    def ssum(self): 
+        """ Squared sum of all entries of self.values """
+        return sum([tf.norm(t)**2    for t in self.values])
+    def size(self): 
+        """ Counter of all entries of self.values """
+        return sum([np.prod(t.shape) for t in self.values])
+    def copy(self): 
+        """ Returns a Theta object with copied self.values """
+        return Theta(self.values.copy())
+    def normal(self, std): 
+        """ Creation of a Theta object with random normal initialization of self.values """
+        return Theta([tf.random.normal(t.shape, stddev=std) for t in self.values]) 
 
     @property
-    def weights(self): return self.values[0::2]
+    def weights(self): 
+        """ Extraction of weights from self.values """
+        return self.values[0::2]
     @property
-    def biases(self): return self.values[1::2]
+    def biases(self): 
+        """ Extraction of biases from self.values """
+        return self.values[1::2]
