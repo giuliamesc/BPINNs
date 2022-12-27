@@ -66,8 +66,9 @@ In particular, we have:
     - :file_folder: `config` contains definitions of functions and domains for generating datasets
     - :file_folder: `template` contains names and definitions of input and output for generating datasets
 - :file_folder: `equations` contains the differential operators library (`Operators.py`) and, in separate files, the definition of physical loss and dataset pre/post processing criteria for each problem studied
-- :file_folder: `networks` contains classes for each part of the Bayesian Neural Netwok. 
-    The network built is an instance of the class `BayesNN`, which inherits methods and attributes from `LossNN` and `PredNN`, having the loss computation and the prediction/post-processing functionalities, respectively. In turn, the above classes inherit from `CoreNN`, representing a basic fully connected network)
+- :file_folder: `networks` contains classes for each part of the Bayesian Neural Network. 
+    The network built is an instance of the class `BayesNN`, which inherits methods and attributes from `LossNN` and `PredNN`, having the loss computation and the prediction/post-processing functionalities, respectively. In turn, the above classes inherit from `CoreNN`, representing a basic fully connected network).  <br /> 
+    Network weights and biases are instances of the class `Theta`, which contains the overloading of some operators for an easier managements of lists of tensors. 
 - :file_folder: `postprocessing` is a module with:
     - the class `Plotter` to generate the plots and save them in the folder `outs`
     - the class `Storage` to store and load results, uncertainty quantification study, loss history and network parameters 

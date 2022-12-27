@@ -50,7 +50,7 @@
 	},
 
 	"ADAM":{
-		"epochs" : 5000,
+		"epochs" : 10000,
         "burn_in": 1500,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
