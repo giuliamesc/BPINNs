@@ -9,15 +9,8 @@ class CoreNN():
     - Does forward pass on given theta
     - Can re-sample theta given a seed
     
-    Neural networks parameters (theta)
-        - nn_params = (weights, biases)
-        - weights is a list of numpy arrays 
-            - 1 layer               : shape (n_input, n_neurons)
-            - (n_layers - 1) layers : shape (n_neurons, n_neurons) 
-            - 1 layer               : shape (n_neurons, n_out_sol)
-        - biases is a list of numpy arrays 
-            - n_layers layers       : shape (n_neurons,) 
-            - 1 layer               : shape (n_out_sol,)
+    Neural Network parameters:
+    nn_params = Theta object, storing weights and biases
     """
 
     def __init__(self, par):
@@ -57,7 +50,7 @@ class CoreNN():
     def __build_NN(self, seed):
         """
         Initializes a fully connected Neural Network with 
-        - Glorot Uniform initialization of weights
+        - Random Normal initialization of weights
         - Zero initialization for biases
         """
         # Set random seed for inizialization
