@@ -3,7 +3,7 @@
 **/deprecated
 **/prove
 **/altro
-**/.paper
+**/.snap
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
