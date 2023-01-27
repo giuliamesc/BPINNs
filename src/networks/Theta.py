@@ -35,6 +35,9 @@ class Theta():
     def __radd__(self, other): 
         """ Addition with the Theta object on the right """
         return self+other
+    def __rsub__(self, other): 
+        """ Subtraction with the Theta object on the right """
+        return -self+other  
     
     def __pow__(self, exp): 
         """ Implementation of elementwise square, sqrt and reciprocal of a Theta object """
