@@ -26,6 +26,7 @@ class Theta():
     def __truediv__(self, other) : 
         """ Division of a Theta object by a scalar (int or float) or elementwise division of Thetas"""
         return self*(other**(-1))
+    
     def __rtruediv__(self, other): 
         """ Division with the Theta object on the right """
         return (self**(-1))*other
