@@ -59,7 +59,7 @@ class Theta():
         """ Returns the number of tensors in the self.values list """
         return len(self.values)
     def __str__(self):
-        """ Formatted print of a Theta object """
+        """ Formatted print of a Theta object DA RIFARE?? """
         for i, (w,b) in enumerate(zip(self.weights, self.biases)):
             print(f"W{i}:", w)
             print(f"b{i}:", b)
