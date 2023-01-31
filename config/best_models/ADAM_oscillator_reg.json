@@ -2,22 +2,22 @@
 	"general":{
 		"problem"  : "Oscillator",
 		"case_name": "sin",
-		"init"     : "ADAM",
-		"method"   : "HMC"
+		"init"     : "",
+		"method"   : "ADAM"
 	},
 
 	"num_points":{
-		"sol" : 8,
+		"sol" : 16,
 		"par" : 0,
 		"bnd" : 2,
 		"pde" : 64
 	},
 	
 	"uncertainty":{
-		"sol" : 0.01,
+		"sol" : 0.1,
 		"par" : 0,
 		"bnd" : 0.01,
-		"pde" : 10
+		"pde" : 0.1
 	},
 
 	"architecture":{
@@ -30,7 +30,7 @@
 		"data_u": "True",
 		"data_f": "False",
 		"data_b": "True",
-		"pde":    "True",
+		"pde":    "False",
 		"prior":  "True"
 	},
 
@@ -49,21 +49,12 @@
 		"gen_flag"   : "True"
 	},
 
-	"ADAM_0":{
-		"epochs" : 2000,
-		"burn_in": 1000,
+	"ADAM":{
+		"epochs" : 20000,
+        "burn_in": 10000,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
         "lr"     : 1e-3
-	},
-
-	"HMC":{
-		"epochs" : 100,
-		"burn_in": 0,
-		"skip"   : 10,
-		"HMC_L"  : 200,
-		"HMC_dt" : 5e-5,
-		"HMC_eta": 5e-1	
 	}
 }

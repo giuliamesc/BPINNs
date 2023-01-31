@@ -32,5 +32,5 @@ class Oscillator(Equation):
         x_tt  = Operators.tf_pack(Operators.laplacian_vector(tape, x_list, inputs))
         x_t   = Operators.tf_pack(Operators.divergence_vector(tape, x_list, inputs))
         x     = Operators.tf_pack(x_list)
-        d, w = self.phys["delta"], self.phys["omega"]
+        d, w = self.phys["delta"], self.phys["omega"]**2
         return x_tt + 2*d*x_t + w*x

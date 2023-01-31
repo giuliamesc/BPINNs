@@ -6,7 +6,7 @@ import numpy as np
 class Oscillator1D(Oscillator1D_Base):
     name    = "Oscillator1D"
     physics = {"delta" : 2.,
-               "omega" : 16}
+               "omega" : 8}
     # Specifications on the mesh: mesh type and resolutions
     mesh = {
         "mesh_type": "sobol",

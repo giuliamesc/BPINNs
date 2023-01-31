@@ -6,7 +6,7 @@ import time, datetime
 
 class Algorithm(ABC):
     """
-    Class for HMC training
+    Template for training
     """
     def __init__(self, bayes_nn, param_method, debug_flag):
         
