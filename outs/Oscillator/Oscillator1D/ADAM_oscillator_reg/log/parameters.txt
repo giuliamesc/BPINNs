@@ -1,0 +1,36 @@
+GENERAL
+	method:     ADAM 
+	problem:    Oscillator 
+	case_name:  sin 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   50 
+
+NUM_POINTS
+	sol:  16 
+	par:  0 
+	bnd:  2 
+	pde:  64 
+
+UNCERTAINTY
+	sol:  0.1 
+	par:  0 
+	bnd:  0.01 
+	pde:  0.1 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    False 
+	gen_flag:     True 
+
+ADAM
+	epochs:   20000 
+	burn_in:  10000 
+	beta_1:   0.9 
+	beta_2:   0.999 
+	eps:      1e-08 
+	lr:       0.001 
+

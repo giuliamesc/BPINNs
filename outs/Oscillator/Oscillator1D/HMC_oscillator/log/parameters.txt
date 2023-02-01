@@ -1,0 +1,36 @@
+GENERAL
+	method:     HMC 
+	problem:    Oscillator 
+	case_name:  sin 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   50 
+
+NUM_POINTS
+	sol:  8 
+	par:  0 
+	bnd:  2 
+	pde:  64 
+
+UNCERTAINTY
+	sol:  0.01 
+	par:  0 
+	bnd:  0.01 
+	pde:  10 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    False 
+	gen_flag:     True 
+
+HMC
+	epochs:   100 
+	burn_in:  0 
+	skip:     10 
+	HMC_L:    200 
+	HMC_dt:   5e-05 
+	HMC_eta:  0.5 
+
