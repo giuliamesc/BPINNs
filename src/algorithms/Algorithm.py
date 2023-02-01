@@ -40,7 +40,7 @@ class Algorithm(ABC):
             case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
-        self.__update_history(new_theta) 
+        #self.__update_history(new_theta) 
         return new_theta
 
     def __train_loop(self, epochs):

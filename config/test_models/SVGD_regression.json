@@ -1,23 +1,23 @@
 {
 	"general":{
-		"problem"  : "Regression",
-		"case_name": "sin",
+		"problem"  : "Laplace1D",
+		"case_name": "cos",
 		"init"     : "",
 		"method"   : "SVGD"
 	},
 
 	"num_points":{
-		"sol" : 16,
-		"par" : 0,
+		"sol" : 0,
+		"par" : 16,
 		"bnd" : 2,
-		"pde" : 0
+		"pde" : 64
 	},
 	
 	"uncertainty":{
 		"sol" : 0.1,
-		"par" : 0,
+		"par" : 0.1,
 		"bnd" : 0.1,
-		"pde" : 0
+		"pde" : 0.1
 	},
 
 	"architecture":{
@@ -28,33 +28,33 @@
 
 	"losses":{
 		"data_u": "True",
-		"data_f": "False",
+		"data_f": "True",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
 	"metrics":{
 		"data_u": "True",
-		"data_f": "False",
+		"data_f": "True",
 		"data_b": "True",
-		"pde":    "False",
+		"pde":    "True",
 		"prior":  "True"
 	},
 
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
-		"gen_flag"   : "False"
+		"save_flag"  : "True",
+		"gen_flag"   : "True"
 	},
 
     "SVGD":{
-		"epochs" : 10,
-		"burn_in": 5,
+		"epochs" : 5000,
+		"burn_in": 1000,
         "N"      : 5,
-        "h"      : 100,
-        "eps"    : 1e-3
+        "h"      : 10000,
+        "eps"    : 1e-5
 	}
 
 }

@@ -24,7 +24,10 @@ class SVGD(Algorithm):
 
     def __gather_grads(self):
         full_loss = self.curr_ep > self.burn_in
-        comp_grad = lambda p: p.grad_loss(self.data_batch, full_loss)
+        norm_coeff = self.data_train.norm_coeff
+        for p in self.particles:
+            p.set_norm_coeff(norm_coeff)
+        comp_grad = lambda p: -p.grad_loss(self.data_batch, full_loss)
         grads  = np.array([comp_grad(p) for p in self.particles])
         return grads
 
@@ -60,6 +63,9 @@ class Particle(BayesNN):
     def __init__(self, par, equation, eps):
         super().__init__(par, equation)
         self.eps = eps
+        
+    def set_norm_coeff(self, norm):
+        self.norm_coeff = norm
 
     def update_theta(self, phi):
         self.nn_params = self.nn_params + phi*self.eps
