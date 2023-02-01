@@ -2,8 +2,8 @@
 	"general":{
 		"problem"  : "Oscillator",
 		"case_name": "sin",
-		"init"     : "ADAM",
-		"method"   : "HMC"
+		"init"     : "",
+		"method"   : "ADAM"
 	},
 
 	"num_points":{
@@ -45,25 +45,16 @@
 	"utils":{
 		"random_seed": 28,
 		"debug_flag" : "False",
-		"save_flag"  : "False",
+		"save_flag"  : "True",
 		"gen_flag"   : "True"
 	},
 
-	"ADAM_0":{
-		"epochs" : 2000,
-		"burn_in": 1000,
+	"ADAM":{
+		"epochs" : 20000,
+        "burn_in": 2000,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
         "lr"     : 1e-3
-	},
-
-	"HMC":{
-		"epochs" : 100,
-		"burn_in": 0,
-		"skip"   : 10,
-		"HMC_L"  : 200,
-		"HMC_dt" : 5e-5,
-		"HMC_eta": 5e-1	
 	}
 }
