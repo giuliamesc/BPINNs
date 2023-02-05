@@ -1,0 +1,17 @@
+RELATIVE ERRORS
+Solution by component:
+	x: 21.25%
+Parametetric field by component:
+	x: 16.70%
+
+UNCERTAINITY QUANTIFICATION (MEAN)
+Solution by component:
+	x: 26.68%
+Parametric field by component:
+	x: 18.86%
+
+UNCERTAINITY QUANTIFICATION (MAX)
+Solution by component:
+	x: 59.93%
+Parametric field by component:
+	x: 35.83%

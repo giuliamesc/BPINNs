@@ -7,7 +7,7 @@
 	},
 
 	"num_points":{
-		"sol" : 0,
+		"sol" : 16,
 		"par" : 16,
 		"bnd" : 2,
 		"pde" : 64
@@ -30,7 +30,7 @@
 		"data_u": "True",
 		"data_f": "True",
 		"data_b": "True",
-		"pde":    "True",
+		"pde":    "False",
 		"prior":  "True"
 	},
 
@@ -50,10 +50,10 @@
 	},
 
     "SVGD":{
-		"epochs" : 5000,
-		"burn_in": 1000,
-        "N"      : 5,
-        "h"      : 10000,
+		"epochs" : 2000,
+		"burn_in": 100,
+        "N"      : 20,
+        "h"      : 1000,
         "eps"    : 1e-5
 	}
 

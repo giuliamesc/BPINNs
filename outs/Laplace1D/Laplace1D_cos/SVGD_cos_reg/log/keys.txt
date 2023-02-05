@@ -1,0 +1,6 @@
+Total
+data_b
+data_f
+data_u
+pde
+prior
