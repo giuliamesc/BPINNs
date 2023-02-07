@@ -1,6 +1,0 @@
-## RISULTATI x Report
-- Validazione differenziazione automatica
-- Tentativi con i diversi sigma prior
-- BNN  vs BPINN (Laplace ?D - oscillatore armonico?) # Comportamento nelle zone in cui mancano i punti di collocation
-- PINN vs BPINN (Laplace ?D) # 
-- Confronto Algoritmi Bayesiani

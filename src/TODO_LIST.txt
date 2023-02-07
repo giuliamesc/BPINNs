@@ -1,16 +1,10 @@
 ### NUOVE IMPLEMENTAZIONI
-- Algoritmo: SVGD
 - Algoritmo: Variational Inference
 
 ### MIGLIORIE
-- Plot: Boundary Points
-- Plot: Sbarra nel grafico delle loss
-- Save: Salvataggio Tempo
+- SVGD: loss storage
+- Loader: print errori
 
-### CONTROLLO
-- Batcher: tempi di esecuzione
-- Equazione: oscillatore armonico
-
-### DA IGNORARE?
-- Plotter  : casi 2D
-- Modello  : problema inverso
+### README
+- Finire report
+- Bibliografia
