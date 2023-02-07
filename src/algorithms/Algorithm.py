@@ -84,8 +84,7 @@ class Algorithm(ABC):
 
     def __update_history(self, new_theta, svgd_flag = False):
         # Saving new theta
-        if svgd_flag : self.model.nn_params = new_theta[-1]
-        else: self.model.nn_params = new_theta
+        self.model.nn_params = new_theta if not svgd_flag else new_theta[-1]
         # Computing History
         pst, llk = self.model.metric_total(self.data_batch)
         self.model.loss_step((pst,llk))
