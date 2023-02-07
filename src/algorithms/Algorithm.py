@@ -40,7 +40,7 @@ class Algorithm(ABC):
             case "SVGD": new_theta = self.sample_theta()
             case "VI"  : new_theta = self.sample_theta()
             case _: raise Exception("Method not Implemented!")
-        #self.__update_history(new_theta) 
+        self.__update_history(new_theta, type(self).__name__=="SVGD") 
         return new_theta
 
     def __train_loop(self, epochs):
@@ -82,9 +82,10 @@ class Algorithm(ABC):
         print('End training:')
         self.compute_time()
 
-    def __update_history(self, new_theta):
+    def __update_history(self, new_theta, svgd_flag = False):
         # Saving new theta
-        self.model.nn_params = new_theta
+        if svgd_flag : self.model.nn_params = new_theta[-1]
+        else: self.model.nn_params = new_theta
         # Computing History
         pst, llk = self.model.metric_total(self.data_batch)
         self.model.loss_step((pst,llk))

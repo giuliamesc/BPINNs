@@ -1,0 +1,35 @@
+GENERAL
+	method:     SVGD 
+	problem:    Laplace1D 
+	case_name:  cos 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   16 
+
+NUM_POINTS
+	sol:  0 
+	par:  16 
+	bnd:  2 
+	pde:  64 
+
+UNCERTAINTY
+	sol:  0.1 
+	par:  0.1 
+	bnd:  0.1 
+	pde:  0.1 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    True 
+	gen_flag:     True 
+
+SVGD
+	epochs:   2000 
+	burn_in:  1000 
+	N:        15 
+	h:        100 
+	eps:      1e-05 
+
