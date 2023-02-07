@@ -10,7 +10,7 @@ class Laplace1D_cos(Laplace1D):
     mesh = {
         "mesh_type": "sobol",
          "test_res": 128,
-        "inner_res": 64,
+        "inner_res": 128,
         "outer_res": 1
     }
     # Boundaries of the domains
