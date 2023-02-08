@@ -1,6 +1,6 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
+		"problem"  : "Laplace2D",
 		"case_name": "cos",
 		"init"     : "ADAM",
 		"method"   : "HMC"

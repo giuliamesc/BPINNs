@@ -1,6 +1,6 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
+		"problem"  : "Laplace2D",
 		"case_name": "cos",
 		"init"     : "",
 		"method"   : "ADAM"
@@ -9,8 +9,8 @@
 	"num_points":{
 		"sol" : 1,
 		"par" : 16,
-		"bnd" : 2,
-		"pde" : 64
+		"bnd" : 16,
+		"pde" : 128
 	},
 	
 	"uncertainty":{

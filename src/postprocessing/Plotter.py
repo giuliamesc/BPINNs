@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -49,6 +50,32 @@ class Plotter():
         plt.legend(prop={'size': 9})
         plt.title(title)
 
+    def __plot_confidence_2D(self, x, func, title, label = ("",""), fit = None):
+        """ Plots mean and standard deviation of func (2D case); used in plot_confidence """
+
+        xx = np.unique(x[:,0])
+        xx, idx_x = self.__order_inputs(xx)
+
+        yy = np.unique(x[:,1])
+        yy, idx_y = self.__order_inputs(yy)
+
+        func_ex = func[0]
+        func_nn = func[1]
+
+        X,Y = np.meshgrid(xx,yy)
+        Z_ex = np.reshape(func_ex, [128,128])
+        Z_nn = np.reshape(func_nn, [128,128])
+
+        fig, (ax1,ax2) = plt.subplots(1,2)
+        p1 = ax1.pcolor(X, Y, Z_ex, cmap=matplotlib.cm.RdBu, vmin=abs(Z_ex).min(), vmax=abs(Z_ex).max())
+        cb1 = fig.colorbar(p1, ax=ax1)
+
+        p2 = ax2.pcolor(X, Y, Z_nn, cmap=matplotlib.cm.RdBu, vmin=abs(Z_nn).min(), vmax=abs(Z_nn).max())
+        cb2 = fig.colorbar(p2, ax=ax2)
+
+        ax1.set_title(f"Exact solution for {title}")
+        ax2.set_title(f"Mean predicted solution for {title}")
+
     def __plot_nn_samples_1D(self, x, func, label = ("",""), fit = None):
         """ Plots all the samples of func; used in plot_nn_samples """
         x, idx = self.__order_inputs(x)
@@ -85,29 +112,42 @@ class Plotter():
 
     def plot_confidence(self, data, functions):
         """ Plots mean and standard deviation of solution and parametric field samples """
+        if data["sol_ex"][0].shape[1] == 1:
+            x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
+            u = (data["sol_ex"][1], functions['sol_NN'], functions['sol_std'])
+            f = (data["par_ex"][1], functions['par_NN'], functions['par_std'])
 
-        x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
-        u = (data["sol_ex"][1], functions['sol_NN'], functions['sol_std'])
-        f = (data["par_ex"][1], functions['par_NN'], functions['par_std'])
+            self.__plot_confidence_1D(x[0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = data["sol_ns"])
+            self.__save_plot(self.path_plot, 'u_confidence.png')
+            if self.only_sol: return
+            self.__plot_confidence_1D(x[1], f, 'Confidence interval for f(x)', label = ('x','f'), fit = data["par_ns"])
+            self.__save_plot(self.path_plot, 'f_confidence.png')
 
-        self.__plot_confidence_1D(x[0], u, 'Confidence interval for u(x)', label = ('x','u'), fit = data["sol_ns"])
-        self.__save_plot(self.path_plot, 'u_confidence.png')
-        if self.only_sol: return
-        self.__plot_confidence_1D(x[1], f, 'Confidence interval for f(x)', label = ('x','f'), fit = data["par_ns"])
-        self.__save_plot(self.path_plot, 'f_confidence.png')
+        elif data["sol_ex"][0].shape[1] == 2:
+            x = (data["sol_ex"][0], data["par_ex"][0])
+            u = (data["sol_ex"][1], functions['sol_NN'], functions['sol_std'])
+            f = (data["par_ex"][1], functions['par_NN'], functions['par_std'])
+
+            self.__plot_confidence_2D(x[0], u, 'u(x)', label = ('x','u'), fit = data["sol_ns"])
+            self.__save_plot(self.path_plot, 'u_confidence.png')
+            if self.only_sol: return
+            self.__plot_confidence_2D(x[1], f, 'f(x)', label = ('x','f'), fit = data["par_ns"])
+            self.__save_plot(self.path_plot, 'f_confidence.png')
 
     def plot_nn_samples(self, data, functions):
         """ Plots all the samples of solution and parametric field """
+        if data["sol_ex"][0].shape[1] == 1 :
+            x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
+            u = (data["sol_ex"][1], functions['sol_samples'])
+            f = (data["par_ex"][1], functions['par_samples'])
 
-        x = (data["sol_ex"][0][:,0], data["par_ex"][0][:,0])
-        u = (data["sol_ex"][1], functions['sol_samples'])
-        f = (data["par_ex"][1], functions['par_samples'])
-
-        self.__plot_nn_samples_1D(x[0], u, label = ('x','u'), fit = data["sol_ns"])
-        self.__save_plot(self.path_plot, 'u_nn_samples.png')
-        if self.only_sol: return
-        self.__plot_nn_samples_1D(x[1], f, label = ('x','f'), fit = data["par_ns"])
-        self.__save_plot(self.path_plot, 'f_nn_samples.png')
+            self.__plot_nn_samples_1D(x[0], u, label = ('x','u'), fit = data["sol_ns"])
+            self.__save_plot(self.path_plot, 'u_nn_samples.png')
+            if self.only_sol: return
+            self.__plot_nn_samples_1D(x[1], f, label = ('x','f'), fit = data["par_ns"])
+            self.__save_plot(self.path_plot, 'f_nn_samples.png')
+        else: 
+            pass 
 
     def plot_losses(self, losses):
         """ Generates the plots of MSE and log-likelihood """
