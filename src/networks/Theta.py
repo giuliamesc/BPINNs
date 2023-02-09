@@ -64,6 +64,9 @@ class Theta():
             print(f"W{i}:", w)
             print(f"b{i}:", b)
         return ""
+
+    def exp(self): return Theta([tf.math.exp(t) for t in self.values])
+    def log(self): return Theta([tf.math.log(t) for t in self.values])
     
     def ssum(self): 
         """ Squared sum of all entries of self.values """
@@ -74,6 +77,6 @@ class Theta():
     def copy(self): 
         """ Returns a Theta object with copied self.values """
         return Theta(self.values.copy())
-    def normal(self, std): 
+    def normal(self, mean=0.0, std=1.0): 
         """ Creation of a Theta object with random normal initialization of self.values """
-        return Theta([tf.random.normal(t.shape, stddev=std) for t in self.values]) 
+        return Theta([tf.random.normal(t.shape, mean=mean, stddev=std) for t in self.values])
