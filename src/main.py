@@ -7,7 +7,7 @@ from utility import switch_dataset, switch_equation
 test_cases = [None, "ADAM_oscillator", "ADAM_regression", "ADAM_laplace", "HMC_regression", "HMC_laplace", 
                     "SVGD_oscillator", "VI_regression"]
 best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "ADAM_oscillator"]
-test_mode, case_num = True, 7 # True for test_cases, False for best_cases
+test_mode, case_num = True, 3 # True for test_cases, False for best_cases
 configuration_file = "test_models/" + test_cases[case_num] if test_mode else "best_models/" + best_cases[case_num]
 
 # Setup utilities
@@ -112,4 +112,4 @@ plotter.plot_confidence(load_storage.data, load_storage.confidence)
 plotter.plot_nn_samples(load_storage.data, load_storage.nn_samples)
 starred_print("END")
 
-#plotter.show_plot()
+plotter.show_plot()

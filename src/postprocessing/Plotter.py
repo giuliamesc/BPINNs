@@ -54,10 +54,10 @@ class Plotter():
         """ Plots mean and standard deviation of func (2D case); used in plot_confidence """
 
         xx = np.unique(x[:,0])
-        xx, idx_x = self.__order_inputs(xx)
+        xx, _ = self.__order_inputs(xx)
 
         yy = np.unique(x[:,1])
-        yy, idx_y = self.__order_inputs(yy)
+        yy, _ = self.__order_inputs(yy)
 
         func_ex = func[0]
         func_nn = func[1]
@@ -67,9 +67,14 @@ class Plotter():
         Z_nn = np.reshape(func_nn, [128,128])
 
         fig, (ax1,ax2) = plt.subplots(1,2)
+        fig.tight_layout()
+        
+        # First subplot - Exact solution
+        ax1.set_box_aspect(1)
         p1 = ax1.pcolor(X, Y, Z_ex, cmap=matplotlib.cm.RdBu, vmin=abs(Z_ex).min(), vmax=abs(Z_ex).max())
         cb1 = fig.colorbar(p1, ax=ax1)
-
+        # Second subplot - NN solution
+        ax2.set_box_aspect(1)
         p2 = ax2.pcolor(X, Y, Z_nn, cmap=matplotlib.cm.RdBu, vmin=abs(Z_nn).min(), vmax=abs(Z_nn).max())
         cb2 = fig.colorbar(p2, ax=ax2)
 
