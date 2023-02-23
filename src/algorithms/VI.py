@@ -16,7 +16,7 @@ class VI(Algorithm):
     
     def __initialize_VI_params(self):
         shape = self.model.nn_params
-        self.VI_mu  = shape.normal(std=0.)
+        self.VI_mu  = shape.normal(std=0.1)
         self.VI_rho = shape.normal(std=0.01)
 
     def __update_theta(self):
@@ -35,7 +35,7 @@ class VI(Algorithm):
         self.VI_mu  -= grad_mu  * self.alpha
         self.VI_rho -= grad_rho * self.alpha
 
-    def sample_theta(self):
+    def sample_theta(self): 
         self.model.nn_params = self.__update_theta()
         grad_theta = self.model.grad_loss(self.data_batch) 
         grad_rho   = self.__compute_grad_rho(grad_theta)
@@ -45,6 +45,5 @@ class VI(Algorithm):
     def select_thetas(self, *_):
         """ Compute burn-in and skip samples """
         mu, sigma = (self.VI_mu, (self.VI_rho.exp()+1).log())
-        print(mu)
         zeta = [sigma.normal() for _ in range(self.samples)]
         return [mu + sigma * z for z in zeta]
