@@ -52,9 +52,9 @@
     "SVGD":{
 		"epochs" : 6000,
 		"burn_in": 1000,
-        "N"      : 15,
-        "h"      : 10000,
-        "eps"    : 1e-5
+        "SVGD_N"      : 15,
+        "SVGD_h"      : 10000,
+        "SVGD_eps"    : 1e-5
 	}
 
 }

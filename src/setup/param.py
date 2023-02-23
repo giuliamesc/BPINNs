@@ -71,7 +71,6 @@ class Param:
         for key in args_dict:
             if args_dict[key] is None: continue
             if key in self.param_method: self.param_method[key] = args_dict[key]
-            ### DA AGGIUNGERE INIT !!!
 
 
 class Dimension():

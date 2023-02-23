@@ -54,14 +54,19 @@ class Parser(ArgumentParser):
 
         # %% Algoritm Parameters
         self.add_argument('--epochs', type=int, help='Number of epochs to train')
+        self.add_argument('--burn-in', type=int,   help="Number of burn-in samples. Needs to be <= epochs")
 
         # HMC
-        self.add_argument('--burn-in', type=int,   help="Number of samples to use in HMC (after burn-in). Needs to be <= epochs")
+        self.add_argument('--HMC_skip'  , type=int,   help="skip: stride in HMC")
         self.add_argument('--HMC_L'  , type=int,   help="L: number of leapfrog step in HMC")
         self.add_argument('--HMC_dt' , type=float, help="dt: step size in HMC")
 
         # SVGD
+        self.add_argument('--SVGD_N' , type=float, help="N: number of particles in SVGD")
+        self.add_argument('--SVGD_h' , type=float, help="h: repulsivity in SVGD")
+        self.add_argument('--SVGD_eps' , type=float, help="eps: epsilon in SVGD")
 
         # VI
-
+        self.add_argument('--VI_samples' , type=float, help="samples: number of samples in VI")
+        self.add_argument('--VI_alpha' , type=float, help="alpha: learning rate for GD steps in VI")
 

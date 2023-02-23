@@ -19,7 +19,7 @@ class HMC(Algorithm):
             raise Exception("Burn-in is too high for this number of epochs!")
         
         self.burn_in = param_method["burn_in"]
-        self.skip    = param_method["skip"]
+        self.skip    = param_method["HMC_skip"]
         self.HMC_L   = param_method["HMC_L"]
         self.HMC_dt  = param_method["HMC_dt"] 
         self.HMC_eta = param_method["HMC_eta"]

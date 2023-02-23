@@ -52,7 +52,7 @@
 	"HMC":{
 		"epochs" : 200,
 		"burn_in": 50,
-		"skip"   : 5,
+		"HMC_skip"   : 5,
 		"HMC_L"  : 20,
 		"HMC_dt" : 1e-3,
 		"HMC_eta": 1e-0

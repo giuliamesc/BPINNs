@@ -7,14 +7,14 @@
 	},
 
 	"num_points":{
-		"sol": 10,
+		"sol": 16,
 		"par": 10,
 		"bnd": 2,
 		"pde": 10 
 	},
 
 	"uncertainty":{
-		"sol": 0.05,
+		"sol": 0.1,
 		"par": 0.05,
 		"bnd": 0.05,
 		"pde": 0.05
@@ -50,6 +50,9 @@
 	},
 
 	"VI":{
-		"epochs" : 10
+		"epochs"    : 200,
+		"burn_in"   : 0,
+		"VI_samples": 50,
+		"VI_alpha"  : 1e-5
 	}
 }

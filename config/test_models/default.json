@@ -59,19 +59,26 @@
 	},
 
 	"HMC":{
-		"epochs" : 10,
-		"burn_in": 0,
-		"skip"   : 5,
-		"HMC_L"  : 20,
-		"HMC_dt" : 1e-2,
-		"HMC_eta": 1.0
+		"epochs"  : 10,
+		"burn_in" : 0,
+		"HMC_skip": 5,
+		"HMC_L"   : 20,
+		"HMC_dt"  : 1e-2,
+		"HMC_eta" : 1.0
 	},
 
 	"SVGD":{
-		"epochs" : 10
+		"epochs"   : 10,
+		"burn_in"  : 0,
+		"SVGD_N"   : 15,
+        "SVGD_h"   : 100,
+        "SVGD_eps" : 1e-5
 	},
 
 	"VI":{
-		"epochs" : 10
+		"epochs"    : 10,
+		"burn_in"   : 0,
+		"VI_samples": 50,
+		"VI_alpha"  : 1e-5
 	}
 }

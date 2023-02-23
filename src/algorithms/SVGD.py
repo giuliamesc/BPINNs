@@ -10,9 +10,9 @@ class SVGD(Algorithm):
     def __init__(self, bayes_nn, param_method, debug_flag): 
         super().__init__(bayes_nn, param_method, debug_flag)
         self.burn_in = param_method["burn_in"]
-        self.N = param_method["N"]
-        self.h = param_method["h"]
-        self.__build_particles(param_method["eps"])
+        self.N = param_method["SVGD_N"]
+        self.h = param_method["SVGD_h"]
+        self.__build_particles(param_method["SVGD_eps"])
 
     def __build_particles(self, eps): 
         par, equation = self.model.constructors
