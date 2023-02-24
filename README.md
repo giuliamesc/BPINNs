@@ -59,8 +59,8 @@ In particular, we have:
 - :file_folder: `algorithms` is a module containing classes representing the training algorithms proposed in this project:
     - `ADAM`: Adaptive Moment Estimation 
     - `HMC`: Hamiltionian Monte Carlo
-    - `SVGD` (WIP): Stein Variational Gradient Descent
-    - `VI` (WIP): Variational Inference <br />
+    - `SVGD`: Stein Variational Gradient Descent
+    - `VI`: Variational Inference <br />
     The folder includes as well the class `Trainer`, used to manage the pre-training and training algorithm.
 - :file_folder: `datasets` contains: 
     - :file_folder: `config` contains definitions of functions and domains for generating datasets
@@ -73,10 +73,10 @@ In particular, we have:
     - the class `Plotter` to generate the plots and save them in the folder `outs`
     - the class `Storage` to store and load results, uncertainty quantification study, loss history and network parameters 
 
-## :books: References
+## :books: Main References
 - *B-PINNs: Bayesian Physics-Informed Neural Networks for Forward and Inverse PDE Problems with Noisy Data*, Liu Yang, Xuhui Meng, George Em Karniadakis, Mar 2020.
+- *Bayesian Physics Informed Neural Networks for real-world nonlinear dynamical systems*, Kevin Linka, Amelie Schäfer, Xuhui Meng, Zongren Zou, George Em Karniadakis, and Ellen Kuhl., May 2022.
 - *Bayesian Physics-Informed Neural Networks for Inverse Uncertainty Quantification problems in Cardiac Electrophysiology*, Master Thesis at Politecnico di Milano by Daniele Ceccarelli.
-- *A physics-informed deep learning framework for inversion and surrogate modeling in solid mechanics*, Ehsan Haghighat, Maziar Raissi, Adrian Moure, Hector Gomez, Ruben Juanes, Mar 2021.
 
 ## :speech_balloon: Authors 
 - Giulia Mescolini ([@giuliamesc](https://gitlab.com/giuliamesc)) 
