@@ -32,8 +32,7 @@ def switch_equation(equation):
         case _ : raise Exception(f"This equation does not exist: {equation}")
 
 def switch_configuration(name, test_mode=False):
-    test_cases = [None, "ADAM_oscillator", "ADAM_regression", "ADAM_laplace", "HMC_regression", "HMC_laplace", 
-                    "SVGD_oscillator", "VI_regression"]
+    test_cases = [None]
     best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "ADAM_oscillator"]
 
     config_folder = "test_models/" if test_mode else "best_models/"
