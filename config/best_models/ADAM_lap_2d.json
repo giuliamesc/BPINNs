@@ -1,7 +1,7 @@
 {
 	"general":{
-		"problem"  : "Laplace1D",
-		"case_name": "sin",
+		"problem"  : "Laplace2D",
+		"case_name": "cos",
 		"init"     : "",
 		"method"   : "ADAM"
 	},
@@ -9,8 +9,8 @@
 	"num_points":{
 		"sol" : 1,
 		"par" : 16,
-		"bnd" : 2,
-		"pde" : 64
+		"bnd" : 16,
+		"pde" : 128
 	},
 	
 	"uncertainty":{
@@ -27,7 +27,7 @@
 	},
 
 	"losses":{
-		"data_u": "True",
+		"data_u": "False",
 		"data_f": "True",
 		"data_b": "True",
 		"pde":    "True",
@@ -50,8 +50,8 @@
 	},
 
 	"ADAM":{
-		"epochs" : 50000,
-        "burn_in": 10000,
+		"epochs" : 10000,
+        "burn_in": 1500,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,

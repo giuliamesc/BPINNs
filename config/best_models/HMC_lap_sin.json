@@ -1,22 +1,22 @@
 {
 	"general":{
 		"problem"  : "Laplace1D",
-		"case_name": "cos",
+		"case_name": "sin",
 		"init"     : "",
-		"method"   : "ADAM"
+		"method"   : "HMC"
 	},
 
 	"num_points":{
-		"sol" : 0,
-		"par" : 16,
+		"sol" : 2,
+		"par" : 32,
 		"bnd" : 2,
 		"pde" : 64
 	},
 	
 	"uncertainty":{
 		"sol" : 0.1,
-		"par" : 0.2,
-		"bnd" : 0.01,
+		"par" : 0.1,
+		"bnd" : 0.1,
 		"pde" : 0.1
 	},
 
@@ -49,12 +49,21 @@
 		"gen_flag"   : "True"
 	},
 
-	"ADAM":{
-		"epochs" : 10000,
-        "burn_in": 1500,
+	"ADAM_0":{
+		"epochs" : 11000,
+        "burn_in": 10000,
 		"beta_1" : 0.9,
         "beta_2" : 0.999,
         "eps"    : 1e-8,
         "lr"     : 1e-3
+	},
+
+	"HMC":{
+		"epochs" : 100,
+		"burn_in": 0,
+		"HMC_skip" : 10,
+		"HMC_L"  : 200,
+		"HMC_dt" : 1e-4,
+		"HMC_eta": 5e-1	
 	}
 }
