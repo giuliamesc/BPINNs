@@ -30,3 +30,14 @@ def switch_equation(equation):
         case "Laplace2D":  return eq.Laplace
         case "Oscillator": return eq.Oscillator
         case _ : raise Exception(f"This equation does not exist: {equation}")
+
+def switch_configuration(name, test_mode=False):
+    test_cases = [None, "ADAM_oscillator", "ADAM_regression", "ADAM_laplace", "HMC_regression", "HMC_laplace", 
+                    "SVGD_oscillator", "VI_regression"]
+    best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "ADAM_oscillator"]
+
+    config_folder = "test_models/" if test_mode else "best_models/"
+    config_list   =  test_cases    if test_mode else  best_cases
+    config_file   = config_list[name] if type(name) == int else name
+
+    return config_folder + config_file

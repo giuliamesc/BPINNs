@@ -50,7 +50,7 @@
 	},
 
 	"VI":{
-		"epochs"    : 200,
+		"epochs"    : 2000,
 		"burn_in"   : 0,
 		"VI_samples": 50,
 		"VI_alpha"  : 1e-5

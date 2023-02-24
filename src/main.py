@@ -1,14 +1,7 @@
 # %% Utilities
 from utility import set_config, set_directory, set_warning, starred_print
 from utility import load_json, check_dataset, create_directories
-from utility import switch_dataset, switch_equation
-
-# Manual configuration
-test_cases = [None, "ADAM_oscillator", "ADAM_regression", "ADAM_laplace", "HMC_regression", "HMC_laplace", 
-                    "SVGD_oscillator", "VI_regression"]
-best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "ADAM_oscillator"]
-test_mode, case_num = True, 7 # True for test_cases, False for best_cases
-configuration_file = "test_models/" + test_cases[case_num] if test_mode else "best_models/" + best_cases[case_num]
+from utility import switch_dataset, switch_equation, switch_configuration
 
 # Setup utilities
 set_directory()
@@ -25,6 +18,7 @@ from postprocessing import Storage, Plotter # Postprocessing
 # %% Creating Parameters
 
 starred_print("START")
+configuration_file = switch_configuration(7, False) # Select the configuration file
 args   = Parser().parse_args()   # Load a param object from command-line
 config_file = set_config(args.config, configuration_file)
 config = load_json(config_file)  # Load params from config file

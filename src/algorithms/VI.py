@@ -28,7 +28,7 @@ class VI(Algorithm):
     def __compute_grad_rho(self, grad_theta):
         q_theta   = (self.VI_mu - self.model.nn_params) * (self.inv_sigma)**2 # (mu-theta) * 1/sigma^2
         q_rho     = ((self.VI_mu - self.model.nn_params)**2 * (self.inv_sigma)**2 - 1) * (self.inv_sigma) # (mu-theta)^2 * 1/sigma^3 - 1/sigma 
-        theta_rho = self.eps / (self.VI_rho.exp()+1) # eps / (1+exp(rho))
+        theta_rho = self.eps / (self.VI_rho.exp()**(-1)+1) # eps / (1+exp(rho))
         return (q_theta + grad_theta) * theta_rho + q_rho
 
     def __update_VI_params(self, grad_mu, grad_rho):
