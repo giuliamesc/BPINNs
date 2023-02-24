@@ -119,7 +119,7 @@ class PredNN(PhysNN):
             raise Warning("Some thetas have been deleted!") 
         self.thetas = new_thetas
 
-    def __disp_UQ(self, tag, means, maxs): # VALUTA SE CONSIDERARE IN RELAZIONE AL NOISE
+    def __disp_UQ(self, tag, means, maxs):
         form = lambda value: f"{100*value:1.2f}%"
         labels = ["x", "y", "z"][:len(means)]
         for label, mean, mx in zip(labels, means, maxs):

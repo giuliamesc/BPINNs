@@ -21,7 +21,7 @@ class Data_Config(ABC):
         "n_out_sol" : int,
         "n_out_par" : int}
     # Specifications on the domain: mesh type, resolution, boundaries
-    analytical_domain = { # DA TOGLIERE
+    analytical_domain = {
         "mesh_type" : str,
         "resolution": int,
         "domain"    : list} 

@@ -138,8 +138,6 @@ class DataGenerator:
         filename = os.path.join(self.save_path, name)
         np.save(filename, data)
 
-    ### TEMP FILES
-
     def plot(self, points, c="b"):
         if self.dim == 1: plotter = self.plot1D
         if self.dim == 2: plotter = self.plot2D

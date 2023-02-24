@@ -29,7 +29,6 @@ plotter = Plotter(test_path)
 load_storage = Storage(test_path)
 print("Plotting the history...")
 plotter.plot_losses(load_storage.history)
-#plotter.plot_sigmas(load_storage.sigmas)
 print("Plotting the results...")
 loaded_data  = load_storage.data
 plotter.plot_confidence(load_storage.data, load_storage.confidence)

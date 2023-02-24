@@ -30,7 +30,7 @@ class LossNN(PhysNN):
     @staticmethod
     def __normal_loglikelihood(mse, n, log_var):
         """ Negative log-likelihood """
-        return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var) # delete * n in the laplace case?
+        return 0.5 * n * ( mse * tf.math.exp(log_var) - log_var)
 
     def __loss_data(self, outputs, targets, log_var):
         """ Auxiliary loss function for the computation of Normal(output | target, 1 / beta * I) """
@@ -70,7 +70,7 @@ class LossNN(PhysNN):
 
     def __loss_prior(self):
         """ Prior for neural network parameters, assuming them to be distributed as a gaussian N(0,stddev^2) """
-        theta = Theta(self.model.trainable_variables) # Valuta come sistemare
+        theta = Theta(self.model.trainable_variables)
         log_var = tf.math.log(1/self.stddev**2)
         prior   = theta.ssum()/theta.size()
         loglike = self.__normal_loglikelihood(prior, theta.size(), log_var)

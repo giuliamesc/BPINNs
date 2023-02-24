@@ -25,7 +25,7 @@ class HMC(Algorithm):
         self.HMC_eta = param_method["HMC_eta"]
         self.selected = list()
 
-    def __leapfrog_step(self, old_theta, r, dt): # Si potrebbe cancellare old_theta
+    def __leapfrog_step(self, old_theta, r, dt):
         """ Performs one leap-frog step starting from previous values of theta/sigma and r/s """
         grad_theta = self.model.grad_loss(self.data_batch, self.__full_loss)
         r = r - grad_theta * dt / 2
