@@ -1,0 +1,34 @@
+GENERAL
+	method:     VI 
+	problem:    Regression 
+	case_name:  cos 
+
+ARCHITECTURE
+	activation:  swish 
+	n_layers:    2 
+	n_neurons:   16 
+
+NUM_POINTS
+	sol:  16 
+	par:  10 
+	bnd:  2 
+	pde:  10 
+
+UNCERTAINTY
+	sol:  0.1 
+	par:  0.05 
+	bnd:  0.05 
+	pde:  0.05 
+
+UTILS
+	random_seed:  28 
+	debug_flag:   False 
+	save_flag:    True 
+	gen_flag:     True 
+
+VI
+	epochs:      200 
+	burn_in:     0 
+	VI_samples:  50 
+	VI_alpha:    1e-05 
+
