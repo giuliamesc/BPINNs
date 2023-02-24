@@ -18,7 +18,7 @@ from postprocessing import Storage, Plotter # Postprocessing
 # %% Creating Parameters
 
 starred_print("START")
-configuration_file = switch_configuration("HMC_reg_sin") # Select the configuration file
+configuration_file = switch_configuration("HMC_lap_sin") # Select the configuration file
 args   = Parser().parse_args()   # Load a param object from command-line
 config_file = set_config(args.config, configuration_file)
 config = load_json(config_file)  # Load params from config file

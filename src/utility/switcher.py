@@ -33,7 +33,8 @@ def switch_equation(equation):
 
 def switch_configuration(name, test_mode=False):
     test_cases = [None]
-    best_cases = [None, "ADAM_lap_cos", "HMC_lap_cos", "HMC_reg_cos", "HMC_reg_sin", "ADAM_oscillator"]
+    best_cases = [None, "ADAM_lap_2d", "ADAM_pde_osc", "ADAM_reg_osc", "ADAM_reg_cos", "HMC_lap_cos", 
+                "HMC_lap_sin", "HMC_pde_osc", "HMC_reg_cos", "HMC_reg_sin", "SVGD_reg_cos", "VI_reg_cos"]
 
     config_folder = "test_models/" if test_mode else "best_models/"
     config_list   =  test_cases    if test_mode else  best_cases

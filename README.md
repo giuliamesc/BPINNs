@@ -1,4 +1,4 @@
-# Foundations for a fully-comprehensive library for Bayesian Physics-Informed Deep Learning
+# A fully-comprehensive library for Physics-Informed Deep Learning under uncertainty
 
 ## :pushpin: Requirements
 - `python` version 3.10.* (download from [here](https://www.python.org/downloads/))
